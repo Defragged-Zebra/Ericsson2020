@@ -28,11 +28,13 @@ public:
             grid.push_back(sor);
         }
     }
-    std::vector<Field> operator[](size_t i){
-        return grid[i];
-}
-    size_t getX(){return grid[0].size();}
-    size_t getY(){return grid.size();}
+    inline std::vector<Field> operator[](size_t i){return grid[i];};
+    inline size_t getX(){return grid[0].size();}
+    inline size_t getY(){return grid.size();}
+
+    template<typename FUNC>
+    FUNC executeOnEveryElement(FUNC func);
+
 
 
 };
