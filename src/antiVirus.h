@@ -18,22 +18,21 @@ class AntiVirus {
     std::vector<Country>coutries;
     Logic logic;
     Iface iface;
+    int maxticks=0;
+    u_long factors[4]={0};
 private:
     AntiVirus()= default;
     public:
-    AntiVirus(size_t y, size_t x){
-        grid = new Grid(y,x);
+    AntiVirus(size_t y, size_t x,size_t ccount,int maxticks,const u_long factors[4]){
+        this->grid = new Grid(y,x);
+        this->coutries = std::vector<Country>(ccount);
+        this->maxticks=maxticks;
+        for (size_t i = 0; i < 4; ++i) {
+            this->factors[i]=factors[i];
+        }
     }
     void run();
-    friend std::ostream & operator<<(std::ostream& os, const AntiVirus& av){
-        for (size_t i = 0; i < av.grid->getY(); ++i) {
-            for (size_t j = 0; j < av.grid->getX(); ++j) {
-                os<<(*av.grid)[0][0]<<" ";
-            }
-            os<<std::endl;
-        }
-        return os;
-    }
+    friend std::ostream & operator<<(std::ostream& os, const AntiVirus& av);
     ~AntiVirus(){
         delete grid;
     }

@@ -11,10 +11,10 @@
 #include <sstream>
 
 class Field {
-    int fieldID;
-    int currentInfectionValue;
-    int vaccinationRate;
-    int populationDensity;
+    int fieldID{};
+    int currentInfectionValue{};
+    int vaccinationRate{};
+    int populationDensity{};
     std::map<int,int> storedVaccines;
     std::queue<int> lastInfectionValues;
 public:
@@ -41,10 +41,8 @@ public:
         }
         return *this;
     }
-    friend std::ostream& operator<<(std::ostream & os,Field f){
-        os << f.fieldID;
-        return os;
-    }
+    int getFieldID(){return this->fieldID;}
+    friend std::ostream& operator<<(std::ostream & os,Field f);
 };
 
 
