@@ -9,14 +9,21 @@ unsigned long factor1_next(){ //might be better w a class
     factor1 = factor1 * 48271 % 0x7fffffff;
     return factor1;
 };
-int healing() {
-    int lastTicks = width + height;
 
+
+
+int healing() {
+
+    int lastTicks = width + height;
+    //Ha még nem értük el a width + height -edik kört, akkor 0
     if (lastInfectionValues.len() < lastTicks) {
         return 0;
     } else {
+        //Az előző tickek (pályaméret width + height darabszámú) fertőzöttségi mutatóinak minimuma szorozva az ...
         a = min(lastInfectionValues[lastInfectionValues.len() - lastTicks->lastInfectionValues.len()]);
+        //első véletlen faktor 10-zel való osztási maradékával (0-9)
         b = factor1_next() % 10;
+        //Az eredmény osztva 20-al, és ennek az alsó egészrésze
         return floor(a * b / 20); //integer div is a design choice
     }
 }
