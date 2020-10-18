@@ -6,14 +6,14 @@
 #define VIRUS_LIFEHAPPENS_H
 
 #include <vector>
-#include "field.cpp"
+#include "grid.cpp"
 //for debug purposes
 #include <iostream>
 #include <stdexcept>
 
 class LifeHappens {
 public:
-    int applySpontaneousHealing(std::vector<Field>);
+    int applySpontaneousHealing(Grid *grid);
     int applySpontaneousInfection();
 };
 

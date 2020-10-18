@@ -43,6 +43,7 @@ public:
     }
     int getFieldID(){return this->fieldID;}
     friend std::ostream& operator<<(std::ostream & os,Field f);
+    std::queue<int> getLastInfectionValues(){  return lastInfectionValues;    }
 };
 
 
