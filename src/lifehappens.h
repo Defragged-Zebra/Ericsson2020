@@ -27,7 +27,7 @@ private:
         return n < m ? n : m;
     }
 
-    int distance(coord, c);
+    int distance(Grid *grid, int x1, int y1, int x2, int y2);
 
 public:
     //separate functions, so values can be changed from the visualization directly

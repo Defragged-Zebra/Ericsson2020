@@ -3,6 +3,7 @@
 //
 
 #include "lifehappens.h"
+#include <queue>
 
 int LifeHappens::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, int currentTick,
                                              int healStartTick, unsigned long random1) {
@@ -15,7 +16,8 @@ int LifeHappens::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, i
     } else {
         //Az előző tickek (pályaméret width + height darabszámú) fertőzöttségi mutatóinak minimuma szorozva az ...
         //a = min(lastInfectionValues[lastInfectionValues.len() - lastTicks->lastInfectionValues.len()]);
-        int a = std::min_element(field.getLastInfectionValues().begin(), field.getLastInfectionValues().end());
+        std::deque<int>::iterator tmp = std::min_element(field.getLastInfectionValues().begin(), field.getLastInfectionValues().end());
+        int a = *tmp;
         //első véletlen faktor 10-zel való osztási maradékával (0-9)
         int b = random1 % 10;
         //Az eredmény osztva 20-al, és ennek az alsó egészrésze
@@ -23,9 +25,11 @@ int LifeHappens::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, i
     }
 }
 
-void LifeHappens::applySpontaneousHealing(int value, Field field) {
+void LifeHappens::applySpontaneousHealing(int value, Grid *grid, int x,int y) {
     //check for healing to not extend 100
-    throw error;
+    int infectionValue=(*grid)[x][y].getLastInfectionValues()[-1];
+    //this func should take care of the update of the que and stuff
+    (*grid)[x][y].updateInfection(min(infectionValue+value,100));
 }
 
 int LifeHappens::calculateSpontaneousInfection(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, int currentTick,
@@ -38,10 +42,13 @@ int LifeHappens::calculateSpontaneousInfection(Grid *grid, int fieldCoordinateX,
         int intervalToAverage = min(random2 % 10 + 10, currentTick);
         //int b = avg(i =[1..c], infection(curr_tick - i, coord));
         Field field = (*grid)[fieldCoordinateX][fieldCoordinateY];
-
-        int b = std::accumulate(field.getLastInfectionValues()[len - intervalToAverage],
-                                field.getLastInfectionValues().end(), 0.0) /
-                field.getLastInfectionValues().len();
+        double b=0;
+        std::deque<int> que=field.getLastInfectionValues();
+        int size=que.size();
+        for (int i = intervalToAverage; i < size; ++i) {
+            b+=field.getLastInfectionValues()[i];
+        }
+        b = b/size;
         int sum = 0;
         int coordinates[5][2] = {{fieldCoordinateX,     fieldCoordinateY},
                                  {fieldCoordinateX - 1, fieldCoordinateY},
@@ -55,7 +62,7 @@ int LifeHappens::calculateSpontaneousInfection(Grid *grid, int fieldCoordinateX,
             if (cX < 0 || cY < 0 || cX > grid->getX() || cY > grid->getY()) {
                 continue;
             }
-            int dist = distance(fieldCoordinateX, fieldCoordinateX, cX, cY);
+            int dist = distance(grid, fieldCoordinateX, fieldCoordinateX, cX, cY);
             //Az átfertőződési mutatók kiszámolása előtt a t átfertőződési hajlandóságot generáljuk
             // a harmadik véletlen faktor 7-tel való osztási maradéka + 3 -mal
             int t = random3 % 7 + 3;
@@ -81,12 +88,12 @@ int LifeHappens::calculateSpontaneousInfection(Grid *grid, int fieldCoordinateX,
     }
 }
 
-int LifeHappens::distance(coord, c) {
+int LifeHappens::distance(Grid *grid, int x1, int y1, int x2, int y2) {
     //A távolság helyben 0, megegyező kerületben 1, egyébként 2
     if (c.district != coord.district) {
         return 2;
     } else {
-        if (coord == c) {
+        if (x1 == x2 && y1==y2) {
             return 0;
         } else {
             return 1;
