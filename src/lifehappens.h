@@ -18,20 +18,26 @@ private:
     int floor(int n) {
         return n - (n % 1);
     }
-    int ceil(int n){
-        return floor(n)+1;
+
+    int ceil(int n) {
+        return floor(n) + 1;
     }
+
     int min(int n, int m) {
         return n < m ? n : m;
     }
+
     int distance(coord, c);
+
 public:
     //separate functions, so values can be changed from the visualization directly
-    int calculateSpontaneousHealing(Field field, int currentTick, int healStartTick, unsigned long random1);
+    int calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, int currentTick,
+                                    int healStartTick, unsigned long random1);
 
     void applySpontaneousHealing(int value, Field field);
 
-    int calculateSpontaneousInfection(Grid *grid, unsigned long random2, unsigned long random3, unsigned long random4);
+    int calculateSpontaneousInfection(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, int currentTick,
+                                      unsigned long random2, unsigned long random3, unsigned long random4);
 
     void applySpontaneousInfection(int value);
 };

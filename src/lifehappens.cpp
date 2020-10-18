@@ -29,10 +29,7 @@ void LifeHappens::applySpontaneousHealing(int value, Field field) {
 }
 
 int LifeHappens::calculateSpontaneousInfection(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, int currentTick,
-                                               unsigned long random2, unsigned long random3,
-                                               unsigned long random4) {
-
-
+                                               unsigned long random2, unsigned long random3, unsigned long random4) {
     if (sectorIsClear) {
         return 0;
     } else {
@@ -55,7 +52,9 @@ int LifeHappens::calculateSpontaneousInfection(Grid *grid, int fieldCoordinateX,
             int cX = coordinates[i][0];
             int cY = coordinates[i][1];
             //boundary check
-            if (cX < 0 || cY < 0 || cX > grid->getX() || cY > grid->getY()) { continue; }
+            if (cX < 0 || cY < 0 || cX > grid->getX() || cY > grid->getY()) {
+                continue;
+            }
             int dist = distance(fieldCoordinateX, fieldCoordinateX, cX, cY);
             //Az átfertőződési mutatók kiszámolása előtt a t átfertőződési hajlandóságot generáljuk
             // a harmadik véletlen faktor 7-tel való osztási maradéka + 3 -mal
@@ -65,9 +64,10 @@ int LifeHappens::calculateSpontaneousInfection(Grid *grid, int fieldCoordinateX,
             //Az átfertőződési mutatókat akkor adjuk össze a hely populációs különbségéből adódó,
             //1-3 érték közé beszorított fertőzési lehetőséggel,
             //ha az előző körös fertőzöttség nagyobb, mint a hajlandóság és a távolság szorzata.
-            if (tick_info[curr_tick - 1, c].infection_rate /*A.K.A: previous infection rate of the cell*/ > dist * t) {
+            Field cField = (*grid)[cX][cY];
+            if (cField.getLastInfectionValues()[-2] > dist * t) {
                 //"beszorított átfertőzési mutató"
-                int d = std::clamp(start_info[coord].population - start_info[c].population, 0, 2) + 1;
+                int d = std::clamp(field.getPopulationDensity() - cField.getPopulationDensity(), 0, 2) + 1;
                 sum += d;
             } else {
                 continue;
@@ -83,8 +83,9 @@ int LifeHappens::calculateSpontaneousInfection(Grid *grid, int fieldCoordinateX,
 
 int LifeHappens::distance(coord, c) {
     //A távolság helyben 0, megegyező kerületben 1, egyébként 2
-    if (c.district != coord.district) { return 2; }
-    else {
+    if (c.district != coord.district) {
+        return 2;
+    } else {
         if (coord == c) {
             return 0;
         } else {
