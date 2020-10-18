@@ -34,12 +34,12 @@ public:
     int calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, int currentTick,
                                     int healStartTick, unsigned long random1);
 
-    void applySpontaneousHealing(int value, Field field);
+    void applySpontaneousHealing(int value, Grid *grid, int x,int y);
 
     int calculateSpontaneousInfection(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, int currentTick,
                                       unsigned long random2, unsigned long random3, unsigned long random4);
 
-    void applySpontaneousInfection(int value);
+    void applySpontaneousInfection(int value, Grid *grid, int x,int y);
 };
 
 
