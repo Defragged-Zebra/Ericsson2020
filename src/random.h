@@ -9,15 +9,22 @@
 
 class Random {
 private:
-    unsigned long factor[4];
+    unsigned long factor[4]{};
 public:
     Random(unsigned long seeds[4]);
-    Random(const Random&){
+
+    Random(const Random &) {
         throw std::runtime_error("Random (that class) copy ctr");
     }
-    Random& operator=(const Random&){
+
+    Random() {
+        throw std::runtime_error("Random (that class) empty ctr");
+    }
+
+    Random &operator=(const Random &) {
         throw std::runtime_error("Random (that class) operator=");
     }
+
     unsigned long next(int index);
 };
 

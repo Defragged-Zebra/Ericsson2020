@@ -6,15 +6,34 @@
 #define VIRUS_LIFEHAPPENS_H
 
 #include <vector>
-#include "grid.cpp"
+#include "grid.h"
+#include "random.h"
+#include <algorithm>
 //for debug purposes
 #include <iostream>
 #include <stdexcept>
 
 class LifeHappens {
+private:
+    int floor(int n) {
+        return n - (n % 1);
+    }
+    int ceil(int n){
+        return floor(n)+1;
+    }
+    int min(int n, int m) {
+        return n < m ? n : m;
+    }
+    int distance(coord, c);
 public:
-    int applySpontaneousHealing(Grid *grid);
-    int applySpontaneousInfection();
+    //separate functions, so values can be changed from the visualization directly
+    int calculateSpontaneousHealing(Field field, int currentTick, int healStartTick, unsigned long random1);
+
+    void applySpontaneousHealing(int value, Field field);
+
+    int calculateSpontaneousInfection(Grid *grid, unsigned long random2, unsigned long random3, unsigned long random4);
+
+    void applySpontaneousInfection(int value);
 };
 
 
