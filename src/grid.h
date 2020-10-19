@@ -21,8 +21,8 @@ class Grid {
     Grid& operator=(const Grid&){
         throw std::runtime_error("grid operator=");
     }
-public:
     Random random;
+public:
     Grid(size_t y, size_t x, unsigned long seeds[4]){
         random=Random(seeds);
         grid = std::vector<std::vector<Field>>();

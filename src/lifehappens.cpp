@@ -5,7 +5,7 @@
 #include "lifehappens.h"
 #include <queue>
 
-int LifeHappens::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, int currentTick,
+int LifeHappens::calculateSpontaneousHealing (Grid *grid, int fieldCoordinateX, int fieldCoordinateY, int currentTick,
                                              int healStartTick, unsigned long random1) {
     Field field = (*grid)[fieldCoordinateX][fieldCoordinateY];
     //healStartTick = width + height; -- it should be calculated further up for optimisation

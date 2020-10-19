@@ -31,7 +31,7 @@ private:
 
 public:
     //separate functions, so values can be changed from the visualization directly
-    int calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, int currentTick,
+    int calculateSpontaneousHealing (Grid *grid, int fieldCoordinateX, int fieldCoordinateY, int currentTick,
                                     int healStartTick, unsigned long random1);
 
     void applySpontaneousHealing(int value, Grid *grid, int x,int y);

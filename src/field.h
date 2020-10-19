@@ -44,8 +44,9 @@ public:
     }
     int getFieldID(){return this->fieldID;}
     friend std::ostream& operator<<(std::ostream & os,Field f);
-    std::deque<int> getLastInfectionValues(){  return lastInfectionValues;    }
-    int getPopulationDensity(){return populationDensity;}
+    //pass on as reference
+    std::deque<int> getLastInfectionValues() const {  return lastInfectionValues;    }
+    int getPopulationDensity() const {return populationDensity;}
 };
 
 
