@@ -28,9 +28,9 @@ int LifeHappens::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, i
 
 void LifeHappens::applySpontaneousHealing(int value, Grid *grid, int x, int y) {
     //check for healing to not extend 100
-    int infectionValue = (*grid)[x][y].getLastInfectionValues()[-1];
+    int healingValue = (*grid)[x][y].getLastInfectionValues()[-1];
     //this func should take care of the update of the que and stuff
-    (*grid)[x][y].updateInfection(min(infectionValue + value, 100));
+    (*grid)[x][y].updateHealing(std::min(healingValue + value, 100));
 }
 
 int LifeHappens::calculateSpontaneousInfection(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, int currentTick,
@@ -50,43 +50,20 @@ int LifeHappens::calculateSpontaneousInfection(Grid *grid, int fieldCoordinateX,
             b += field.getLastInfectionValues()[i];
         }
         b = b / size;
-        int sum = 0;
-        int coordinates[5][2] = {{fieldCoordinateX,     fieldCoordinateY},
-                                 {fieldCoordinateX - 1, fieldCoordinateY},
-                                 {fieldCoordinateX,     fieldCoordinateY + 1},
-                                 {fieldCoordinateX - 1, fieldCoordinateY},
-                                 {fieldCoordinateX,     fieldCoordinateY - 1}};
-        for (int i = 0; i < 5; ++i) {
-            int cX = coordinates[i][0];
-            int cY = coordinates[i][1];
-            //boundary check
-            if (cX < 0 || cY < 0 || cX > grid->getX() || cY > grid->getY()) {
-                continue;
-            }
-            int dist = distance(grid, fieldCoordinateX, fieldCoordinateX, cX, cY);
-            //Az átfertőződési mutatók kiszámolása előtt a t átfertőződési hajlandóságot generáljuk
-            // a harmadik véletlen faktor 7-tel való osztási maradéka + 3 -mal
-            int t = int(random3 % 7) + 3;
-
-
-            //Az átfertőződési mutatókat akkor adjuk össze a hely populációs különbségéből adódó,
-            //1-3 érték közé beszorított fertőzési lehetőséggel,
-            //ha az előző körös fertőzöttség nagyobb, mint a hajlandóság és a távolság szorzata.
-            Field cField = (*grid)[cX][cY];
-            if (cField.getLastInfectionValues()[-2] > dist * t) {
-                //"beszorított átfertőzési mutató"
-                int d = std::clamp(field.getPopulationDensity() - cField.getPopulationDensity(), 0, 2) + 1;
-                sum += d;
-            } else {
-                continue;
-            }
-        }
+        int sum = calculateCrossInfection(grid, fieldCoordinateX, fieldCoordinateY, random3);
         //Ehhez hozzáadva az adott cella és a szomszédjainak az átfertőződési mutatóját.
         double a = b + sum;
         //Az így eddig kiszámolt összeget megszorozzuk a negyedik véletlen faktor 25-tel való osztási maradéka + 50-nel,
         //és az egészet leosztjuk 100-al, majd vesszük a felső egészrészét.
         return ceil(a * double(random4 % 25 + 50) / 100.0);
     }
+}
+
+void applySpontaneousInfection(int value, Grid *grid, int x, int y){
+    //check for infection to not extend 100
+    int infectionValue = (*grid)[x][y].getLastInfectionValues()[-1];
+    //this func should take care of the update of the que and stuff
+    (*grid)[x][y].updateInfection(std::min(infectionValue + value, 100));
 }
 
 int LifeHappens::distance(Grid *grid, int x1, int y1, int x2, int y2) {
@@ -100,5 +77,41 @@ int LifeHappens::distance(Grid *grid, int x1, int y1, int x2, int y2) {
         return 2;
     } else {
         return 1;
+    }
+}
+
+int
+LifeHappens::calculateCrossInfection(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, unsigned long random3) {
+    Field field = (*grid)[fieldCoordinateX][fieldCoordinateY];
+    int sum = 0;
+    int coordinates[5][2] = {{fieldCoordinateX,     fieldCoordinateY},
+                             {fieldCoordinateX - 1, fieldCoordinateY},
+                             {fieldCoordinateX,     fieldCoordinateY + 1},
+                             {fieldCoordinateX - 1, fieldCoordinateY},
+                             {fieldCoordinateX,     fieldCoordinateY - 1}};
+    for (int i = 0; i < 5; ++i) {
+        int cX = coordinates[i][0];
+        int cY = coordinates[i][1];
+        //boundary check
+        if (cX < 0 || cY < 0 || cX > grid->getX() || cY > grid->getY()) {
+            continue;
+        }
+        int dist = distance(grid, fieldCoordinateX, fieldCoordinateX, cX, cY);
+        //Az átfertőződési mutatók kiszámolása előtt a t átfertőződési hajlandóságot generáljuk
+        // a harmadik véletlen faktor 7-tel való osztási maradéka + 3 -mal
+        int t = int(random3 % 7) + 3;
+
+
+        //Az átfertőződési mutatókat akkor adjuk össze a hely populációs különbségéből adódó,
+        //1-3 érték közé beszorított fertőzési lehetőséggel,
+        //ha az előző körös fertőzöttség nagyobb, mint a hajlandóság és a távolság szorzata.
+        Field cField = (*grid)[cX][cY];
+        if (cField.getLastInfectionValues()[-2] > dist * t) {
+            //"beszorított átfertőzési mutató"
+            int d = std::clamp(field.getPopulationDensity() - cField.getPopulationDensity(), 0, 2) + 1;
+            sum += d;
+        } else {
+            continue;
+        }
     }
 }

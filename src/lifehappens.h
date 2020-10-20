@@ -37,7 +37,7 @@ private:
      */
 
     static int distance(Grid *grid, int x1, int y1, int x2, int y2);
-
+    static int calculateCrossInfection(Grid* grid, int fieldCoordinateX, int fieldCoordinateY, unsigned long random3);
 public:
     //separate functions, so values can be changed from the visualization directly
     int calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, int currentTick,
