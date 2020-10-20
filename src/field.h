@@ -19,11 +19,11 @@ class Field {
     std::map<int,int> storedVaccines;
     //note: changed to deque bc it supports iterate.. we can change it back, if it's slow af, but that's gonna be like ~2*2 hours of work
     std::deque<int> lastInfectionValues;
-    District *sector;
+    District *district;
     size_t numberOfStoredPastValues;
 public:
     Field()=default;
-    Field(const int fieldID,const int currentInfectionValue, const int vaccinationRate, const int populationDensity, const Field* fieldPointer, size_t storedPastValues){
+    Field(const int fieldID,const int currentInfectionValue, const int vaccinationRate, const int populationDensity, const Field* fieldPointer, size_t numberOfStoredPastValues){
         this->fieldID=fieldID;
         this->currentInfectionValue =currentInfectionValue;
         this->vaccinationRate =vaccinationRate;
@@ -51,7 +51,7 @@ public:
     //pass on as reference
     std::deque<int> getLastInfectionValues() const {  return lastInfectionValues;    }
     int getPopulationDensity() const {return populationDensity;}
-    District* getSector() const{return sector;}
+    District* getDistrict() const{return district;}
     void updateHealing(int value);
     void updateInfection(int value);
 };

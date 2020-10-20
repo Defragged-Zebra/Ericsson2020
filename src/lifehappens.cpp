@@ -30,7 +30,7 @@ int LifeHappens::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, i
 int LifeHappens::calculateSpontaneousInfection(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, int currentTick,
                                                unsigned long random2, unsigned long random3, unsigned long random4) {
     if (grid == nullptr) throw std::invalid_argument("grid null pointer");
-    if ((*grid)[fieldCoordinateX][fieldCoordinateY].getSector()->isClear()) {
+    if ((*grid)[fieldCoordinateX][fieldCoordinateY].getDistrict()->isClear()) {
         return 0;
     } else {
         //curr_tick: ticks elapsed
@@ -59,8 +59,8 @@ int LifeHappens::distance(Grid *grid, int x1, int y1, int x2, int y2) {
     if (x1 == x2 && y1 == y2) {
         return 0;
     }
-    int sector1 = (*grid)[x1][y1].getSector()->getID();
-    int sector2 = (*grid)[x2][y2].getSector()->getID();
+    int sector1 = (*grid)[x1][y1].getDistrict()->getID();
+    int sector2 = (*grid)[x2][y2].getDistrict()->getID();
     if (sector1 != sector2) {
         return 2;
     } else {
