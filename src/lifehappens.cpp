@@ -22,7 +22,7 @@ int LifeHappens::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, i
         //első véletlen faktor 10-zel való osztási maradékával (0-9)
         int b = int(random1 % 10);
         //Az eredmény osztva 20-al, és ennek az alsó egészrésze
-        return floor(a * b / 20); //integer div is a design choice
+        return floor(a * int(b / 20));
     }
 }
 

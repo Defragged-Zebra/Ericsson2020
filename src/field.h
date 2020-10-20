@@ -50,6 +50,8 @@ public:
     std::deque<int> getLastInfectionValues() const {  return lastInfectionValues;    }
     int getPopulationDensity() const {return populationDensity;}
     Sector* getSector() const{return sector;}
+    void updateHealing(int value);
+    void updateInfection(int value);
 };
 
 
