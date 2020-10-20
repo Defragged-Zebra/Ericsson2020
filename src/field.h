@@ -20,15 +20,17 @@ class Field {
     //note: changed to deque bc it supports iterate.. we can change it back, if it's slow af, but that's gonna be like ~2*2 hours of work
     std::deque<int> lastInfectionValues;
     District *sector;
+    size_t storedPastValues;
 public:
     Field()=default;
-    Field(const int fieldID,const int currentInfectionValue, const int vaccinationRate, const int populationDensity, const Field* fieldPointer){
+    Field(const int fieldID,const int currentInfectionValue, const int vaccinationRate, const int populationDensity, const Field* fieldPointer, size_t storedPastValues){
         this->fieldID=fieldID;
         this->currentInfectionValue =currentInfectionValue;
         this->vaccinationRate =vaccinationRate;
         this->populationDensity = populationDensity;
         this->storedVaccines = std::map<int,int>();
         this->lastInfectionValues = std::deque<int>();
+        this->storedPastValues=storedPastValues;
     }
     Field(const Field& f){
         *this = f;
@@ -44,7 +46,7 @@ public:
         }
         return *this;
     }
-    int getFieldID(){return this->fieldID;}
+    int getFieldID() const{return this->fieldID;}
     friend std::ostream& operator<<(std::ostream & os,Field f);
     //pass on as reference
     std::deque<int> getLastInfectionValues() const {  return lastInfectionValues;    }
