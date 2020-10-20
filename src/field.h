@@ -9,7 +9,7 @@
 #include <map>
 #include <queue>
 #include <sstream>
-#include "sector.h"
+#include "district.h"
 
 class Field {
     int fieldID{};
@@ -19,10 +19,10 @@ class Field {
     std::map<int,int> storedVaccines;
     //note: changed to deque bc it supports iterate.. we can change it back, if it's slow af, but that's gonna be like ~2*2 hours of work
     std::deque<int> lastInfectionValues;
-    Sector *sector;
+    District *sector;
 public:
     Field()=default;
-    Field(const int fieldID,const int currentInfectionValue, const int vaccinationRate, const int populationDensity){
+    Field(const int fieldID,const int currentInfectionValue, const int vaccinationRate, const int populationDensity, const Field* fieldPointer){
         this->fieldID=fieldID;
         this->currentInfectionValue =currentInfectionValue;
         this->vaccinationRate =vaccinationRate;
@@ -49,7 +49,7 @@ public:
     //pass on as reference
     std::deque<int> getLastInfectionValues() const {  return lastInfectionValues;    }
     int getPopulationDensity() const {return populationDensity;}
-    Sector* getSector() const{return sector;}
+    District* getSector() const{return sector;}
     void updateHealing(int value);
     void updateInfection(int value);
 };

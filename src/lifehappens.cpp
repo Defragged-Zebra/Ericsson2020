@@ -7,6 +7,7 @@
 
 int LifeHappens::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, int currentTick,
                                              int healStartTick, unsigned long random1) {
+    if (grid == nullptr) throw std::invalid_argument("grid null pointer");
     Field field = (*grid)[fieldCoordinateX][fieldCoordinateY];
     //healStartTick = width + height; -- it should be calculated further up for optimisation
     //currentTick = hanyadik tick van
@@ -35,6 +36,7 @@ void LifeHappens::applySpontaneousHealing(int value, Grid *grid, int x, int y) {
 
 int LifeHappens::calculateSpontaneousInfection(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, int currentTick,
                                                unsigned long random2, unsigned long random3, unsigned long random4) {
+    if (grid == nullptr) throw std::invalid_argument("grid null pointer");
     if ((*grid)[fieldCoordinateX][fieldCoordinateY].getSector()->isClear()) {
         return 0;
     } else {
@@ -59,7 +61,7 @@ int LifeHappens::calculateSpontaneousInfection(Grid *grid, int fieldCoordinateX,
     }
 }
 
-void applySpontaneousInfection(int value, Grid *grid, int x, int y){
+void applySpontaneousInfection(int value, Grid *grid, int x, int y) {
     //check for infection to not extend 100
     int infectionValue = (*grid)[x][y].getLastInfectionValues()[-1];
     //this func should take care of the update of the que and stuff

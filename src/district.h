@@ -2,19 +2,19 @@
 // Created by woranhun on 2020. 10. 17..
 //
 
-#ifndef VIRUS_SECTOR_H
-#define VIRUS_SECTOR_H
+#ifndef VIRUS_DISTRICT_H
+#define VIRUS_DISTRICT_H
 
 #include <vector>
 #include "field.h"
 
-class Sector {
+class District {
 private:
     int sectorID;
     std::vector<Field *> fields;
     bool clear;
 public:
-    Sector(int sectorID, std::vector<Field *> fields, bool clear);
+    District(int sectorID, std::vector<Field *> fields, bool clear);
 
     std::vector<Field *> getFields() const;
 
@@ -24,4 +24,4 @@ public:
 };
 
 
-#endif //VIRUS_SECTOR_H
+#endif //VIRUS_DISTRICT_H
