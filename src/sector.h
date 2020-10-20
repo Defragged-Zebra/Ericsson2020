@@ -11,10 +11,16 @@
 class Sector {
 private:
     int sectorID;
-    std::vector<Field*> fields;
+    std::vector<Field *> fields;
+    bool clear;
 public:
-    Sector(std::vector<Field*> fields);
-    std::vector<Field*> getFields () const;
+    Sector(int sectorID, std::vector<Field *> fields, bool clear);
+
+    std::vector<Field *> getFields() const;
+
+    int getID() const;
+
+    bool isClear();
 };
 
 

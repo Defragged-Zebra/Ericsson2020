@@ -9,37 +9,47 @@
 #include "grid.h"
 #include "random.h"
 #include <algorithm>
+#include <vector>
+#include "sector.h"
+//in the end I included this bc they surely not asking to write such low lvl funcs like floor(double n) as those require bitshifting stuff;
+#include <cmath>
+
 //for debug purposes
 #include <iostream>
 #include <stdexcept>
 
+
 class LifeHappens {
 private:
-    int floor(int n) {
+    /*
+    static inline int floor(double n) {
         return n - (n % 1);
+
     }
 
-    int ceil(int n) {
+    static inline int ceil(double n) {
         return floor(n) + 1;
     }
 
-    int min(int n, int m) {
+    static inline int min(int n, int m) {
         return n < m ? n : m;
     }
+     */
 
-    int distance(Grid *grid, int x1, int y1, int x2, int y2);
+    static int distance(Grid *grid, int x1, int y1, int x2, int y2);
 
 public:
     //separate functions, so values can be changed from the visualization directly
-    int calculateSpontaneousHealing (Grid *grid, int fieldCoordinateX, int fieldCoordinateY, int currentTick,
+    int calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, int currentTick,
                                     int healStartTick, unsigned long random1);
 
-    void applySpontaneousHealing(int value, Grid *grid, int x,int y);
+    void applySpontaneousHealing(int value, Grid *grid, int x, int y);
 
     int calculateSpontaneousInfection(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, int currentTick,
                                       unsigned long random2, unsigned long random3, unsigned long random4);
 
-    void applySpontaneousInfection(int value, Grid *grid, int x,int y);
+    void applySpontaneousInfection(int value, Grid *grid, int x, int y);
+
 };
 
 
