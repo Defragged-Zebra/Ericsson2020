@@ -7,20 +7,24 @@
 #include <vector>
 #include <stdexcept>
 #include "field.h"
+#include "random.h"
 
 class Grid {
     std::vector<std::vector<Field>> grid;
-Grid(){
-    throw std::runtime_error("grid default ctr");
-}
-Grid(const Grid&){
-    throw std::runtime_error("grid copy ctr");
-}
-Grid& operator=(const Grid&){
-    throw std::runtime_error("grid operator=");
-}
+
+    Grid(){
+        throw std::runtime_error("grid default ctr");
+    }
+    Grid(const Grid&){
+        throw std::runtime_error("grid copy ctr");
+    }
+    Grid& operator=(const Grid&){
+        throw std::runtime_error("grid operator=");
+    }
+    Random random;
 public:
-    Grid(size_t y, size_t x){
+    Grid(size_t y, size_t x, unsigned long seeds[4]){
+        random=Random(seeds);
         grid = std::vector<std::vector<Field>>();
         grid.reserve(y);
         for (size_t i = 0; i < y; ++i) {
@@ -34,7 +38,6 @@ public:
 
     template<typename FUNC>
     FUNC executeOnEveryElement(FUNC func);
-
 
 
 };
