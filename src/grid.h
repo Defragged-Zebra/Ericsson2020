@@ -8,10 +8,14 @@
 #include <stdexcept>
 #include "field.h"
 #include "random.h"
+#include "country.h"
+#include "district.h"
 
 class Grid {
     std::vector<std::vector<Field>> grid;
-
+    Random random;
+    std::vector<Country> countries;
+    std::vector<District> districts;
     Grid(){
         throw std::runtime_error("grid default ctr");
     }
@@ -21,7 +25,7 @@ class Grid {
     Grid& operator=(const Grid&){
         throw std::runtime_error("grid operator=");
     }
-    Random random;
+
 public:
     Grid(size_t y, size_t x, unsigned long seeds[4]){
         random=Random(seeds);
@@ -31,6 +35,9 @@ public:
             std::vector<Field> sor = std::vector<Field>(x);
             grid.push_back(sor);
         }
+        this->countries=std::vector<Country>();
+        this->districts=std::vector<District>();
+        districts
     }
     inline std::vector<Field> operator[](size_t i){return grid[i];};
     inline size_t getX(){return grid[0].size();}

@@ -10,17 +10,18 @@
 
 class District {
 private:
-    int sectorID;
-    std::vector<Field *> fields;
+    int districtID;
+    int assignedCountryID;
+    std::vector<int> assignedFieldIDs;
     bool clear;
 public:
-    District(int sectorID, std::vector<Field *> fields, bool clear);
+    District(int sectorID, std::vector<int> fields, bool clear);
 
-    std::vector<Field *> getFields() const;
+    std::vector<int> getAssignedFields() const;
 
-    int getID() const;
+    int getDistrictID() const;
 
-    bool isClear();
+    bool isClear () const;
 };
 
 

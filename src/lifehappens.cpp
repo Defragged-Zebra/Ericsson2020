@@ -59,9 +59,9 @@ int LifeHappens::distance(Grid *grid, int x1, int y1, int x2, int y2) {
     if (x1 == x2 && y1 == y2) {
         return 0;
     }
-    int sector1 = (*grid)[x1][y1].getDistrict()->getID();
-    int sector2 = (*grid)[x2][y2].getDistrict()->getID();
-    if (sector1 != sector2) {
+    int district1 = (*grid)[x1][y1].getDistrict()->getDistrictID();
+    int district2 = (*grid)[x2][y2].getDistrict()->getDistrictID();
+    if (district1 != district2) {
         return 2;
     } else {
         return 1;
