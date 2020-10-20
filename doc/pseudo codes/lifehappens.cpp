@@ -2,6 +2,7 @@
 // Created by lukac on 10/18/2020.
 //
 
+
 //random nums:
 unsigned long factor1 -> factor4 = factor1.next(seed_from_server) //global variable or property of grid
 //factor = factor * 48271 % 0x7fffffff
