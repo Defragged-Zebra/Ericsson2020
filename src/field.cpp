@@ -4,7 +4,7 @@
 
 #include "field.h"
 
-std::ostream& operator<<(std::ostream & os,const Field& f){
+std::ostream& operator<<(std::ostream & os, const Field& f){
     os << f.getFieldID();
     return os;
 }

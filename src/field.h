@@ -41,8 +41,8 @@ public:
         }
         return *this;
     }
-    int getFieldID(){return this->fieldID;}
-    friend std::ostream& operator<<(std::ostream & os,Field f);
+    int getFieldID()const{return this->fieldID;}
+    friend std::ostream& operator<<(std::ostream & os,const Field& f);
 };
 
 

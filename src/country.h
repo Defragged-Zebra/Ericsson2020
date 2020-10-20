@@ -13,7 +13,7 @@ class Country {
     int totalProductionCapacity{};
     int reserveVaccines{};
     std::vector<int> assignedSectorsID;
-
+public:
     Country(){
         assignedSectorsID=std::vector<int>();
     }

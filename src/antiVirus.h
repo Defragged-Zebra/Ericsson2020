@@ -22,7 +22,7 @@ class AntiVirus {
     u_long factors[4]={0};
 private:
     AntiVirus()= default;
-    public:
+public:
     AntiVirus(size_t y, size_t x,size_t ccount,int maxticks,const u_long factors[4]){
         this->grid = new Grid(y,x);
         this->coutries = std::vector<Country>(ccount);
@@ -30,6 +30,7 @@ private:
         for (size_t i = 0; i < 4; ++i) {
             this->factors[i]=factors[i];
         }
+        this->iface = Iface();
     }
     void run();
     friend std::ostream & operator<<(std::ostream& os, const AntiVirus& av);
