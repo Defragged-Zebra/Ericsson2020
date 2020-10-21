@@ -17,7 +17,7 @@ private:
 public:
     District(size_t sectorID, std::vector<size_t> assignedFieldIDs, bool clear);
 
-    std::vector<size_t>& getAssignedFields() const {return assignedFieldIDs;}
+    std::vector<size_t>& getAssignedFields() {return assignedFieldIDs;}
 
     size_t getDistrictID() const { return districtID; }
 
