@@ -10,7 +10,6 @@
 #include "random.h"
 #include <algorithm>
 #include <vector>
-#include "district.h"
 #include <stdexcept>
 //in the end I included this bc they surely not asking to write such low lvl funcs like floor(double n) as those require bitshifting stuff;
 #include <cmath>
@@ -37,7 +36,7 @@ private:
     }
      */
 
-    static int distance(Grid *grid, int x1, int y1, int x2, int y2);
+    static int distance(Grid *grid, size_t x1, size_t y1, size_t x2, size_t y2);
 
     static int calculateCrossInfection(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, unsigned long random3);
 

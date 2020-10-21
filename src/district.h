@@ -10,17 +10,19 @@
 
 class District {
 private:
-    int sectorID;
-    std::vector<Field *> fields;
+    size_t districtID;
+    size_t assignedCountryID;
+    std::vector<size_t> assignedFieldIDs;
     bool clear;
 public:
-    District(int sectorID, std::vector<Field *> fields, bool clear);
+    District(size_t sectorID, std::vector<size_t> assignedFieldIDs, bool clear);
 
-    std::vector<Field *> getFields() const;
+    //pass on reference is better, right? if yes, we should change it
+    std::vector<size_t> getAssignedFields() const {return assignedFieldIDs;}
 
-    int getID() const;
+    size_t getDistrictID() const { return districtID; }
 
-    bool isClear();
+    bool isClear() const { return clear; }
 };
 
 

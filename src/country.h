@@ -9,23 +9,23 @@
 #include <vector>
 
 class Country {
-    int id{};
+    size_t ID{};
     int totalProductionCapacity{};
     int reserveVaccines{};
-    std::vector<int> assignedSectorsID;
+    std::vector<size_t> assignedDistrictIDs;
 public:
     Country(){
-        assignedSectorsID=std::vector<int>();
+        assignedDistrictIDs=std::vector<size_t>();
     }
     Country(const Country& c){
         *this = c;
     }
     Country&operator=(const Country& c){
         if(this!=&c){
-            id=c.id;
+            ID=c.ID;
             totalProductionCapacity=c.totalProductionCapacity;
             reserveVaccines = c.reserveVaccines;
-            assignedSectorsID=c.assignedSectorsID;
+            assignedDistrictIDs=c.assignedDistrictIDs;
         }
         return *this;
     }
