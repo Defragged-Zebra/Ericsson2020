@@ -16,7 +16,18 @@ class Iface {
     Graphics graphics;
 
 public:
-    Iface();
+    Iface()=default;
+    Iface(const Iface& iface){
+        *this= iface;
+    }
+    Iface& operator=(const Iface& iface){
+        if(this != &iface){
+            protocol=iface.protocol;
+            fileio=iface.fileio;
+            graphics=iface.graphics;
+        }
+        return *this;
+    }
 };
 
 

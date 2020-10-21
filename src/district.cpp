@@ -4,7 +4,7 @@
 
 #include "district.h"
 
-District::District(size_t sectorID, std::vector<size_t> assignedFieldIDs, bool clear = false) {
+District::District(size_t sectorID, const std::vector<size_t>& assignedFieldIDs, bool clear = false) {
     this->districtID = sectorID;
     this->assignedFieldIDs = assignedFieldIDs;
     this->clear = clear;

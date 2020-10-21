@@ -7,6 +7,18 @@
 
 
 class Protocol {
+public:
+    Protocol(){
+    }
+    Protocol(const Protocol& p){
+        *this= p;
+    }
+    Protocol& operator=(const Protocol& g){
+        if(this != &g){
+            //fields come here
+        }
+        return *this;
+    }
 
 };
 
