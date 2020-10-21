@@ -91,3 +91,16 @@ void FileIO::saveCountryLastData(size_t tickID) {
     saveFileCountryData << std::endl;
 }
 
+
+void FileIO::loadConfiguration() {
+    std::stringstream ss;
+    saveFileConfiguration.seekg(0, std::ios::beg);
+    std::string line;
+    std::getline(saveFileConfiguration, line);
+    std::getline(saveFileConfiguration, line)
+
+}
+
+void FileIO::loadFieldsLastData() {
+
+}
