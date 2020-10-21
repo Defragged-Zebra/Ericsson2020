@@ -7,7 +7,20 @@
 
 
 class Graphics {
-
+    int id;
+public:
+    Graphics(){
+        id=0;
+    }
+    Graphics(const Graphics& g){
+        *this= g;
+    }
+    Graphics& operator=(const Graphics& g){
+        if(this != &g){
+            id=g.id;
+        }
+        return *this;
+    }
 };
 
 

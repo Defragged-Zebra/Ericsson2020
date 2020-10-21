@@ -33,7 +33,7 @@ public:
         return *this;
     }
 
-    std::vector<size_t> &getAssignedDistrictIDs() { return assignedDistrictIDs; }
+    std::vector<size_t> getAssignedDistrictIDs() const { return assignedDistrictIDs; }
 
     friend std::ostream &operator<<(std::ostream &os, const Country &c);
 

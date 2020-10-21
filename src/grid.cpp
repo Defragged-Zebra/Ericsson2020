@@ -25,20 +25,19 @@ std::ostream &operator<<(std::ostream &os, const Grid &g) {
     }
     os << "section2: fields assigned to a district" << std::endl;
     os << std::endl;
-    //TODO: clear up this mess
-    for (int i = 0; i < g.districts.size(); ++i) {
+    for (size_t i = 0; i < g.districts.size(); ++i) {
         os << g.districts[i] << ": ";
-        for (int j = 0; j < g.districts[i].getAssignedFields.size(); ++j) {
-            os<<g.districts[i].getAssignedFields[j]<<", "
+        for (size_t j = 0; j < g.districts[i].getAssignedFields().size(); ++j) {
+            os<<g.districts[i].getAssignedFields()[j]<<", ";
         }
         os<<std::endl;
     }
     os << std::endl;
     os <<"section3: districts assigned to a country"<<std::endl;
-    for (int i = 0; i < g.countries.size(); ++i) {
+    for (size_t i = 0; i < g.countries.size(); ++i) {
         os << g.countries[i] << ", ";
-        for (int j = 0; j < g.countries[i].getAssignedDistrictIDs.size(); ++j) {
-            os<<g.countries[j].getAssignedDistrictIDs[j]<<", "
+        for (size_t j = 0; j < g.countries[i].getAssignedDistrictIDs().size(); ++j) {
+            os<<g.countries[j].getAssignedDistrictIDs()[j]<<", ";
         }
         os<<std::endl;
     }

@@ -19,7 +19,7 @@ class FileIO {
     std::fstream saveFileFieldData;
     std::fstream saveFileDistrictData;
     std::fstream saveFileCountryData;
-    Grid *grid;
+    Grid *grid{};
 
     void saveFieldsLastData(size_t tickID);
 
@@ -36,7 +36,17 @@ class FileIO {
     void loadCountryLastData();
 
 public:
-    FileIO(char *saveFolderPath, Grid *grid = nullptr, const char *saveFileConfigurationDataName = nullptr,
+    FileIO()=default;
+    FileIO(const FileIO& fio){
+        *this = fio;
+    }
+    FileIO& operator=(const FileIO& fio){
+        if(this!=&fio){
+            this->grid=fio.grid;
+        }
+        return *this;
+    }
+    explicit FileIO(char *saveFolderPath, Grid *grid = nullptr, const char *saveFileConfigurationDataName = nullptr,
            const char *saveFileFieldsDataName = nullptr, const char *saveFileDistrictsDataName = nullptr,
            const char *saveFileCountriesDataName = nullptr) {
         //try to create directory
@@ -68,8 +78,8 @@ public:
                 << std::endl;
     }
 
-    void setGrid(Grid *grid) { this->grid = grid; }
-
+    void setGrid(Grid *g) { this->grid = g; }
+  
     void saveConfiguration();
 
     void saveTickData(size_t tickID) {
