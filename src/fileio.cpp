@@ -93,14 +93,64 @@ void FileIO::saveCountryLastData(size_t tickID) {
 
 
 void FileIO::loadConfiguration() {
-    std::stringstream ss;
-    saveFileConfiguration.seekg(0, std::ios::beg);
+    throw std::runtime_error("currently not implemented");
+    size_t x=getXfromSaveFile();
+    size_t y=getYfromSaveFile();
     std::string line;
+    saveFileConfiguration.seekg(0, std::ios::beg);
     std::getline(saveFileConfiguration, line);
-    std::getline(saveFileConfiguration, line)
+    std::getline(saveFileConfiguration, line);
+    for (int i = 0; i < x; ++i) {
+        std::getline(saveFileConfiguration, line);
+        for (int j = 0; j < y; ++j) {
+            size_t ID = std::stoi(line.substr(0, line.find(',')));
+            grid->setCellIndex(x, y, ID);
+            line = line.substr(line.find(','));
+        }
+    }
+    std::getline(saveFileConfiguration, line);
+    std::stringstream ss;
+    std::vector<size_t> fieldIDs = std::vector<size_t>();
+    size_t ID;
+    while (line.substr(0, 8) != "section3") {
+        std::getline(saveFileConfiguration, line);
+        ss << line;
+        District district;
+        size_t i = 0;
+        while (getline(ss, line, ',')) {
+            std::stringstream(line) >> ID;
+            //Field()
+            //grid->
+            //        grid->setField(i, ID);
+            //i++;
+        }
+    }
 
 }
 
 void FileIO::loadFieldsLastData() {
+
+}
+
+size_t FileIO::getYfromSaveFile() {
+    //kireszelni az x y-t innen ... ötletem nincs miért így csináltam meg és nem while loop-al, hajnali 1 volt
+    saveFileConfiguration.seekg(0, std::ios::beg);
+    std::string line;
+    std::getline(saveFileConfiguration, line);
+    std::getline(saveFileConfiguration, line);
+    size_t x = std::stod(line.substr(line.find(':'), line.find(' ') - 1));
+    size_t y = std::stod(line.substr(line.rfind(' ', line.find('\n'))));
+    return y;
+}
+
+size_t FileIO::getXfromSaveFile() {
+    //kireszelni az x y-t innen ... ötletem nincs miért így csináltam meg és nem while loop-al, hajnali 1 volt
+    saveFileConfiguration.seekg(0, std::ios::beg);
+    std::string line;
+    std::getline(saveFileConfiguration, line);
+    std::getline(saveFileConfiguration, line);
+    size_t x = std::stod(line.substr(line.find(':'), line.find(' ') - 1));
+    size_t y = std::stod(line.substr(line.rfind(' ', line.find('\n'))));
+    return x;
 
 }
