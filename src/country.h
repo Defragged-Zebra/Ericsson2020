@@ -9,13 +9,13 @@
 #include <vector>
 
 class Country {
-    int ID{};
+    size_t ID{};
     int totalProductionCapacity{};
     int reserveVaccines{};
-    std::vector<int> assignedDistrictIDs;
+    std::vector<size_t> assignedDistrictIDs;
 public:
     Country(){
-        assignedDistrictIDs=std::vector<int>();
+        assignedDistrictIDs=std::vector<size_t>();
     }
     Country(const Country& c){
         *this = c;

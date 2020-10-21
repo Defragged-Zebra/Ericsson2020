@@ -12,14 +12,14 @@
 #include "district.h"
 
 class Field {
-    int fieldID{};
+    size_t fieldID{};
     int currentInfectionValue{};
     int vaccinationRate{};
     int populationDensity{};
     std::map<int, int> storedVaccines;
     //note: changed to deque bc it supports iterate.. we can change it back, if it's slow af, but that's gonna be like ~2*2 hours of work
     std::deque<int> lastInfectionValues;
-    int assignedDistrictID;
+    size_t assignedDistrictID;
     size_t numberOfStoredPastValues;
 public:
     Field() = default;
@@ -33,7 +33,7 @@ public:
         this->populationDensity = populationDensity;
         this->storedVaccines = std::map<int, int>();
         this->lastInfectionValues = std::deque<int>();
-        this->numberOfStoredPastValues = storedPastValues;
+        this->numberOfStoredPastValues = numberOfStoredPastValues;
     }
 
     Field(const Field &f) {
@@ -52,16 +52,16 @@ public:
         return *this;
     }
 
-    int getFieldID() const { return this->fieldID; }
+    size_t getFieldID() const { return this->fieldID; }
 
     friend std::ostream &operator<<(std::ostream &os, const Field &f);
 
-    //pass on as reference
-    &std::deque<int> getLastInfectionValues() const { return &lastInfectionValues; }
+    //TODO: pass on as reference
+    std::deque<int> getLastInfectionValues() const { return lastInfectionValues; }
 
     int getPopulationDensity() const { return populationDensity; }
 
-    District *getDistrict() const { return assignedDistrictID; }
+    size_t getAssignedDistrictID() const { return assignedDistrictID; }
 
     void updateHealing(int value);
 

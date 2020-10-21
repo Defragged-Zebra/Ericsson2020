@@ -8,7 +8,7 @@
 int LifeHappens::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, int currentTick,
                                              int healStartTick, unsigned long random1) {
     if (grid == nullptr) throw std::invalid_argument("grid null pointer");
-    Field field = (*grid)[fieldCoordinateX][fieldCoordinateY];
+    Field field = grid->getFieldByID(grid->transformCoordinateToID(fieldCoordinateX, fieldCoordinateY));
     //healStartTick = width + height; -- it should be calculated further up for optimisation
     //currentTick = hanyadik tick van
     //Ha még nem értük el a width + height -edik kört, akkor 0
@@ -30,14 +30,16 @@ int LifeHappens::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, i
 int LifeHappens::calculateSpontaneousInfection(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, int currentTick,
                                                unsigned long random2, unsigned long random3, unsigned long random4) {
     if (grid == nullptr) throw std::invalid_argument("grid null pointer");
-    if ((*grid)[fieldCoordinateX][fieldCoordinateY].getDistrict()->isClear()) {
+    size_t fieldID = grid->transformCoordinateToID(fieldCoordinateX, fieldCoordinateY);
+    size_t districtID = grid->getFieldByID(fieldID).getAssignedDistrictID();
+    if (grid->getDistrictByID(districtID).isClear()) {
         return 0;
     } else {
         //curr_tick: ticks elapsed
         //A második véletlen faktor 10-zel való osztási maradéka + 10 darab előző vírusterjedés átlaga az adott cellán.
         int intervalToAverage = std::min(int(random2 % 10) + 10, currentTick);
         //int b = avg(i =[1..c], infection(curr_tick - i, coord));
-        Field field = (*grid)[fieldCoordinateX][fieldCoordinateY];
+        Field field = grid->getFieldByID(grid->transformCoordinateToID(fieldCoordinateX, fieldCoordinateY));
         double b = 0;
         std::deque<int> que = field.getLastInfectionValues();
         int size = que.size();
@@ -54,13 +56,13 @@ int LifeHappens::calculateSpontaneousInfection(Grid *grid, int fieldCoordinateX,
     }
 }
 
-int LifeHappens::distance(Grid *grid, int x1, int y1, int x2, int y2) {
+int LifeHappens::distance(Grid *grid, size_t x1, size_t y1, size_t x2, size_t y2) {
     //A távolság helyben 0, megegyező kerületben 1, egyébként 2
     if (x1 == x2 && y1 == y2) {
         return 0;
     }
-    int district1 = (*grid)[x1][y1].getDistrict()->getDistrictID();
-    int district2 = (*grid)[x2][y2].getDistrict()->getDistrictID();
+    size_t district1 = grid->getFieldByID(grid->transformCoordinateToID(x1, y1)).getAssignedDistrictID();
+    size_t district2 = grid->getFieldByID(grid->transformCoordinateToID(x2, y2)).getAssignedDistrictID();
     if (district1 != district2) {
         return 2;
     } else {
@@ -70,14 +72,14 @@ int LifeHappens::distance(Grid *grid, int x1, int y1, int x2, int y2) {
 
 int
 LifeHappens::calculateCrossInfection(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, unsigned long random3) {
-    Field field = (*grid)[fieldCoordinateX][fieldCoordinateY];
+    Field field = grid->getFieldByID(grid->transformCoordinateToID(fieldCoordinateX, fieldCoordinateY));
     int sum = 0;
     int coordinates[5][2] = {{fieldCoordinateX,     fieldCoordinateY},
                              {fieldCoordinateX - 1, fieldCoordinateY},
                              {fieldCoordinateX,     fieldCoordinateY + 1},
                              {fieldCoordinateX - 1, fieldCoordinateY},
                              {fieldCoordinateX,     fieldCoordinateY - 1}};
-    size_t lastInfectionSize= field.getLastInfectionValues().size() - 2;
+    size_t lastInfectionSize = field.getLastInfectionValues().size() - 2;
     for (int i = 0; i < 5; ++i) {
         int cX = coordinates[i][0];
         int cY = coordinates[i][1];
@@ -94,7 +96,7 @@ LifeHappens::calculateCrossInfection(Grid *grid, int fieldCoordinateX, int field
         //Az átfertőződési mutatókat akkor adjuk össze a hely populációs különbségéből adódó,
         //1-3 érték közé beszorított fertőzési lehetőséggel,
         //ha az előző körös fertőzöttség nagyobb, mint a hajlandóság és a távolság szorzata.
-        Field cField = (*grid)[cX][cY];
+        Field cField = grid->getFieldByID(grid->transformCoordinateToID(cX, cY));
         if (cField.getLastInfectionValues()[lastInfectionSize] > dist * t) {
             //"beszorított átfertőzési mutató"
             int d = std::clamp(field.getPopulationDensity() - cField.getPopulationDensity(), 0, 2) + 1;
@@ -103,4 +105,5 @@ LifeHappens::calculateCrossInfection(Grid *grid, int fieldCoordinateX, int field
             continue;
         }
     }
+    return sum;
 }

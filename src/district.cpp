@@ -4,21 +4,8 @@
 
 #include "district.h"
 
-District::District(int sectorID, std::vector<int> fields, bool clear = false) {
+District::District(size_t sectorID, std::vector<size_t> assignedFieldIDs, bool clear = false) {
     this->districtID = sectorID;
-    this->assignedFieldIDs = fields;
+    this->assignedFieldIDs = assignedFieldIDs;
     this->clear = clear;
-}
-
-//pass on reference is better, right? if yes, we should change it
-std::vector<int> District::getAssignedFields() const {
-    return assignedFieldIDs;
-}
-
-int District::getDistrictID() const {
-    return this->districtID;
-}
-
-bool District::isClear () const {
-    return this->clear
 }
