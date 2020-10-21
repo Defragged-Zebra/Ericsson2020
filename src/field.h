@@ -55,7 +55,7 @@ public:
 
     friend std::ostream &operator<<(std::ostream &os, const Field &f);
 
-    std::deque<int>& getLastInfectionValues() { return lastInfectionValues; }
+    std::deque<int> &getLastInfectionValues() { return lastInfectionValues; }
 
     int getPopulationDensity() const { return populationDensity; }
 
@@ -64,6 +64,9 @@ public:
     void updateHealing(int value);
 
     void updateInfection(int value);
+
+    int getCurrentInfectionValue() { return currentInfectionValue; }
+    int getVaccinationRate(){return vaccinationRate;}
 };
 
 

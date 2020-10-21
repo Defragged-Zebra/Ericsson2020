@@ -20,3 +20,4 @@ void Field::updateInfection(int value) {
     if (lastInfectionValues.size() >= numberOfStoredPastValues) lastInfectionValues.pop_front();
     currentInfectionValue = value;
 }
+

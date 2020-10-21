@@ -36,6 +36,14 @@ public:
     std::vector<size_t> &getAssignedDistrictIDs() { return assignedDistrictIDs; }
 
     friend std::ostream &operator<<(std::ostream &os, const Country &c);
+
+    int getTotalProductionCapacity() const { return totalProductionCapacity; }
+
+    void setTotalProductionCapacity(int tpc) { totalProductionCapacity = tpc; }
+
+    int getReserveVaccines() const { return reserveVaccines; }
+
+    void setReserveVaccines(int rv) { reserveVaccines = rv; }
 };
 
 

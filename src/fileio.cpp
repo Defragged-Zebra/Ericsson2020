@@ -30,22 +30,64 @@
  *               .               .               .        .
  *               .               .               .          .
  *               .               .               .            .
- *    section2:
- *          districtID: assignedFieldID1, assignedFieldID2, ....
- *    section3:
- *          countryID: assignedDistrictID1, assignedDistrictID1, ...
  *
- * file Field:
- *      TBD
+ *    section2:
+ *          districtID1: assignedFieldID1, assignedFieldID2, ....
+ *          districtID2: assignedFieldID1, assignedFieldID2, ....
+ *          .
+ *          .
+ *          .
+ *
+ *    section3:
+ *          countryID1: assignedDistrictID1, assignedDistrictID1, ...
+ *          countryID2: assignedDistrictID1, assignedDistrictID1, ...
+ *          .
+ *          .
+ *          .
+ *
+ * file Fields:
+ *      tickID: id1_vaccination, id1_infection, id2_vaccination, id2_infection, id3_vaccination, ...
+ *      .
+ *      .
+ *      .
+ *
  * file Districts:
- *      TBD
+ *      tickID: id1_clear, id2_clear, ...
+ *      .
+ *      .
+ *      .
+ *
  * file Countries:
- *      TBD
+ *      tickID: id1_reservedVaccines, id1_totalProdCap, id2_reservedVaccines, id2_totalProdCap, id3_reservedVaccines, ...
  *
  * */
 void FileIO::saveConfiguration() {
-    saveFile<<*grid<<std::endl;
+    saveFileConfiguration << *grid << std::endl;
 }
-void FileIO::saveAll() const {
 
+void FileIO::saveFieldsLastData(size_t tickID) {
+    saveFileFieldData << tickID << ": ";
+    for (int i = 0; i < grid->getX() * grid->getY(); ++i) {
+        saveFileFieldData << grid->getFieldByID(i).getCurrentInfectionValue() << ", "
+                          << grid->getFieldByID(i).getVaccinationRate() << ", ";
+    }
+    saveFileFieldData << std::endl;
 }
+
+void FileIO::saveDistrictsLastData(size_t tickID) {
+    saveFileDistrictData << tickID << ": ";
+    for (int i = 0; i < grid->getX() * grid->getY(); ++i) {
+        saveFileDistrictData << grid->getDistrictByID(i).isClear() << ", ";
+    }
+    saveFileDistrictData << std::endl;
+}
+
+void FileIO::saveCountryLastData(size_t tickID) {
+    saveFileCountryData << ": ";
+    for (int i = 0; i < grid->getX() * grid->getY(); ++i) {
+        saveFileCountryData << grid->getCountryByID(i).getReserveVaccines() << ", "
+                            << grid->getCountryByID(i).getTotalProductionCapacity() << ", ";
+    }
+    saveFileCountryData << std::endl;
+}
+
