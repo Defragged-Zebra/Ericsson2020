@@ -13,16 +13,19 @@ private:
 public:
     Random(unsigned long seeds[4]);
 
-    Random(const Random &) {
-        throw std::runtime_error("Random (that class) copy ctr");
+    Random(const Random &r) {
+        *this = r;
     }
 
-    Random() {
-        throw std::runtime_error("Random (that class) empty ctr");
-    }
+    Random() = default;
 
-    Random &operator=(const Random &) {
-        throw std::runtime_error("Random (that class) operator=");
+    Random &operator=(const Random &r) {
+        if (this != &r) {
+            for (size_t i = 0; i < 4; ++i) {
+                this->factor[i] = r.factor[i];
+            }
+        }
+        return *this;
     }
 
     unsigned long next(int index);

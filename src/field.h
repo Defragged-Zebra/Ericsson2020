@@ -56,8 +56,7 @@ public:
 
     friend std::ostream &operator<<(std::ostream &os, const Field &f);
 
-    //TODO: pass on as reference
-    std::deque<int> getLastInfectionValues() const { return lastInfectionValues; }
+    std::deque<int>& getLastInfectionValues() { return lastInfectionValues; }
 
     int getPopulationDensity() const { return populationDensity; }
 
