@@ -21,13 +21,19 @@ class FileIO {
     std::fstream saveFileCountryData;
     Grid *grid;
 
-    void saveConfiguration();
-
     void saveFieldsLastData(size_t tickID);
 
     void saveDistrictsLastData(size_t tickID);
 
     void saveCountryLastData(size_t tickID);
+
+    void loadConfiguration();
+
+    void loadFieldsLastData();
+
+    void loadDistrictsLastData();
+
+    void loadCountryLastData();
 
 public:
     FileIO(char *saveFolderPath, Grid *grid = nullptr, const char *saveFileConfigurationDataName = nullptr,
@@ -64,22 +70,25 @@ public:
 
     void setGrid(Grid *grid) { this->grid = grid; }
 
-    void changeSaveFile(char *newName) {
-        saveFile.flush();
-        saveFile.close();
-        saveFile = std::fstream(newName, std::ios::in | std::ios::app);
-        if (!saveFile.is_open()) { throw std::runtime_error("fileIO saveFile couldn't be opened"); }
-    }
+    void saveConfiguration();
 
-    void saveAll() {
-
+    void saveTickData(size_t tickID) {
+        saveFieldsLastData(tickID);
+        saveDistrictsLastData(tickID);
+        saveCountryLastData(tickID);
     }
 
     void load();
 
     ~FileIO() {
-        saveFile.flush();
-        saveFile.close();
+        saveFileConfiguration.flush();
+        saveFileConfiguration.close();
+        saveFileFieldData.flush();
+        saveFileFieldData.close();
+        saveFileDistrictData.flush();
+        saveFileDistrictData.close();
+        saveFileCountryData.flush();
+        saveFileCountryData.close();
     }
 };
 

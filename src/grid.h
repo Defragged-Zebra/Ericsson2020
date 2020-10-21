@@ -54,6 +54,10 @@ public:
     FUNC executeOnEveryElement(FUNC func);
 
     friend std::ostream &operator<<(std::ostream &os, const Grid &g);
+    void setCellIndex(size_t x, size_t y, size_t cellIndex);
+    void setField(size_t i, Field newField);
+    void setDistrict(size_t i, District newDistrict);
+    void setCountry(size_t i, Country newCountry);
 };
 
 

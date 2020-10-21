@@ -44,3 +44,20 @@ std::ostream &operator<<(std::ostream &os, const Grid &g) {
     }
     return os;
 }
+
+void Grid::setCellIndex(size_t x, size_t y, size_t cellIndex) {
+    grid[x][y]=cellIndex;
+}
+
+void Grid::setField(size_t i, Field newField) {
+    fields[i]=newField;
+}
+
+void Grid::setDistrict(size_t i, District newDistrict) {
+    districts[i]=newDistrict;
+}
+
+void Grid::setCountry(size_t i, Country newCountry) {
+    countries[i]=newCountry;
+}
+
