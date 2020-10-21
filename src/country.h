@@ -7,9 +7,10 @@
 
 
 #include <vector>
+#include <iostream>
 
 class Country {
-    size_t ID{};
+    size_t countryID{};
     int totalProductionCapacity{};
     int reserveVaccines{};
     std::vector<size_t> assignedDistrictIDs;
@@ -22,14 +23,14 @@ public:
     }
     Country&operator=(const Country& c){
         if(this!=&c){
-            ID=c.ID;
+            countryID=c.countryID;
             totalProductionCapacity=c.totalProductionCapacity;
             reserveVaccines = c.reserveVaccines;
             assignedDistrictIDs=c.assignedDistrictIDs;
         }
         return *this;
     }
-
+    friend std::ostream &operator<<(std::ostream &os, const Country &c);
 };
 
 

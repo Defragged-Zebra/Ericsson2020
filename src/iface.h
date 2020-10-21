@@ -15,6 +15,8 @@ class Iface {
     FileIO fileio;
     Graphics graphics;
 
+public:
+    Iface();
 };
 
 

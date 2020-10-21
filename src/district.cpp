@@ -9,3 +9,9 @@ District::District(size_t sectorID, std::vector<size_t> assignedFieldIDs, bool c
     this->assignedFieldIDs = assignedFieldIDs;
     this->clear = clear;
 }
+
+std::ostream &operator<<(std::ostream &os, const District &d) {
+    os << d.districtID;
+    return os;
+}
+

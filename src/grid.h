@@ -53,7 +53,7 @@ public:
     template<typename FUNC>
     FUNC executeOnEveryElement(FUNC func);
 
-
+    friend std::ostream &operator<<(std::ostream &os, const Grid &g);
 };
 
 
