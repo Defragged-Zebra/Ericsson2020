@@ -9,11 +9,18 @@
 #include "protocol.h"
 #include "fileio.h"
 #include "graphics.h"
+#include "grid.h"
 
 class Iface {
-    Protocol protocol;
     FileIO fileio;
-    Graphics graphics;
+    Grid* grid;
+public:
+    Iface(){
+        throw std::runtime_error("Grid* cannot be null!!!");
+    }
+    explicit Iface(Grid* g){
+        this->grid = g;
+    }
 
 };
 
