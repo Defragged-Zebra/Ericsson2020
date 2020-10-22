@@ -45,6 +45,7 @@ public:
     inline size_t getY(){return grid.size();}
     size_t transformCoordinateToID(size_t x, size_t y){
         //TODO:
+        throw std::runtime_error("not yet implemented part in gird constructor");
     }
     Country getCountryByID(size_t ID){countries[ID];}
     District getDistrictByID(size_t ID){districts[ID];}
@@ -55,9 +56,10 @@ public:
 
     friend std::ostream &operator<<(std::ostream &os, const Grid &g);
     void setCellIndex(size_t x, size_t y, size_t cellIndex);
-    void setField(size_t i, Field newField);
-    void setDistrict(size_t i, District newDistrict);
-    void setCountry(size_t i, Country newCountry);
+    //WARNING: this might generate some problems if grid is not newly created
+    void addField(Field newField);
+    void addDistrict(District newDistrict);
+    void addCountry(Country newCountry);
 };
 
 

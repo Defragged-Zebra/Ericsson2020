@@ -77,8 +77,8 @@ public:
                 << "tickID: id1_reservedVaccines, id1_totalProdCap, id2_reservedVaccines, id2_totalProdCap, id3_reservedVaccines, ..."
                 << std::endl;
     }
-    size_t getXfromSaveFile();
-    size_t getYfromSaveFile();
+    size_t getXFromSaveFile();
+    size_t getYFromSaveFile();
     void setGrid(Grid *g) { this->grid = g; }
 
     void saveConfiguration();

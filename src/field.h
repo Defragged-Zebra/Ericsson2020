@@ -24,7 +24,7 @@ public:
     Field() = default;
 
     Field(const int fieldID, const int assignedDistrictID, const int currentInfectionValue, const int vaccinationRate,
-          const int populationDensity, const Field *fieldPointer, size_t numberOfStoredPastValues) {
+          const int populationDensity, size_t numberOfStoredPastValues) {
         this->fieldID = fieldID;
         this->assignedDistrictID = assignedDistrictID;
         this->currentInfectionValue = currentInfectionValue;

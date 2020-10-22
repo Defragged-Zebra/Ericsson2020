@@ -32,7 +32,6 @@ std::ostream &operator<<(std::ostream &os, const Grid &g) {
         }
         os<<std::endl;
     }
-    os << std::endl;
     os <<"section3: districts assigned to a country"<<std::endl;
     for (size_t i = 0; i < g.countries.size(); ++i) {
         os << g.countries[i] << ", ";
@@ -48,15 +47,15 @@ void Grid::setCellIndex(size_t x, size_t y, size_t cellIndex) {
     grid[x][y]=cellIndex;
 }
 
-void Grid::setField(size_t i, Field newField) {
-    fields[i]=newField;
+void Grid::addField(Field newField) {
+    fields.push_back(newField);
 }
 
-void Grid::setDistrict(size_t i, District newDistrict) {
-    districts[i]=newDistrict;
+void Grid::addDistrict(District newDistrict) {
+    districts.push_back(newDistrict);
 }
 
-void Grid::setCountry(size_t i, Country newCountry) {
-    countries[i]=newCountry;
+void Grid::addCountry(Country newCountry) {
+    countries.push_back(newCountry);
 }
 

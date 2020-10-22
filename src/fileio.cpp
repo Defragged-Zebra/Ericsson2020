@@ -91,11 +91,11 @@ void FileIO::saveCountryLastData(size_t tickID) {
     saveFileCountryData << std::endl;
 }
 
-
+//WARNING: this might generate some problems if grid is not newly created
 void FileIO::loadConfiguration() {
-    throw std::runtime_error("currently not implemented");
-    size_t x=getXfromSaveFile();
-    size_t y=getYfromSaveFile();
+    //throw std::runtime_error("currently not implemented");
+    size_t x = getXFromSaveFile();
+    size_t y = getYFromSaveFile();
     std::string line;
     saveFileConfiguration.seekg(0, std::ios::beg);
     std::getline(saveFileConfiguration, line);
@@ -108,49 +108,51 @@ void FileIO::loadConfiguration() {
             line = line.substr(line.find(','));
         }
     }
+    //creating Fields
+    for (size_t ID = 0; ID < x * y; ++ID) {
+        grid->addField(Field(ID, 0, 0, 0, 0, 0));
+    }
     std::getline(saveFileConfiguration, line);
     std::stringstream ss;
     std::vector<size_t> fieldIDs = std::vector<size_t>();
-    size_t ID;
+    size_t FieldID;
+    size_t districtID=0;
     while (line.substr(0, 8) != "section3") {
         std::getline(saveFileConfiguration, line);
         ss << line;
-        District district;
-        size_t i = 0;
         while (getline(ss, line, ',')) {
-            std::stringstream(line) >> ID;
-            //Field()
-            //grid->
-            //        grid->setField(i, ID);
-            //i++;
+            std::stringstream(line) >> FieldID;
+            fieldIDs.push_back(FieldID);
         }
+        grid->addDistrict(District(districtID, fieldIDs, false));
+        districtID++;
+    }
+    //TODO: from here it might be shifted a line, debug
+    while (line.substr(0, 8) != "section3") {
+        //TODO: do country as well, and the other loading functions
     }
 
-}
+    void FileIO::loadFieldsLastData() {
 
-void FileIO::loadFieldsLastData() {
+    }
 
-}
+    size_t FileIO::getYFromSaveFile() {
+        saveFileConfiguration.seekg(0, std::ios::beg);
+        std::string line;
+        std::getline(saveFileConfiguration, line);
+        std::getline(saveFileConfiguration, line);
+        size_t x = std::stod(line.substr(line.find(':'), line.find(' ') - 1));
+        size_t y = std::stod(line.substr(line.rfind(' ', line.find('\n'))));
+        return y;
+    }
 
-size_t FileIO::getYfromSaveFile() {
-    //kireszelni az x y-t innen ... ötletem nincs miért így csináltam meg és nem while loop-al, hajnali 1 volt
-    saveFileConfiguration.seekg(0, std::ios::beg);
-    std::string line;
-    std::getline(saveFileConfiguration, line);
-    std::getline(saveFileConfiguration, line);
-    size_t x = std::stod(line.substr(line.find(':'), line.find(' ') - 1));
-    size_t y = std::stod(line.substr(line.rfind(' ', line.find('\n'))));
-    return y;
-}
+    size_t FileIO::getXFromSaveFile() {
+        saveFileConfiguration.seekg(0, std::ios::beg);
+        std::string line;
+        std::getline(saveFileConfiguration, line);
+        std::getline(saveFileConfiguration, line);
+        size_t x = std::stod(line.substr(line.find(':'), line.find(' ') - 1));
+        size_t y = std::stod(line.substr(line.rfind(' ', line.find('\n'))));
+        return x;
 
-size_t FileIO::getXfromSaveFile() {
-    //kireszelni az x y-t innen ... ötletem nincs miért így csináltam meg és nem while loop-al, hajnali 1 volt
-    saveFileConfiguration.seekg(0, std::ios::beg);
-    std::string line;
-    std::getline(saveFileConfiguration, line);
-    std::getline(saveFileConfiguration, line);
-    size_t x = std::stod(line.substr(line.find(':'), line.find(' ') - 1));
-    size_t y = std::stod(line.substr(line.rfind(' ', line.find('\n'))));
-    return x;
-
-}
+    }
