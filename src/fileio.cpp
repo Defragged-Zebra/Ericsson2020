@@ -116,7 +116,7 @@ void FileIO::loadConfiguration() {
     std::stringstream ss;
     std::vector<size_t> fieldIDs = std::vector<size_t>();
     size_t FieldID;
-    size_t districtID=0;
+    size_t districtID = 0;
     while (line.substr(0, 8) != "section3") {
         std::getline(saveFileConfiguration, line);
         ss << line;
@@ -127,32 +127,43 @@ void FileIO::loadConfiguration() {
         grid->addDistrict(District(districtID, fieldIDs, false));
         districtID++;
     }
-    //TODO: from here it might be shifted a line, debug
-    while (line.substr(0, 8) != "section3") {
-        //TODO: do country as well, and the other loading functions
-    }
-
-    void FileIO::loadFieldsLastData() {
-
-    }
-
-    size_t FileIO::getYFromSaveFile() {
-        saveFileConfiguration.seekg(0, std::ios::beg);
-        std::string line;
+    std::getline(saveFileConfiguration, line);
+    std::vector<size_t> districtIDs = std::vector<size_t>();
+    size_t CountryID = 0;
+    while (!saveFileConfiguration.eof()) {
         std::getline(saveFileConfiguration, line);
-        std::getline(saveFileConfiguration, line);
-        size_t x = std::stod(line.substr(line.find(':'), line.find(' ') - 1));
-        size_t y = std::stod(line.substr(line.rfind(' ', line.find('\n'))));
-        return y;
+        ss << line;
+        while (getline(ss, line, ',')) {
+            std::stringstream(line) >> districtID;
+            fieldIDs.push_back(districtID);
+        }
+        grid->addCountry(Country(CountryID, districtIDs));
+        CountryID++;
     }
+    //TODO: other loading functions
+}
 
-    size_t FileIO::getXFromSaveFile() {
-        saveFileConfiguration.seekg(0, std::ios::beg);
-        std::string line;
-        std::getline(saveFileConfiguration, line);
-        std::getline(saveFileConfiguration, line);
-        size_t x = std::stod(line.substr(line.find(':'), line.find(' ') - 1));
-        size_t y = std::stod(line.substr(line.rfind(' ', line.find('\n'))));
-        return x;
+void FileIO::loadFieldsLastData() {
 
-    }
+}
+
+size_t FileIO::getYFromSaveFile() {
+    saveFileConfiguration.seekg(0, std::ios::beg);
+    std::string line;
+    std::getline(saveFileConfiguration, line);
+    std::getline(saveFileConfiguration, line);
+    //size_t x = std::stod(line.substr(line.find(':'), line.find(' ') - 1));
+    size_t y = std::stod(line.substr(line.rfind(' ', line.find('\n'))));
+    return y;
+}
+
+size_t FileIO::getXFromSaveFile() {
+    saveFileConfiguration.seekg(0, std::ios::beg);
+    std::string line;
+    std::getline(saveFileConfiguration, line);
+    std::getline(saveFileConfiguration, line);
+    size_t x = std::stod(line.substr(line.find(':'), line.find(' ') - 1));
+    //size_t y = std::stod(line.substr(line.rfind(' ', line.find('\n'))));
+    return x;
+
+}
