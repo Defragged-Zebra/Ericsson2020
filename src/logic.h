@@ -7,7 +7,10 @@
 
 
 class Logic {
+public:
+    Logic(){
 
+    }
 };
 
 

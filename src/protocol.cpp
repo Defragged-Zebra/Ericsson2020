@@ -3,4 +3,3 @@
 //
 
 #include "protocol.h"
-std::string Protocol::teamToken = "eBPSHlkl";

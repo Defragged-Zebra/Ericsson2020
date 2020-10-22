@@ -3,3 +3,8 @@
 //
 
 #include "country.h"
+
+std::ostream &operator<<(std::ostream &os, const Country &c) {
+    os<<c.countryID;
+    return os;
+}

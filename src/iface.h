@@ -6,22 +6,30 @@
 #define VIRUS_IFACE_H
 
 
-#include "protocol.h"
 #include "fileio.h"
-#include "graphics.h"
 #include "grid.h"
+#include "iface.h"
 
 class Iface {
+protected:
     FileIO fileio;
     Grid* grid;
 public:
     Iface(){
-        throw std::runtime_error("Grid* cannot be null!!!");
     }
     explicit Iface(Grid* g){
         this->grid = g;
     }
-
+    Iface(const Iface& iface){
+        *this= iface;
+    }
+    Iface& operator=(const Iface& iface){
+        if(this != &iface){
+            this->fileio=iface.fileio;
+            this->grid = iface.grid;
+        }
+        return *this;
+    }
 };
 
 

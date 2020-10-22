@@ -7,29 +7,43 @@
 
 
 #include <vector>
+#include <iostream>
 
 class Country {
-    size_t ID{};
+    size_t countryID{};
     int totalProductionCapacity{};
     int reserveVaccines{};
     std::vector<size_t> assignedDistrictIDs;
 public:
-    Country(){
-        assignedDistrictIDs=std::vector<size_t>();
+    Country() {
+        assignedDistrictIDs = std::vector<size_t>();
     }
-    Country(const Country& c){
+
+    Country(const Country &c) {
         *this = c;
     }
-    Country&operator=(const Country& c){
-        if(this!=&c){
-            ID=c.ID;
-            totalProductionCapacity=c.totalProductionCapacity;
+
+    Country &operator=(const Country &c) {
+        if (this != &c) {
+            countryID = c.countryID;
+            totalProductionCapacity = c.totalProductionCapacity;
             reserveVaccines = c.reserveVaccines;
-            assignedDistrictIDs=c.assignedDistrictIDs;
+            assignedDistrictIDs = c.assignedDistrictIDs;
         }
         return *this;
     }
 
+    std::vector<size_t> getAssignedDistrictIDs() const { return assignedDistrictIDs; }
+
+    friend std::ostream &operator<<(std::ostream &os, const Country &c);
+
+    int getTotalProductionCapacity() const { return totalProductionCapacity; }
+
+    void setTotalProductionCapacity(int tpc) { totalProductionCapacity = tpc; }
+
+    int getReserveVaccines() const { return reserveVaccines; }
+
+    void setReserveVaccines(int rv) { reserveVaccines = rv; }
 };
 
 

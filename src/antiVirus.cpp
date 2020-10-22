@@ -14,5 +14,7 @@ std::ostream & operator<<(std::ostream& os, const AntiVirus& av){
         }
         os<<std::endl;
     }
+    os<<std::endl;
+    os<<(*av.grid);
     return os;
 }
