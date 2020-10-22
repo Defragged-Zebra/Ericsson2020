@@ -11,38 +11,22 @@
 
 class Protocol: public Iface {
     std::string teamToken = "eBPSHlkl";
+    std::istream& is;
+    std::ostream& os;
+    std::ostream& ers;
 public:
-    Protocol() : Iface() {
-    }
+    Protocol &operator=(const Protocol &g)=delete;
+    Protocol(const Protocol &p)=delete;
+    Protocol():is(std::cin),os(std::cout),ers(std::cerr), Iface() {}
+    Protocol(std::istream& is,std::ostream& os,std::ostream& ers):is(is),os(os),ers(ers), Iface(){}
+    void init();
 
-    Protocol(const Protocol &p) {
-        *this = p;
-    }
+    void init(int seed);
 
-    Protocol &operator=(const Protocol &g) {
-        if (this != &g) {
-            //fields come here
-        }
-        return *this;
-    }
+    void sendDebugMsg(const std::string &msg);
 
-    void init() {
-        std::cout << "START" << teamToken << std::endl << "." << std::endl;
-    }
-
-    void init(int seed) {
-        std::cout << "START" << teamToken << " " << seed << std::endl << "." << std::endl;
-    }
-
-    void sendDebugMsg(const std::string &msg) {
-        std::cerr << msg << std::endl;
-    }
-
-    void initValues() {
-        std::string line;
-        while (std::getline(std::cin, line)) {
-        }
-    }
+    void initValues();
+    void start() override;
 };
 
 

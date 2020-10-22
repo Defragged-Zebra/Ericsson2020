@@ -3,3 +3,7 @@
 //
 
 #include "graphics.h"
+
+void Graphics::start() {
+
+}

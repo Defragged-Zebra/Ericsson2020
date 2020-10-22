@@ -15,8 +15,7 @@ protected:
     FileIO fileio;
     Grid* grid;
 public:
-    Iface(){
-    }
+    Iface(){ grid=nullptr; }
     explicit Iface(Grid* g){
         this->grid = g;
     }
@@ -29,6 +28,16 @@ public:
             this->grid = iface.grid;
         }
         return *this;
+    }
+    void setGrid(Grid* g){
+        grid=g;
+    }
+    void checkGrid(){
+        if(grid==nullptr)throw std::runtime_error("Iface: grid pointer is null");
+    }
+    virtual void start()=0;
+    virtual ~Iface(){
+
     }
 };
 
