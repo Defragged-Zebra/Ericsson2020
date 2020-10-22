@@ -83,7 +83,7 @@ void FileIO::saveDistrictsLastData(size_t tickID) {
 }
 
 void FileIO::saveCountryLastData(size_t tickID) {
-    saveFileCountryData << ": ";
+    saveFileCountryData << tickID<<": ";
     for (int i = 0; i < grid->getX() * grid->getY(); ++i) {
         saveFileCountryData << grid->getCountryByID(i).getReserveVaccines() << ", "
                             << grid->getCountryByID(i).getTotalProductionCapacity() << ", ";
@@ -140,11 +140,42 @@ void FileIO::loadConfiguration() {
         grid->addCountry(Country(CountryID, districtIDs));
         CountryID++;
     }
-    //TODO: other loading functions
 }
 
-void FileIO::loadFieldsLastData() {
-
+void FileIO::loadFieldsLastData(size_t numberOfPastRecordToLoad, size_t x, size_t y) {
+    for (int j = 0; j < x * y; ++j) {
+        grid->getFieldByID(j).setNumberOfPastValues(numberOfPastRecordToLoad);
+    }
+    std::stringstream ss;
+    std::string line;
+    saveFileFieldData.seekg(0, std::ios::beg);
+    std::getline(saveFileFieldData, line);
+    size_t rows = 0;
+    while (std::getline(saveFileFieldData, line)) rows++;
+    saveFileFieldData.seekg(0, std::ios::beg);
+    std::getline(saveFileFieldData, line);
+    for (int i = 0; i < rows - numberOfPastRecordToLoad; ++i) {
+        std::getline(saveFileFieldData, line);
+    }
+    //std::vector<int> pastInfections;
+    int *vaccination;
+    vaccination = new int[x * y];
+    for (size_t i = rows - numberOfPastRecordToLoad; i < rows; ++i) {
+        std::getline(saveFileFieldData, line);
+        ss << line;
+        size_t fieldID = 0;
+        getline(ss, line, ':');
+        while (getline(ss, line, ',')) {
+            vaccination[fieldID] = std::stoi(line);
+            getline(ss, line, ',');
+            grid->getFieldByID(fieldID).updateInfection(std::stoi(line));
+            fieldID++;
+        }
+    }
+    for (int i = 0; i < x * y; ++i) {
+        grid->getFieldByID(i).updateVaccination(vaccination[i]);
+    }
+    delete vaccination;
 }
 
 size_t FileIO::getYFromSaveFile() {
@@ -166,4 +197,60 @@ size_t FileIO::getXFromSaveFile() {
     //size_t y = std::stod(line.substr(line.rfind(' ', line.find('\n'))));
     return x;
 
+}
+
+void FileIO::loadDistrictsLastData() {
+    std::stringstream ss;
+    std::string line;
+    findLastLine(saveFileDistrictData);
+    std::getline(saveFileDistrictData, line);
+    ss << line;
+    size_t districtID = 0;
+    bool clear;
+    while (getline(ss, line, ',')) {
+        ss >> clear;
+        grid->getDistrictByID(districtID).setClear(clear);
+        districtID++;
+    }
+}
+
+void FileIO::findLastLine(std::fstream &file) {
+    //find last line by: https://stackoverflow.com/questions/11876290/c-fastest-way-to-read-only-last-line-of-text-file
+    file.seekg(-1, std::ios_base::end);                // go to one spot before the EOF
+    bool keepLooping = true;
+    while (keepLooping) {
+        char ch;
+        file.get(ch);                            // Get current byte's data
+        if ((int) file.tellg() <= 1) {             // If the data was at or before the 0th byte
+            file.seekg(0);                       // The first line is the last line
+            keepLooping = false;                // So stop there
+        } else if (ch == '\n') {                   // If the data was a newline
+            keepLooping = false;                // Stop at the current position.
+        } else {                                  // If the data was neither a newline nor at the 0 byte
+            file.seekg(-2, std::ios_base::cur);
+            // Move to the front of that data, then to the front of the data before it
+        }
+    }
+}
+
+void FileIO::loadCountryLastData() {
+    std::stringstream ss;
+    std::string line;
+    findLastLine(saveFileCountryData);
+    std::getline(saveFileCountryData, line);
+    ss << line;
+    size_t countryID = 0;
+    while (getline(ss, line, ',')) {
+        grid->getCountryByID(countryID).setReserveVaccines(std::stoi(line));
+        getline(ss, line, ',');
+        grid->getCountryByID(countryID).setTotalProductionCapacity(std::stoi(line));
+        countryID++;
+    }
+}
+
+void FileIO::load(size_t numberOfPastRecordsToLoad, size_t x, size_t y) {
+    loadConfiguration();
+    loadFieldsLastData(numberOfPastRecordsToLoad,x,y);
+    loadDistrictsLastData();
+    loadCountryLastData();
 }

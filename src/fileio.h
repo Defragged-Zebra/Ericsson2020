@@ -5,7 +5,6 @@
 #ifndef VIRUS_FILEIO_H
 #define VIRUS_FILEIO_H
 
-//#include <iostream>
 #include <fstream>
 #include <stdexcept>
 #include "grid.h"
@@ -29,7 +28,7 @@ class FileIO {
 
     void loadConfiguration();
 
-    void loadFieldsLastData();
+    void loadFieldsLastData(size_t numberOfPastRecordToLoad, size_t x, size_t y);
 
     void loadDistrictsLastData();
 
@@ -89,7 +88,7 @@ public:
         saveCountryLastData(tickID);
     }
 
-    void load();
+    void load(size_t numberOfPastRecordsToLoad, size_t x, size_t y);
 
     ~FileIO() {
         saveFileConfiguration.flush();
@@ -101,6 +100,8 @@ public:
         saveFileCountryData.flush();
         saveFileCountryData.close();
     }
+
+    void static findLastLine(std::fstream &file);
 };
 
 

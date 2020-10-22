@@ -14,7 +14,6 @@
 
 class Grid {
     std::vector<std::vector<size_t>> grid;
-    Random random;
     std::vector<Country> countries;
     std::vector<District> districts;
     std::vector<Field> fields;
@@ -29,6 +28,7 @@ class Grid {
     }
 
 public:
+    Random random;
     Grid(size_t y, size_t x, unsigned long seeds[4]){
         random=Random(seeds);
         grid = std::vector<std::vector<size_t>>();
@@ -47,9 +47,9 @@ public:
         //TODO:
         throw std::runtime_error("not yet implemented part in gird constructor");
     }
-    Country getCountryByID(size_t ID){countries[ID];}
-    District getDistrictByID(size_t ID){districts[ID];}
-    Field getFieldByID(size_t ID){fields[ID];}
+    Country getCountryByID(size_t ID){return countries[ID];}
+    District getDistrictByID(size_t ID){return districts[ID];}
+    Field getFieldByID(size_t ID){return fields[ID];}
 
     template<typename FUNC>
     FUNC executeOnEveryElement(FUNC func);

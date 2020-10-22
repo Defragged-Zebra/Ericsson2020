@@ -61,12 +61,15 @@ public:
 
     size_t getAssignedDistrictID() const { return assignedDistrictID; }
 
-    void updateHealing(int value);
+    void updateVaccination(int value);
 
     void updateInfection(int value);
 
     int getCurrentInfectionValue() { return currentInfectionValue; }
-    int getVaccinationRate(){return vaccinationRate;}
+
+    int getVaccinationRate() { return vaccinationRate; }
+
+    void setNumberOfPastValues(size_t values) { numberOfStoredPastValues = values; }
 };
 
 
