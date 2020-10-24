@@ -62,14 +62,20 @@ void Grid::addCountry(Country newCountry) {
 void Grid::init(size_t districtCount, size_t countryCount) {
     for (size_t i = 0; i < getX(); ++i) {
         for (size_t j = 0; j < getY(); ++j) {
-            addField(Field(i * y + j,-1,0,0,1,1));
+            size_t ID = i * y + j;
+            if (i == 0 && j == 0) {
+                addField(Field(ID, -1, 1, 0, 1, 1));
+            } else {
+                addField(Field(ID, -1, 0, 0, 1, 1));
+            }
+            grid[i][j]=ID;
         }
     }
     for (size_t i = 0; i < districtCount; ++i) {
-        addDistrict(District(i,std::vector<size_t>(), true));
+        addDistrict(District(i, std::vector<size_t>(), true));
     }
     for (size_t i = 0; i < countryCount; ++i) {
-        addCountry(Country(i,std::vector<size_t>()));
+        addCountry(Country(i, std::vector<size_t>()));
     }
 }
 

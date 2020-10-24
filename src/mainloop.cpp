@@ -2,11 +2,11 @@
 // Created by lukac on 10/18/2020.
 //
 
-#include "lifehappens.h"
+#include "mainloop.h"
 #include <queue>
 
-int LifeHappens::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, int currentTick,
-                                             int healStartTick, unsigned long random1) {
+int MainLoop::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, int currentTick,
+                                          int healStartTick, unsigned long random1) {
     if (grid == nullptr) throw std::invalid_argument("grid null pointer");
     Field field = grid->getFieldByID(grid->transformCoordinateToID(fieldCoordinateX, fieldCoordinateY));
     //healStartTick = width + height; -- it should be calculated further up for optimisation
@@ -27,8 +27,8 @@ int LifeHappens::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, i
     }
 }
 
-int LifeHappens::calculateSpontaneousInfection(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, int currentTick,
-                                               unsigned long random2, unsigned long random3, unsigned long random4) {
+int MainLoop::calculateSpontaneousInfection(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, int currentTick,
+                                            unsigned long random2, unsigned long random3, unsigned long random4) {
     if (grid == nullptr) throw std::invalid_argument("grid null pointer");
     size_t fieldID = grid->transformCoordinateToID(fieldCoordinateX, fieldCoordinateY);
     size_t districtID = grid->getFieldByID(fieldID).getAssignedDistrictID();
@@ -56,7 +56,7 @@ int LifeHappens::calculateSpontaneousInfection(Grid *grid, int fieldCoordinateX,
     }
 }
 
-int LifeHappens::distance(Grid *grid, size_t x1, size_t y1, size_t x2, size_t y2) {
+int MainLoop::distance(Grid *grid, size_t x1, size_t y1, size_t x2, size_t y2) {
     //A távolság helyben 0, megegyező kerületben 1, egyébként 2
     if (x1 == x2 && y1 == y2) {
         return 0;
@@ -71,7 +71,7 @@ int LifeHappens::distance(Grid *grid, size_t x1, size_t y1, size_t x2, size_t y2
 }
 
 int
-LifeHappens::calculateCrossInfection(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, unsigned long random3) {
+MainLoop::calculateCrossInfection(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, unsigned long random3) {
     Field field = grid->getFieldByID(grid->transformCoordinateToID(fieldCoordinateX, fieldCoordinateY));
     int sum = 0;
     int coordinates[5][2] = {{fieldCoordinateX,     fieldCoordinateY},

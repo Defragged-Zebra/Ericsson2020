@@ -15,9 +15,10 @@ void Graphics::terminalGraphics() {
     std::cout << "x=" << x << ", y=" << y << std::endl;
     int color = 30; //black, codes here: https://stackoverflow.com/questions/2616906/how-do-i-output-coloured-text-to-a-linux-terminal
     std::cout << "\033[" << color << "mtest text\n\033[0m\n";
+    int infectionValue;
     for (int i = 0; i < x; ++i) {
         for (int j = 0; j < y; ++j) {
-            int infectionValue = grid->getFieldByID((*grid)[i][j]).getCurrentInfectionValue();
+            infectionValue = grid->getFieldByID((*grid)[i][j]).getCurrentInfectionValue();
             if (infectionValue == 0) {
                 color = 30;
             } else if (infectionValue < 10) {

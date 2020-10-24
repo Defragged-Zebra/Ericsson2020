@@ -2,8 +2,8 @@
 // Created by lukac on 10/18/2020.
 //
 
-#ifndef VIRUS_LIFEHAPPENS_H
-#define VIRUS_LIFEHAPPENS_H
+#ifndef VIRUS_MAINLOOP_H
+#define VIRUS_MAINLOOP_H
 
 #include <vector>
 #include "grid.h"
@@ -19,23 +19,8 @@
 #include <stdexcept>
 
 
-class LifeHappens {
+class MainLoop {
 private:
-    /*
-    static inline int floor(double n) {
-        return n - (n % 1);
-
-    }
-
-    static inline int ceil(double n) {
-        return floor(n) + 1;
-    }
-
-    static inline int min(int n, int m) {
-        return n < m ? n : m;
-    }
-     */
-
     static int distance(Grid *grid, size_t x1, size_t y1, size_t x2, size_t y2);
 
     static int calculateCrossInfection(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, unsigned long random3);
@@ -52,4 +37,4 @@ public:
 };
 
 
-#endif //VIRUS_LIFEHAPPENS_H
+#endif //VIRUS_MAINLOOP_H
