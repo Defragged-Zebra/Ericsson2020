@@ -54,9 +54,9 @@ public:
         //        ...
                 return x*(this->y)+y;
     }
-    Country getCountryByID(size_t ID){return countries[ID];}
-    District getDistrictByID(size_t ID){return districts[ID];}
-    Field getFieldByID(size_t ID){return fields[ID];}
+    Country &getCountryByID(size_t ID){return countries[ID];}
+    District &getDistrictByID(size_t ID){return districts[ID];}
+    Field &getFieldByID(size_t ID){return fields[ID];}
 
     template<typename FUNC>
     FUNC executeOnEveryElement(FUNC func);

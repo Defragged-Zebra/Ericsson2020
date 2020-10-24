@@ -43,7 +43,7 @@ std::ostream &operator<<(std::ostream &os, const Grid &g) {
     return os;
 }
 
-void Grid::setCellIndex(size_t x, size_t y, size_t cellIndex) {
+void Grid::setCellIndex(const size_t x, const size_t y, const size_t cellIndex) {
     grid[x][y] = cellIndex;
 }
 
@@ -64,9 +64,9 @@ void Grid::init(size_t districtCount, size_t countryCount) {
         for (size_t j = 0; j < getY(); ++j) {
             size_t ID = i * y + j;
             if (i == 0 && j == 0) {
-                addField(Field(ID, 1, 1, 0, 1, 20));
+                addField(Field(ID, 0, 1, 0, 1, 20));
             } else {
-                addField(Field(ID, 1, 0, 0, 1, 20));
+                addField(Field(ID, 0, 0, 0, 1, 20));
             }
             grid[i][j]=ID;
         }

@@ -40,6 +40,11 @@ int MainLoop::calculateSpontaneousInfection(Grid *grid, int fieldCoordinateX, in
         int intervalToAverage = std::min(int(random2 % 10) + 10, currentTick);
         //int b = avg(i =[1..c], infection(curr_tick - i, coord));
         Field field = grid->getFieldByID(grid->transformCoordinateToID(fieldCoordinateX, fieldCoordinateY));
+        //a "rekurzív" függvényhívás miatt szükség van az első elemre, ami a következőképpen néz ki:
+        if (currentTick == 0) {
+            //infection(0, coord) => tick_info[0, coord].infection_rate > 0 ? 1 : 0
+            return field.getCurrentInfectionValue() > 0 ? 1 : 0;
+        }
         double b = 0;
         std::deque<int> que = field.getLastInfectionValues();
         int size = que.size();
