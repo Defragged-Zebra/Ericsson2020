@@ -63,23 +63,38 @@ void Grid::init(size_t districtCount, size_t countryCount) {
     for (size_t i = 0; i < getX(); ++i) {
         for (size_t j = 0; j < getY(); ++j) {
             size_t ID = i * y + j;
-            if (i == 0 && j == 0) {
+            if ((i == 0 && j == 0) ) {
                 addField(Field(ID, 0, 1, 0, 1, 20));
-            } else {
+            } else if ((i==0&&j == 1)){
                 addField(Field(ID, 0, 0, 0, 1, 20));
             }
-            grid[i][j]=ID;
+            else{
+                addField(Field(ID, 1, 0, 0, 1, 20));
+            }
+            grid[i][j] = ID;
         }
     }
     for (size_t i = 0; i < districtCount; ++i) {
-        std::vector<size_t> fields=std::vector<size_t>();
-        for (int j = 0; j < x * y; ++j) {
-            fields.push_back(j);
+        std::vector<size_t> fieldsToAssign = std::vector<size_t>();
+        if (i == 0) {
+            for (int j = 0; j < 2; ++j) {
+                fieldsToAssign.push_back(j);
+            }
+        } else if (i == 1) {}
+        for (int j = 2; j < x * y; ++j) {
+            fieldsToAssign.push_back(j);
         }
-        addDistrict(District(i, fields, false));
+        addDistrict(District(i, fieldsToAssign, false));
     }
-    for (size_t i = 0; i < countryCount; ++i) {
-        addCountry(Country(i, std::vector<size_t>()));
+    for (
+            size_t i = 0;
+            i < countryCount;
+            ++i) {
+        std::vector<size_t> districtsToAssign;
+        districtsToAssign.push_back(0);
+        districtsToAssign.push_back(1);
+        addCountry(Country(i, districtsToAssign)
+        );
     }
 }
 
