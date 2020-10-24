@@ -20,6 +20,7 @@ public:
         return *this;
     }
     void start() override;
+    void terminalGraphics();
 };
 
 

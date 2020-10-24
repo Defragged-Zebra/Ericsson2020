@@ -20,6 +20,7 @@ class AntiVirus {
     Logic logic;
     Iface* iface= nullptr;
     int maxticks=0;
+    //this property might not needed, because grid has the public property random
     unsigned long factors[4]={0};
 private:
     AntiVirus()= default;

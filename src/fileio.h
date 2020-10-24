@@ -13,7 +13,8 @@
 #include <sys/stat.h>
 
 
-class FileIO {
+
+class FileIO{
     std::fstream saveFileConfiguration;
     std::fstream saveFileFieldData;
     std::fstream saveFileDistrictData;

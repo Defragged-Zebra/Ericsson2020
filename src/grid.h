@@ -44,8 +44,14 @@ public:
     inline size_t getX(){return grid[0].size();}
     inline size_t getY(){return grid.size();}
     size_t transformCoordinateToID(size_t x, size_t y){
-        //TODO:
-        throw std::runtime_error("not yet implemented part in gird constructor");
+        //design: 0   -> [0,0]   1   -> [0,1]  2   -> [0,2]  ...
+        //        x   -> [1,0]   x+1 -> [1,1]  x+2 -> [1,2]  ...
+        //        ...
+        for (int i = 0; i < x; ++i) {
+            for (int j = 0; j < y; ++j) {
+                return i*y+j;
+            }
+        }
     }
     Country getCountryByID(size_t ID){return countries[ID];}
     District getDistrictByID(size_t ID){return districts[ID];}
