@@ -27,6 +27,7 @@ private:
 public:
     AntiVirus(size_t y, size_t x,size_t ccount,int maxticks, unsigned long factors[4],Iface* iface){
         this->grid = new Grid(y,x, factors);
+        grid->init(0,0);
         this->countries = std::vector<Country>(ccount);
         this->maxticks=maxticks;
         for (size_t i = 0; i < 4; ++i) {

@@ -29,7 +29,7 @@ void Graphics::terminalGraphics() {
             } else {
                 color = 35;
             }
-            std::cout << "\033[" << color << "mtest_text";
+            std::cout << "\033[" << color << "m*";
         }
         std::cout << std::endl;
     }

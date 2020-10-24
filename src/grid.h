@@ -17,6 +17,8 @@ class Grid {
     std::vector<Country> countries;
     std::vector<District> districts;
     std::vector<Field> fields;
+    size_t x;
+    size_t y;
     Grid(){
         throw std::runtime_error("grid default ctr");
     }
@@ -30,6 +32,8 @@ class Grid {
 public:
     Random random;
     Grid(size_t y, size_t x, unsigned long seeds[4]){
+        this->x=x;
+        this->y=y;
         random=Random(seeds);
         grid = std::vector<std::vector<size_t>>();
         grid.reserve(y);
@@ -40,18 +44,15 @@ public:
         this->countries=std::vector<Country>();
         this->districts=std::vector<District>();
     }
+    void init(size_t districtCount, size_t countryCount);
     inline std::vector<size_t> operator[](size_t i){return grid[i];};
-    inline size_t getX(){return grid[0].size();}
-    inline size_t getY(){return grid.size();}
+    inline size_t getX() const {return x;} //grid[0].size();}
+    inline size_t getY() const {return y;} //grid.size();}
     size_t transformCoordinateToID(size_t x, size_t y){
         //design: 0   -> [0,0]   1   -> [0,1]  2   -> [0,2]  ...
         //        x   -> [1,0]   x+1 -> [1,1]  x+2 -> [1,2]  ...
         //        ...
-        for (int i = 0; i < x; ++i) {
-            for (int j = 0; j < y; ++j) {
-                return i*y+j;
-            }
-        }
+                return x*(this->y)+y;
     }
     Country getCountryByID(size_t ID){return countries[ID];}
     District getDistrictByID(size_t ID){return districts[ID];}
