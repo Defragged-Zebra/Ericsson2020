@@ -11,32 +11,36 @@
 #include "grid.h"
 #include "country.h"
 #include "logic.h"
-#include "iface.h"
+#include "graphics.h"
+#include "protocol.h"
 
 class AntiVirus {
     Grid* grid= nullptr; //(*av.grid)[y][x] is the way to access this
     std::vector<Country>countries;
     Logic logic;
-    Iface iface;
+    Iface* iface= nullptr;
     int maxticks=0;
     unsigned long factors[4]={0};
 private:
     AntiVirus()= default;
 public:
-    AntiVirus(size_t y, size_t x,size_t ccount,int maxticks, unsigned long factors[4]){
+    AntiVirus(size_t y, size_t x,size_t ccount,int maxticks, unsigned long factors[4],Iface* iface){
         this->grid = new Grid(y,x, factors);
         this->countries = std::vector<Country>(ccount);
         this->maxticks=maxticks;
         for (size_t i = 0; i < 4; ++i) {
             this->factors[i]=factors[i];
         }
-        this->iface = Iface();
+        this->iface = iface;
+        this->iface->setGrid(grid);
     }
-    void run();
     friend std::ostream & operator<<(std::ostream& os, const AntiVirus& av);
     ~AntiVirus(){
         delete grid;
+        delete iface;
     }
+
+    void startInterface();
 };
 
 

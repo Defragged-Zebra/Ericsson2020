@@ -6,27 +6,38 @@
 #define VIRUS_IFACE_H
 
 
-#include "protocol.h"
 #include "fileio.h"
-#include "graphics.h"
+#include "grid.h"
+#include "iface.h"
 
 class Iface {
-    Protocol protocol;
+protected:
     FileIO fileio;
-    Graphics graphics;
-
+    Grid* grid;
 public:
-    Iface()=default;
+    Iface(){ grid=nullptr; }
+    explicit Iface(Grid* g){
+        this->grid = g;
+    }
     Iface(const Iface& iface){
         *this= iface;
     }
     Iface& operator=(const Iface& iface){
         if(this != &iface){
-            protocol=iface.protocol;
-            fileio=iface.fileio;
-            graphics=iface.graphics;
+            this->fileio=iface.fileio;
+            this->grid = iface.grid;
         }
         return *this;
+    }
+    void setGrid(Grid* g){
+        grid=g;
+    }
+    void checkGrid(){
+        if(grid==nullptr)throw std::runtime_error("Iface: grid pointer is null");
+    }
+    virtual void start()=0;
+    virtual ~Iface(){
+
     }
 };
 

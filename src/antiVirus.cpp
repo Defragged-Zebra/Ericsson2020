@@ -4,8 +4,9 @@
 
 #include "antiVirus.h"
 
-void AntiVirus::run() {
-
+void AntiVirus::startInterface() {
+    iface->checkGrid();
+    iface->start();
 }
 std::ostream & operator<<(std::ostream& os, const AntiVirus& av){
     for (size_t i = 0; i < av.grid->getY(); ++i) {

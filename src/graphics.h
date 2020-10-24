@@ -5,22 +5,21 @@
 #ifndef VIRUS_GRAPHICS_H
 #define VIRUS_GRAPHICS_H
 
+#include "iface.h"
 
-class Graphics {
-    int id;
+class Graphics : public Iface{
 public:
-    Graphics(){
-        id=0;
+    Graphics():Iface(){
     }
-    Graphics(const Graphics& g){
+    Graphics(const Graphics& g):Iface(g){
         *this= g;
     }
     Graphics& operator=(const Graphics& g){
         if(this != &g){
-            id=g.id;
         }
         return *this;
     }
+    void start() override;
 };
 
 
