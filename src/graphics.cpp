@@ -6,17 +6,30 @@
 #include <iostream>
 
 void Graphics::start() {
-    terminalGraphics();
+    terminalGraphicsStart();
 }
 
-void Graphics::terminalGraphics() {
+void Graphics::terminalGraphicsStart() {
     size_t x = grid->getX();
     size_t y = grid->getY();
+    std::cout << "initial setup:" << std::endl;
     std::cout << "x=" << x << ", y=" << y << std::endl;
-    int color = 30; //black, codes here: https://stackoverflow.com/questions/2616906/how-do-i-output-coloured-text-to-a-linux-terminal
-    std::cout << "\033[" << color << "mtest text\n\033[0m\n";
+    terminalGraphicsRun(0);
+}
+
+void Graphics::terminalGraphicsRun(size_t tickID) {
+    std::cout << "State after tick: " << tickID << std::endl;
+    size_t x = grid->getX();
+    size_t y = grid->getY();
+    std::cout << "\033[0m+";
+    for (int i = 0; i < y; ++i) {
+        std::cout << "-";
+    }
+    std::cout << "+" << std::endl;
+    int color; //= 30; //black, codes here: https://stackoverflow.com/questions/2616906/how-do-i-output-coloured-text-to-a-linux-terminal
     int infectionValue;
     for (int i = 0; i < x; ++i) {
+        std::cout << "\033[0m|";
         for (int j = 0; j < y; ++j) {
             infectionValue = grid->getFieldByID((*grid)[i][j]).getCurrentInfectionValue();
             if (infectionValue == 0) {
@@ -32,7 +45,17 @@ void Graphics::terminalGraphics() {
             }
             std::cout << "\033[" << color << "m*";
         }
-        std::cout << std::endl;
+        std::cout << "\033[0m|" << std::endl;
     }
-    std::cout << "\033[0m\n";
+    std::cout << "\033[0m";
+    std::cout << "+";
+    for (int i = 0; i < y; ++i) {
+        std::cout << "-";
+    }
+    std::cout << "+" << std::endl;
+
+}
+
+void Graphics::update(size_t tickID) {
+    terminalGraphicsRun(tickID);
 }

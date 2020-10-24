@@ -47,6 +47,7 @@ public:
             this->storedVaccines = f.storedVaccines;
             this->populationDensity = f.populationDensity;
             this->vaccinationRate = f.vaccinationRate;
+            this->assignedDistrictID=f.assignedDistrictID;
         }
         return *this;
     }
