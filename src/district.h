@@ -15,8 +15,9 @@ private:
     std::vector<size_t> assignedFieldIDs;
     bool clear;
 public:
-    District()=default;
-    District(size_t sectorID, const std::vector<size_t>& assignedFieldIDs, bool clear);
+    District() = default;
+
+    District(size_t sectorID, const std::vector<size_t> &assignedFieldIDs, bool clear);
 
     std::vector<size_t> getAssignedFields() const { return assignedFieldIDs; }
 
@@ -24,6 +25,7 @@ public:
 
     bool isClear() const { return clear; }
 
+    void setClear(bool clear) { this->clear = clear; }
 
     friend std::ostream &operator<<(std::ostream &os, const District &d);
 };

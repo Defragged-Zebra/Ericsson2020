@@ -20,6 +20,9 @@ public:
         return *this;
     }
     void start() override;
+    void update(size_t tickID) override;
+    void terminalGraphicsStart();
+    void terminalGraphicsRun(size_t tickID);
 };
 
 

@@ -15,6 +15,11 @@ class Country {
     int reserveVaccines{};
     std::vector<size_t> assignedDistrictIDs;
 public:
+    Country(size_t ID, std::vector<size_t> districts) {
+        countryID=ID;
+        assignedDistrictIDs = districts;
+    }
+
     Country() {
         assignedDistrictIDs = std::vector<size_t>();
     }

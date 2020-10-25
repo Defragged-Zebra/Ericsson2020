@@ -14,10 +14,11 @@
 
 class Grid {
     std::vector<std::vector<size_t>> grid;
-    Random random;
     std::vector<Country> countries;
     std::vector<District> districts;
     std::vector<Field> fields;
+    size_t x;
+    size_t y;
     Grid(){
         throw std::runtime_error("grid default ctr");
     }
@@ -29,7 +30,10 @@ class Grid {
     }
 
 public:
+    Random random;
     Grid(size_t y, size_t x, unsigned long seeds[4]){
+        this->x=x;
+        this->y=y;
         random=Random(seeds);
         grid = std::vector<std::vector<size_t>>();
         grid.reserve(y);
@@ -40,24 +44,29 @@ public:
         this->countries=std::vector<Country>();
         this->districts=std::vector<District>();
     }
+    void init(size_t districtCount, size_t countryCount);
     inline std::vector<size_t> operator[](size_t i){return grid[i];};
-    inline size_t getX(){return grid[0].size();}
-    inline size_t getY(){return grid.size();}
+    inline size_t getX() const {return x;} //grid[0].size();}
+    inline size_t getY() const {return y;} //grid.size();}
     size_t transformCoordinateToID(size_t x, size_t y){
-        //TODO:
+        //design: 0   -> [0,0]   1   -> [0,1]  2   -> [0,2]  ...
+        //        x   -> [1,0]   x+1 -> [1,1]  x+2 -> [1,2]  ...
+        //        ...
+                return x*(this->y)+y;
     }
-    Country getCountryByID(size_t ID){countries[ID];}
-    District getDistrictByID(size_t ID){districts[ID];}
-    Field getFieldByID(size_t ID){fields[ID];}
+    Country &getCountryByID(size_t ID){return countries[ID];}
+    District &getDistrictByID(size_t ID){return districts[ID];}
+    Field &getFieldByID(size_t ID){return fields[ID];}
 
     template<typename FUNC>
     FUNC executeOnEveryElement(FUNC func);
 
     friend std::ostream &operator<<(std::ostream &os, const Grid &g);
     void setCellIndex(size_t x, size_t y, size_t cellIndex);
-    void setField(size_t i, Field newField);
-    void setDistrict(size_t i, District newDistrict);
-    void setCountry(size_t i, Country newCountry);
+    //WARNING: this might generate some problems if grid is not newly created
+    void addField(Field newField);
+    void addDistrict(District newDistrict);
+    void addCountry(Country newCountry);
 };
 
 

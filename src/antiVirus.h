@@ -13,6 +13,7 @@
 #include "logic.h"
 #include "graphics.h"
 #include "protocol.h"
+#include "mainloop.h"
 
 class AntiVirus {
     Grid* grid= nullptr; //(*av.grid)[y][x] is the way to access this
@@ -20,12 +21,16 @@ class AntiVirus {
     Logic logic;
     Iface* iface= nullptr;
     int maxticks=0;
+    //this property might not needed, because grid has the public property random
     unsigned long factors[4]={0};
+    size_t currentTick=0;
 private:
     AntiVirus()= default;
 public:
     AntiVirus(size_t y, size_t x,size_t ccount,int maxticks, unsigned long factors[4],Iface* iface){
         this->grid = new Grid(y,x, factors);
+        //TODO: change here to get values from iface
+        grid->init(2,1);
         this->countries = std::vector<Country>(ccount);
         this->maxticks=maxticks;
         for (size_t i = 0; i < 4; ++i) {
@@ -33,6 +38,7 @@ public:
         }
         this->iface = iface;
         this->iface->setGrid(grid);
+        this->currentTick=0;
     }
     friend std::ostream & operator<<(std::ostream& os, const AntiVirus& av);
     ~AntiVirus(){
@@ -41,6 +47,8 @@ public:
     }
 
     void startInterface();
+    void play1Tick();
+    void updateInterface();
 };
 
 

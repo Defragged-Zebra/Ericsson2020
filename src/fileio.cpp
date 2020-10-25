@@ -83,7 +83,7 @@ void FileIO::saveDistrictsLastData(size_t tickID) {
 }
 
 void FileIO::saveCountryLastData(size_t tickID) {
-    saveFileCountryData << ": ";
+    saveFileCountryData << tickID<<": ";
     for (int i = 0; i < grid->getX() * grid->getY(); ++i) {
         saveFileCountryData << grid->getCountryByID(i).getReserveVaccines() << ", "
                             << grid->getCountryByID(i).getTotalProductionCapacity() << ", ";
@@ -91,11 +91,11 @@ void FileIO::saveCountryLastData(size_t tickID) {
     saveFileCountryData << std::endl;
 }
 
-
+//WARNING: this might generate some problems if grid is not newly created
 void FileIO::loadConfiguration() {
-    throw std::runtime_error("currently not implemented");
-    size_t x=getXfromSaveFile();
-    size_t y=getYfromSaveFile();
+    //throw std::runtime_error("currently not implemented");
+    size_t x = getXFromSaveFile();
+    size_t y = getYFromSaveFile();
     std::string line;
     saveFileConfiguration.seekg(0, std::ios::beg);
     std::getline(saveFileConfiguration, line);
@@ -108,49 +108,149 @@ void FileIO::loadConfiguration() {
             line = line.substr(line.find(','));
         }
     }
+    //creating Fields
+    for (size_t ID = 0; ID < x * y; ++ID) {
+        grid->addField(Field(ID, 0, 0, 0, 0, 0));
+    }
     std::getline(saveFileConfiguration, line);
     std::stringstream ss;
     std::vector<size_t> fieldIDs = std::vector<size_t>();
-    size_t ID;
+    size_t FieldID;
+    size_t districtID = 0;
     while (line.substr(0, 8) != "section3") {
         std::getline(saveFileConfiguration, line);
         ss << line;
-        District district;
-        size_t i = 0;
         while (getline(ss, line, ',')) {
-            std::stringstream(line) >> ID;
-            //Field()
-            //grid->
-            //        grid->setField(i, ID);
-            //i++;
+            std::stringstream(line) >> FieldID;
+            fieldIDs.push_back(FieldID);
+        }
+        grid->addDistrict(District(districtID, fieldIDs, false));
+        districtID++;
+    }
+    std::getline(saveFileConfiguration, line);
+    std::vector<size_t> districtIDs = std::vector<size_t>();
+    size_t CountryID = 0;
+    while (!saveFileConfiguration.eof()) {
+        std::getline(saveFileConfiguration, line);
+        ss << line;
+        while (getline(ss, line, ',')) {
+            std::stringstream(line) >> districtID;
+            fieldIDs.push_back(districtID);
+        }
+        grid->addCountry(Country(CountryID, districtIDs));
+        CountryID++;
+    }
+}
+
+void FileIO::loadFieldsLastData(size_t numberOfPastRecordToLoad, size_t x, size_t y) {
+    for (int j = 0; j < x * y; ++j) {
+        grid->getFieldByID(j).setNumberOfPastValues(numberOfPastRecordToLoad);
+    }
+    std::stringstream ss;
+    std::string line;
+    saveFileFieldData.seekg(0, std::ios::beg);
+    std::getline(saveFileFieldData, line);
+    size_t rows = 0;
+    while (std::getline(saveFileFieldData, line)) rows++;
+    saveFileFieldData.seekg(0, std::ios::beg);
+    std::getline(saveFileFieldData, line);
+    for (int i = 0; i < rows - numberOfPastRecordToLoad; ++i) {
+        std::getline(saveFileFieldData, line);
+    }
+    //std::vector<int> pastInfections;
+    int *vaccination;
+    vaccination = new int[x * y];
+    for (size_t i = rows - numberOfPastRecordToLoad; i < rows; ++i) {
+        std::getline(saveFileFieldData, line);
+        ss << line;
+        size_t fieldID = 0;
+        getline(ss, line, ':');
+        while (getline(ss, line, ',')) {
+            vaccination[fieldID] = std::stoi(line);
+            getline(ss, line, ',');
+            grid->getFieldByID(fieldID).updateInfection(std::stoi(line));
+            fieldID++;
         }
     }
-
+    for (int i = 0; i < x * y; ++i) {
+        grid->getFieldByID(i).updateVaccination(vaccination[i]);
+    }
+    delete vaccination;
 }
 
-void FileIO::loadFieldsLastData() {
-
-}
-
-size_t FileIO::getYfromSaveFile() {
-    //kireszelni az x y-t innen ... ötletem nincs miért így csináltam meg és nem while loop-al, hajnali 1 volt
+size_t FileIO::getYFromSaveFile() {
     saveFileConfiguration.seekg(0, std::ios::beg);
     std::string line;
     std::getline(saveFileConfiguration, line);
     std::getline(saveFileConfiguration, line);
-    size_t x = std::stod(line.substr(line.find(':'), line.find(' ') - 1));
+    //size_t x = std::stod(line.substr(line.find(':'), line.find(' ') - 1));
     size_t y = std::stod(line.substr(line.rfind(' ', line.find('\n'))));
     return y;
 }
 
-size_t FileIO::getXfromSaveFile() {
-    //kireszelni az x y-t innen ... ötletem nincs miért így csináltam meg és nem while loop-al, hajnali 1 volt
+size_t FileIO::getXFromSaveFile() {
     saveFileConfiguration.seekg(0, std::ios::beg);
     std::string line;
     std::getline(saveFileConfiguration, line);
     std::getline(saveFileConfiguration, line);
     size_t x = std::stod(line.substr(line.find(':'), line.find(' ') - 1));
-    size_t y = std::stod(line.substr(line.rfind(' ', line.find('\n'))));
+    //size_t y = std::stod(line.substr(line.rfind(' ', line.find('\n'))));
     return x;
 
+}
+
+void FileIO::loadDistrictsLastData() {
+    std::stringstream ss;
+    std::string line;
+    findLastLine(saveFileDistrictData);
+    std::getline(saveFileDistrictData, line);
+    ss << line;
+    size_t districtID = 0;
+    bool clear;
+    while (getline(ss, line, ',')) {
+        ss >> clear;
+        grid->getDistrictByID(districtID).setClear(clear);
+        districtID++;
+    }
+}
+
+void FileIO::findLastLine(std::fstream &file) {
+    //find last line by: https://stackoverflow.com/questions/11876290/c-fastest-way-to-read-only-last-line-of-text-file
+    file.seekg(-1, std::ios_base::end);                // go to one spot before the EOF
+    bool keepLooping = true;
+    while (keepLooping) {
+        char ch;
+        file.get(ch);                            // Get current byte's data
+        if ((int) file.tellg() <= 1) {             // If the data was at or before the 0th byte
+            file.seekg(0);                       // The first line is the last line
+            keepLooping = false;                // So stop there
+        } else if (ch == '\n') {                   // If the data was a newline
+            keepLooping = false;                // Stop at the current position.
+        } else {                                  // If the data was neither a newline nor at the 0 byte
+            file.seekg(-2, std::ios_base::cur);
+            // Move to the front of that data, then to the front of the data before it
+        }
+    }
+}
+
+void FileIO::loadCountryLastData() {
+    std::stringstream ss;
+    std::string line;
+    findLastLine(saveFileCountryData);
+    std::getline(saveFileCountryData, line);
+    ss << line;
+    size_t countryID = 0;
+    while (getline(ss, line, ',')) {
+        grid->getCountryByID(countryID).setReserveVaccines(std::stoi(line));
+        getline(ss, line, ',');
+        grid->getCountryByID(countryID).setTotalProductionCapacity(std::stoi(line));
+        countryID++;
+    }
+}
+
+void FileIO::load(size_t numberOfPastRecordsToLoad, size_t x, size_t y) {
+    loadConfiguration();
+    loadFieldsLastData(numberOfPastRecordsToLoad,x,y);
+    loadDistrictsLastData();
+    loadCountryLastData();
 }

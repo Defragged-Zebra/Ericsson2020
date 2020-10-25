@@ -24,7 +24,7 @@ public:
     Field() = default;
 
     Field(const int fieldID, const int assignedDistrictID, const int currentInfectionValue, const int vaccinationRate,
-          const int populationDensity, const Field *fieldPointer, size_t numberOfStoredPastValues) {
+          const int populationDensity, size_t numberOfStoredPastValues) {
         this->fieldID = fieldID;
         this->assignedDistrictID = assignedDistrictID;
         this->currentInfectionValue = currentInfectionValue;
@@ -47,6 +47,8 @@ public:
             this->storedVaccines = f.storedVaccines;
             this->populationDensity = f.populationDensity;
             this->vaccinationRate = f.vaccinationRate;
+            this->assignedDistrictID=f.assignedDistrictID;
+            this->numberOfStoredPastValues=f.numberOfStoredPastValues;
         }
         return *this;
     }
@@ -61,12 +63,15 @@ public:
 
     size_t getAssignedDistrictID() const { return assignedDistrictID; }
 
-    void updateHealing(int value);
+    void updateVaccination(int value);
 
     void updateInfection(int value);
 
     int getCurrentInfectionValue() { return currentInfectionValue; }
-    int getVaccinationRate(){return vaccinationRate;}
+
+    int getVaccinationRate() { return vaccinationRate; }
+
+    void setNumberOfPastValues(size_t values) { numberOfStoredPastValues = values; }
 };
 
 

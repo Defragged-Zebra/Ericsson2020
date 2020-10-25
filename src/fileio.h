@@ -5,7 +5,6 @@
 #ifndef VIRUS_FILEIO_H
 #define VIRUS_FILEIO_H
 
-//#include <iostream>
 #include <fstream>
 #include <stdexcept>
 #include "grid.h"
@@ -14,7 +13,8 @@
 #include <sys/stat.h>
 
 
-class FileIO {
+
+class FileIO{
     std::fstream saveFileConfiguration;
     std::fstream saveFileFieldData;
     std::fstream saveFileDistrictData;
@@ -29,7 +29,7 @@ class FileIO {
 
     void loadConfiguration();
 
-    void loadFieldsLastData();
+    void loadFieldsLastData(size_t numberOfPastRecordToLoad, size_t x, size_t y);
 
     void loadDistrictsLastData();
 
@@ -77,8 +77,8 @@ public:
                 << "tickID: id1_reservedVaccines, id1_totalProdCap, id2_reservedVaccines, id2_totalProdCap, id3_reservedVaccines, ..."
                 << std::endl;
     }
-    size_t getXfromSaveFile();
-    size_t getYfromSaveFile();
+    size_t getXFromSaveFile();
+    size_t getYFromSaveFile();
     void setGrid(Grid *g) { this->grid = g; }
 
     void saveConfiguration();
@@ -89,7 +89,7 @@ public:
         saveCountryLastData(tickID);
     }
 
-    void load();
+    void load(size_t numberOfPastRecordsToLoad, size_t x, size_t y);
 
     ~FileIO() {
         saveFileConfiguration.flush();
@@ -101,6 +101,8 @@ public:
         saveFileCountryData.flush();
         saveFileCountryData.close();
     }
+
+    void static findLastLine(std::fstream &file);
 };
 
 
