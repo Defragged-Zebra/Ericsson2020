@@ -12,18 +12,20 @@ int MainLoop::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, int 
     //healStartTick = width + height; -- it should be calculated further up for optimisation
     //currentTick = hanyadik tick van
     //Ha még nem értük el a width + height -edik kört, akkor 0
-    if (currentTick < healStartTick) {
+    //+1 because Tick starts from 0
+    if (currentTick +1 < healStartTick ||
+        grid->getFieldByID((*grid)[fieldCoordinateX][fieldCoordinateY]).getCurrentInfectionValue() == 0) {
         return 0;
     } else {
         //Az előző tickek (pályaméret width + height darabszámú) fertőzöttségi mutatóinak minimuma szorozva az ...
         //a = min(lastInfectionValues[lastInfectionValues.len() - lastTicks->lastInfectionValues.len()]);
         std::deque<int>::iterator tmp = std::min_element(field.getLastInfectionValues().begin(),
                                                          field.getLastInfectionValues().end());
-        int a = *tmp;
+        double a = *tmp;
         //első véletlen faktor 10-zel való osztási maradékával (0-9)
-        int b = int(random1 % 10);
+        double b = int(random1 % 10);
         //Az eredmény osztva 20-al, és ennek az alsó egészrésze
-        return floor(a * int(b / 20));
+        return std::floor((a * b) / 20.0);
     }
 }
 
@@ -91,7 +93,7 @@ MainLoop::calculateCrossInfection(Grid *grid, int fieldCoordinateX, int fieldCoo
         int cX = coordinates[i][0];
         int cY = coordinates[i][1];
         //boundary check .. -1 because arrays still start at 0
-        if (cX < 0 || cY < 0 || cX > grid->getX()-1 || cY > grid->getY()-1) {
+        if (cX < 0 || cY < 0 || cX > grid->getX() - 1 || cY > grid->getY() - 1) {
             continue;
         }
         int dist = distance(grid, fieldCoordinateX, fieldCoordinateX, cX, cY);
