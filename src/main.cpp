@@ -15,7 +15,6 @@ void debug() {
 
 int main() {
     debug();
-    return 0;
     std::stringstream ss;
     ss << "Alma"; //test simulation
     u_long factors[4] = {2, 3, 4, 6};

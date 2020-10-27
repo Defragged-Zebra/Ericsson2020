@@ -5,8 +5,9 @@
 #ifndef VIRUS_LOGIC_H
 #define VIRUS_LOGIC_H
 
+#include "mainloop.h"
 
-class Logic {
+class Logic:MainLoop {
 public:
     Logic(){
 
