@@ -62,11 +62,12 @@ public:
     FUNC executeOnEveryElement(FUNC func);
 
     friend std::ostream &operator<<(std::ostream &os, const Grid &g);
-    void setCellIndex(size_t x, size_t y, size_t cellIndex);
+    void uploadGridWithFieldID(size_t y, size_t x, size_t fieldID);
     //WARNING: this might generate some problems if grid is not newly created
-    void addField(Field newField);
-    void addDistrict(District newDistrict);
-    void addCountry(Country newCountry);
+    void addField(const Field& newField);
+    void addDistrict(const District& newDistrict);
+    void addCountry(const Country& newCountry);
+
 };
 
 

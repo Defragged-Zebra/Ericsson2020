@@ -35,8 +35,14 @@ public:
     void checkGrid(){
         if(grid==nullptr)throw std::runtime_error("Iface: grid pointer is null");
     }
+    Grid* getGrid(){
+        return grid;
+    }
     virtual void start()=0;
-    virtual void update(size_t tickID) =0;
+    virtual void update(size_t tickID){
+
+    };
+    virtual void initAntiVirus()=0;
     virtual ~Iface(){
 
     }

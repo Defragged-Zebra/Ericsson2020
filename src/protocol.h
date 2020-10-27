@@ -27,6 +27,16 @@ public:
 
     void initValues();
     void start() override;
+
+    void setStart(std::string &line);
+
+    void initAntiVirus() override;
+
+    void createGrid(std::string &line);
+
+    void request(std::string &line);
+
+    void currentResult(int gameID, int tickID, int countryID);
 };
 
 

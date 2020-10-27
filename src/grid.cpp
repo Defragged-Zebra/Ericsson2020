@@ -19,7 +19,7 @@ std::ostream &operator<<(std::ostream &os, const Grid &g) {
     os << "size of the grid: " << g.grid[0].size() << ", " << g.grid.size() << std::endl;
     for (int x = 0; x < g.grid[0].size(); ++x) {
         for (int y = 0; y < g.grid.size(); ++y) {
-            os << g.grid[x][y] << ",";
+            os << g.grid[y][x] << ",";
         }
         os << std::endl;
     }
@@ -43,23 +43,24 @@ std::ostream &operator<<(std::ostream &os, const Grid &g) {
     return os;
 }
 
-void Grid::setCellIndex(const size_t x, const size_t y, const size_t cellIndex) {
-    grid[x][y] = cellIndex;
+void Grid::uploadGridWithFieldID(const size_t fy, const size_t fx, const size_t fieldID) {
+    grid[fy][fx] = fieldID;
 }
 
-void Grid::addField(Field newField) {
+void Grid::addField(const Field& newField) {
     fields.push_back(newField);
 }
 
-void Grid::addDistrict(District newDistrict) {
+void Grid::addDistrict(const District& newDistrict) {
     districts.push_back(newDistrict);
 }
 
-void Grid::addCountry(Country newCountry) {
+void Grid::addCountry(const Country& newCountry) {
     countries.push_back(newCountry);
 }
 
 void Grid::init(size_t districtCount, size_t countryCount) {
+    //TODO refactor it asap
     for (size_t i = 0; i < getX(); ++i) {
         for (size_t j = 0; j < getY(); ++j) {
             size_t ID = i * y + j;
