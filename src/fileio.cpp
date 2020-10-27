@@ -104,7 +104,7 @@ void FileIO::loadConfiguration() {
         std::getline(saveFileConfiguration, line);
         for (int j = 0; j < y; ++j) {
             size_t ID = std::stoi(line.substr(0, line.find(',')));
-            grid->setCellIndex(x, y, ID);
+            grid->uploadGridWithFieldID(y, x, ID);
             line = line.substr(line.find(','));
         }
     }

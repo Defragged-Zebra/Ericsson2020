@@ -12,6 +12,8 @@ public:
     Logic(){
 
     }
+
+    void static simulateTO(int gameID, int tickID, int countryID);
 };
 
 

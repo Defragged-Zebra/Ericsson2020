@@ -3,19 +3,86 @@
 //
 
 #include "protocol.h"
+#include "logic.h"
 
 void Protocol::start() {
+    std::string line;
+    while (std::getline(is,line)){
+        if(line!="."){
+            Protocol::request(line);
+        }
+    }
+}
+void Protocol::request(std::string& line){
+    std::string tmp;
+    std::stringstream ss;
+    ss<<line;
+    int gameID,tickID,countryID;
+    ss>>tmp>>gameID>>tickID>>countryID;
+    Logic::simulateTO(gameID,tickID,countryID); //TODO ezt meg kell írni, addig tickID-ig szimuláljon!!!
+    Protocol::currentResult(gameID,tickID,countryID);
+}
+void Protocol::currentResult(int gameID,int tickID,int countryID) {
+    os << "RES " << gameID <<" " << tickID <<" "<< countryID <<std::endl;
+    for (size_t y = 0; y < grid->getY(); ++y) {
+        for (size_t x = 0; x < grid->getX() ; ++x) {
+            os<< grid->getFieldByID((*grid)[y][x]).getCurrentInfectionValue() <<" ";
+        }
+        os<<std::endl;
+    }
+    os << "." <<std::endl;
+}
+void Protocol::initAntiVirus() {
     init();
     initValues();
 }
-
 void Protocol::initValues() {
     std::string line;
-    while (std::getline(is, line)) {
-        os<<line<<std::endl;
+    std::getline(is, line);
+    Protocol::setStart(line);
+    std::getline(is, line);
+    Protocol::createGrid(line);
+}
+void Protocol::setStart(std::string& line){
+    std::stringstream ss;
+    size_t gameid,maxtickid,countriescount;
+    std::string tmp;
+    ss<<line;
+    ss>> tmp >> gameid >> maxtickid >> countriescount;
+}
+void Protocol::createGrid(std::string& line){
+    std::stringstream ss;
+    ss<<line;
+    std::string tmp;
+    ss>> tmp;
+    unsigned long factors[4] ={0};
+    for (unsigned long & factor : factors) {
+        ss>>factor;
+    }
+
+    std::getline(is, line);
+    //iy==rows, ix==columns
+    size_t iy, ix;
+    std::stringstream ss2;
+    ss2<<line;
+    ss2>>tmp>>iy >> ix;
+    grid = new Grid(iy,ix,factors);
+    size_t fieldID=0;
+    size_t storedValsCnt = grid->getY()+grid->getX();
+    for (size_t y = 0; y < grid->getY(); ++y) {
+        for (size_t x = 0; x < grid->getX(); ++x) {
+            std::stringstream ss3;
+            std::getline(is,line);
+            ss3<<line;
+            size_t district;
+            int infRate, population,tmp2;
+            ss3>>tmp>> tmp2 >> tmp2 >> district >> infRate >> population;
+            //TODO field id check
+            grid->addField(Field(fieldID,district,infRate,0,population,storedValsCnt));
+            grid->uploadGridWithFieldID(y,x,fieldID++);
+        }
     }
 }
-
 void Protocol::sendDebugMsg(const std::string &msg) {
     ers << msg << std::endl;
 }

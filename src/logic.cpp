@@ -3,3 +3,6 @@
 //
 
 #include "logic.h"
+void Logic::simulateTO(int gameID, int tickID, int countryID){
+
+}
