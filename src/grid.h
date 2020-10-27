@@ -31,7 +31,7 @@ class Grid {
 
 public:
     Random random;
-    Grid(size_t y, size_t x, unsigned long seeds[4]){
+    Grid(size_t x, size_t y, unsigned long seeds[4]){
         this->x=x;
         this->y=y;
         random=Random(seeds);
@@ -48,6 +48,7 @@ public:
     inline std::vector<size_t> operator[](size_t i){return grid[i];};
     inline size_t getX() const {return x;} //grid[0].size();}
     inline size_t getY() const {return y;} //grid.size();}
+    //TODO: refactor y-x stuff
     size_t transformCoordinateToID(size_t x, size_t y){
         //design: 0   -> [0,0]   1   -> [0,1]  2   -> [0,2]  ...
         //        x   -> [1,0]   x+1 -> [1,1]  x+2 -> [1,2]  ...

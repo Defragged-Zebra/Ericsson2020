@@ -27,6 +27,7 @@ class AntiVirus {
 private:
     AntiVirus()= default;
 public:
+
     explicit AntiVirus(Iface* iface){
         this->iface=iface;
         this->iface->initAntiVirus();

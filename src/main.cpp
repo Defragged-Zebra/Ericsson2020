@@ -2,7 +2,19 @@
 #include "antiVirus.h"
 #include "mainloop.h"
 
+void debug() {
+    u_long factors[4] = {1569741360, 1785505948, 4, 6};
+    Random rd = Random(factors);
+    size_t i = 0;
+    do  {
+        ++i;
+    } while (rd.next(2) != 1022357306);
+    std::cout << "i= " << i << std::endl;
+}
+
+
 int main() {
+    debug();
     std::stringstream ss;
     ss << "START 1 44 1"<< std::endl;
     ss << "FACTORS 1569741360 1785505948 516548029 1302116447"<< std::endl;
