@@ -22,8 +22,8 @@ std::ostream & operator<<(std::ostream& os, const AntiVirus& av){
 
 void AntiVirus::play1Tick() {
     if(currentTick>maxticks){throw std::runtime_error("antiVirus.cpp: too many ticks");}
-    int heal;
-    int inf;
+    int heal=0;
+    int inf=0;
     size_t healStartTick=grid->getX()+grid->getY();
     for (int i = 0; i < grid->getX(); ++i) {
         for (int j = 0; j < grid->getY(); ++j) {

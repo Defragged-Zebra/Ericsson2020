@@ -32,7 +32,6 @@ public:
         this->populationDensity = populationDensity;
         this->storedVaccines = std::map<int, int>();
         this->lastInfectionValues = std::deque<int>();
-        lastInfectionValues.push_back(currentInfectionValue);
         this->numberOfStoredPastValues = numberOfStoredPastValues;
     }
 

@@ -75,12 +75,10 @@ void Graphics::terminalGraphicsRun(size_t tickID) {
         std::cout << "-";
     }
     std::cout << "+" << std::endl;
-    /*
     struct timespec tim, tim2;
     tim.tv_sec  = 0;
     tim.tv_nsec = 500000000L;
     nanosleep(&tim , &tim);
-     */
 }
 
 void Graphics::update(size_t tickID) {

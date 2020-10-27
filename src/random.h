@@ -27,7 +27,7 @@ public:
         }
         return *this;
     }
-    unsigned long getFactor(int index);
+
     unsigned long next(int index);
 };
 
