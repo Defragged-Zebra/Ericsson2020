@@ -27,8 +27,8 @@ class AntiVirus {
 private:
     AntiVirus()= default;
 public:
-    AntiVirus(size_t y, size_t x,size_t ccount,int maxticks, unsigned long factors[4],Iface* iface){
-        this->grid = new Grid(y,x, factors);
+    AntiVirus(size_t x,size_t y,size_t ccount,int maxticks, unsigned long factors[4],Iface* iface){
+        this->grid = new Grid(x,y, factors);
         //TODO: change here to get values from iface
         grid->init(2,1);
         this->countries = std::vector<Country>(ccount);

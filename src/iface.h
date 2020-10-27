@@ -14,6 +14,9 @@ class Iface {
 protected:
     FileIO fileio;
     Grid* grid;
+    size_t gameID;
+    size_t maxTickCount;
+    size_t countriesCount;
 public:
     Iface(){ grid=nullptr; }
     explicit Iface(Grid* g){
@@ -37,9 +40,11 @@ public:
     }
     virtual void start()=0;
     virtual void update(size_t tickID) =0;
-    virtual ~Iface(){
+    virtual ~Iface(){}
+    size_t getGameID(){return gameID;}
+    size_t getMaxTick(){return maxTickCount;}
+    size_t getNumberOfCountries(){return countriesCount;}
 
-    }
 };
 
 
