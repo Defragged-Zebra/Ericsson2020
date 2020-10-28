@@ -16,7 +16,7 @@ void debug() {
 
 
 int main() {
-    debug();
+    //debug();
     //return 0;
     std::stringstream ss;
     ss << "START 1 44 1"<< std::endl;

@@ -20,7 +20,9 @@ void Logic::simulateTO(int gameID, int tickID, int countryID) {
         for (int x = 0; x < grid->getX(); ++x) {
             for (int y = 0; y < grid->getY(); ++y) {
                 heal = Logic::calculateSpontaneousHealing(grid, x, y, healStartTick);
+
                 inf = Logic::calculateSpontaneousInfection(grid, x, y);
+
                 grid->getFieldByID((*grid)[y][x]).updateVaccination(heal);
                 grid->getFieldByID((*grid)[y][x]).updateInfection(inf);
             }
@@ -61,19 +63,21 @@ int Logic::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, int fie
 }
 
 int Logic::calculateSpontaneousInfection(Grid *grid, size_t fieldCoordinateX, size_t fieldCoordinateY) {
+
+
     if (grid == nullptr) throw std::invalid_argument("grid null pointer");
 
     unsigned long random2, random3, random4;
-    /* if (grid->getCurrentTick() == 0) {
-        random2 = grid->random.getFactor(2);
-        random3 = grid->random.getFactor(3);
-        random4 = grid->random.getFactor(4);
-    } else { */
+    if (grid->getCurrentTick() == 0) {
+        grid->random.next(2);
+        grid->random.next(3);
+        grid->random.next(4);
+    }
+
         random2 = grid->random.next(2);
 
         random3 = grid->random.next(3);
         random4 = grid->random.next(4);
-    //}
 
     size_t currentTick = grid->getCurrentTick();
     size_t fieldID = grid->transformCoordinateToID(fieldCoordinateX, fieldCoordinateY);
@@ -92,6 +96,7 @@ int Logic::calculateSpontaneousInfection(Grid *grid, size_t fieldCoordinateX, si
             //infection(0, coord) => tick_info[0, coord].infection_rate > 0 ? 1 : 0
             return field.getCurrentInfectionValue() > 0 ? 1 : 0;
         }
+
         double b = 0;
         std::deque<int> lastInfectionValues = field.getLastInfectionValues();
         int size = lastInfectionValues.size();
@@ -99,12 +104,12 @@ int Logic::calculateSpontaneousInfection(Grid *grid, size_t fieldCoordinateX, si
             b += lastInfectionValues[i];
         }
         b = b / size;
+
         int sum = calculateCrossInfection(grid, fieldCoordinateX, fieldCoordinateY, random3);
         //Ehhez hozzáadva az adott cella és a szomszédjainak az átfertőződési mutatóját.
         double a = b + sum;
         //Az így eddig kiszámolt összeget megszorozzuk a negyedik véletlen faktor 25-tel való osztási maradéka + 50-nel,
         //és az egészet leosztjuk 100-al, majd vesszük a felső egészrészét.
-        std::cout << std::ceil(a * (double) (random4 % 25 + 50) / 100.0);
         return std::ceil(a * (double) (random4 % 25 + 50) / 100.0);
     }
 }
