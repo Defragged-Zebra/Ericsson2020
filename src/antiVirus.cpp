@@ -27,13 +27,13 @@ void AntiVirus::play1Tick() {
     size_t healStartTick=grid->getX()+grid->getY();
     for (int i = 0; i < grid->getX(); ++i) {
         for (int j = 0; j < grid->getY(); ++j) {
-            heal=MainLoop::calculateSpontaneousHealing(grid,i,j,currentTick,healStartTick,grid->random.next(1));
-            inf=MainLoop::calculateSpontaneousInfection(grid, i,j,currentTick,grid->random.next(2),grid->random.next(3),grid->random.next(4));
+            heal=Logic::calculateSpontaneousHealing(grid,i,j,healStartTick,grid->random.next(1));
+            inf=Logic::calculateSpontaneousInfection(grid, i,j,grid->random.next(2),grid->random.next(3),grid->random.next(4));
             grid->getFieldByID((*grid)[i][j]).updateVaccination(heal);
             grid->getFieldByID((*grid)[i][j]).updateInfection(inf);
         }
     }
-    currentTick++;
+    this->currentTick++;
 }
 
 void AntiVirus::updateInterface() {

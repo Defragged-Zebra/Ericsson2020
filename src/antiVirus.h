@@ -21,7 +21,7 @@ class AntiVirus {
     Logic logic;
     Iface* iface= nullptr;
     int maxticks=0;
-    //this property might not needed, because grid has the public property random
+    //TODO: this property might not needed, because grid has the public property random
     unsigned long factors[4]={0};
     size_t currentTick=0;
 private:

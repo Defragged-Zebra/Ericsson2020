@@ -14,7 +14,7 @@ void debug() {
 
 
 int main() {
-    debug();
+    //debug();
     std::stringstream ss;
     ss << "START 1 44 1"<< std::endl;
     ss << "FACTORS 1569741360 1785505948 516548029 1302116447"<< std::endl;
