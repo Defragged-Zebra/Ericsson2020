@@ -14,8 +14,8 @@ void Logic::simulateTO(int gameID, int tickID, int countryID) {
     for (int i = 0; (grid->getCurrentTick() < tickID); ++i) {
 
         //if(currentTick>maxticks){throw std::runtime_error("antiVirus.cpp: too many ticks");}
-        int heal=0;
-        int inf=0;
+        int heal = 0;
+        int inf = 0;
         size_t healStartTick = grid->getX() + grid->getY();
         for (int x = 0; x < grid->getX(); ++x) {
             for (int y = 0; y < grid->getY(); ++y) {
@@ -36,6 +36,12 @@ int Logic::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, int fie
     size_t currentTick = grid->getCurrentTick();
     if (grid == nullptr) throw std::invalid_argument("grid null pointer");
     Field field = grid->getFieldByID(grid->transformCoordinateToID(fieldCoordinateY, fieldCoordinateX));
+    unsigned long factor1;
+    if (currentTick + 1 < healStartTick) {
+        factor1 = grid->random.getFactor(1);
+    } else {
+        factor1 = grid->random.next(1);
+    }
     //healStartTick = width + height; -- it should be calculated further up for optimisation
     //currentTick = hanyadik tick van
     //Ha még nem értük el a width + height -edik kört, akkor 0
@@ -46,12 +52,8 @@ int Logic::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, int fie
     } else {
         //Az előző tickek (pályaméret width + height darabszámú) fertőzöttségi mutatóinak minimuma szorozva az ...
         //a = min(lastInfectionValues[lastInfectionValues.len() - lastTicks->lastInfectionValues.len()]);
-        unsigned long factor1;
-        if (grid->getCurrentTick() == healStartTick) {
-            factor1 = grid->random.getFactor(1);
-        } else {
-            grid->random.next(1);
-        }
+
+
         std::deque<int>::iterator tmp = std::min_element(field.getLastInfectionValues().begin(),
                                                          field.getLastInfectionValues().end());
         double a = *tmp;
@@ -67,17 +69,16 @@ int Logic::calculateSpontaneousInfection(Grid *grid, size_t fieldCoordinateX, si
 
     if (grid == nullptr) throw std::invalid_argument("grid null pointer");
 
-    unsigned long random2, random3, random4;
+    unsigned long factor2, factor3, factor4;
     if (grid->getCurrentTick() == 0) {
         grid->random.next(2);
         grid->random.next(3);
         grid->random.next(4);
     }
 
-        random2 = grid->random.next(2);
-
-        random3 = grid->random.next(3);
-        random4 = grid->random.next(4);
+    factor2 = grid->random.next(2);
+    factor3 = grid->random.next(3);
+    factor4 = grid->random.next(4);
 
     size_t currentTick = grid->getCurrentTick();
     size_t fieldID = grid->transformCoordinateToID(fieldCoordinateX, fieldCoordinateY);
@@ -88,7 +89,7 @@ int Logic::calculateSpontaneousInfection(Grid *grid, size_t fieldCoordinateX, si
         //curr_tick: ticks elapsed
         //A második véletlen faktor 10-zel való osztási maradéka + 10 darab előző vírusterjedés átlaga az adott cellán.
         //the -1 in the end is there because we later use it as an array index
-        int intervalToAverage = std::min(int(random2 % 10) + 10, (int) currentTick) - 1;
+        int intervalToAverage = std::min(int(factor2 % 10) + 10, (int) currentTick) - 1;
         //int b = avg(i =[1..c], infection(curr_tick - i, coord));
         Field &field = grid->getFieldByID(grid->transformCoordinateToID(fieldCoordinateY, fieldCoordinateX));
         //a "rekurzív" függvényhívás miatt szükség van az első elemre, ami a következőképpen néz ki:
@@ -105,12 +106,12 @@ int Logic::calculateSpontaneousInfection(Grid *grid, size_t fieldCoordinateX, si
         }
         b = b / size;
 
-        int sum = calculateCrossInfection(grid, fieldCoordinateX, fieldCoordinateY, random3);
+        int sum = calculateCrossInfection(grid, fieldCoordinateX, fieldCoordinateY, factor3);
         //Ehhez hozzáadva az adott cella és a szomszédjainak az átfertőződési mutatóját.
         double a = b + sum;
         //Az így eddig kiszámolt összeget megszorozzuk a negyedik véletlen faktor 25-tel való osztási maradéka + 50-nel,
         //és az egészet leosztjuk 100-al, majd vesszük a felső egészrészét.
-        return std::ceil(a * (double) (random4 % 25 + 50) / 100.0);
+        return std::ceil(a * (double) (factor4 % 25 + 50) / 100.0);
     }
 }
 

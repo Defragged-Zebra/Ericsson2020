@@ -10,7 +10,7 @@ void debug() {
     size_t i = 0;
     do  {
         ++i;
-    } while (rd.next(2) != 1022357306 ); //6014329);
+    } while (rd.next(1) != 547987797 ); //6014329);
     std::cout << "i= " << i << std::endl;
 }
 
