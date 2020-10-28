@@ -19,7 +19,13 @@ void Protocol::request(std::string& line){
     ss<<line;
     int gameID,tickID,countryID;
     ss>>tmp>>gameID>>tickID>>countryID;
-    Logic::simulateTO(gameID,tickID,countryID); //TODO ezt meg kell írni, addig tickID-ig szimuláljon!!!
+    std::cerr<<std::endl;
+    for (int i = 1; i <= 4; ++i) {
+        std::cerr<<grid->random.getFactor(i)<<" ";
+    }
+    std::cerr<<std::endl;
+    Logic::simulateTO(gameID,tickID,countryID); //TODO: randomszámok innen jönnek
+
     Protocol::currentResult(gameID,tickID,countryID);
 }
 void Protocol::currentResult(int gameID,int tickID,int countryID) {

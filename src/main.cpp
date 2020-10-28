@@ -2,19 +2,22 @@
 #include "antiVirus.h"
 #include "mainloop.h"
 
+
+
 void debug() {
-    u_long factors[4] = {1569741360, 1785505948, 4, 6};
+    u_long factors[4] = {1569741360, 1785505948, 516548029, 1302116447};
     Random rd = Random(factors);
     size_t i = 0;
     do  {
         ++i;
-    } while (rd.next(2) != 1022357306);
+    } while (rd.next(2) != 1022357306 ); //6014329);
     std::cout << "i= " << i << std::endl;
 }
 
 
 int main() {
-    //debug();
+    debug();
+    //return 0;
     std::stringstream ss;
     ss << "START 1 44 1"<< std::endl;
     ss << "FACTORS 1569741360 1785505948 516548029 1302116447"<< std::endl;
@@ -44,10 +47,12 @@ int main() {
     ss << "FD 5 2 4 0 2" << std::endl;
     ss << "FD 5 3 4 0 5" << std::endl;
     ss << "." << std::endl;
-    ss << "REQ 1 0 0" << std::endl;
-    ss << "." <<std::endl;
-    ss << "REQ 1 1 0" << std::endl;
-    ss << "." <<std::endl;
+    for (int i = 0; i < 44; ++i) {
+        ss << "REQ 1 "<<i<<" 0" << std::endl;
+        ss << "." <<std::endl;
+    }
+
+
     u_long factors[4] = {2, 3, 4, 6};
     AntiVirus av = AntiVirus(new Protocol(ss,std::cout,std::cerr));
     //int maxTicks=300;

@@ -7,27 +7,30 @@
 
 
 #include "logic.h"
-Grid* Logic::grid=nullptr;
+
+Grid *Logic::grid = nullptr;
 
 void Logic::simulateTO(int gameID, int tickID, int countryID) {
-    //if(currentTick>maxticks){throw std::runtime_error("antiVirus.cpp: too many ticks");}
-    int heal;
-    int inf;
-    //TODO: refactor factor1
-    size_t healStartTick=grid->getX()+grid->getY();
-    for (int x = 0; x < grid->getX(); ++x) {
-        for (int y = 0; y < grid->getY(); ++y) {
-            heal=Logic::calculateSpontaneousHealing(grid, x, y, healStartTick, grid->random.next(1));
-            inf=Logic::calculateSpontaneousInfection(grid, x, y, grid->random.next(2), grid->random.next(3), grid->random.next(4));
-            grid->getFieldByID((*grid)[y][x]).updateVaccination(heal);
-            grid->getFieldByID((*grid)[y][x]).updateInfection(inf);
+    for (int i = 0; (grid->getCurrentTick() < tickID); ++i) {
+
+        //if(currentTick>maxticks){throw std::runtime_error("antiVirus.cpp: too many ticks");}
+        int heal=0;
+        int inf=0;
+        size_t healStartTick = grid->getX() + grid->getY();
+        for (int x = 0; x < grid->getX(); ++x) {
+            for (int y = 0; y < grid->getY(); ++y) {
+                heal = Logic::calculateSpontaneousHealing(grid, x, y, healStartTick);
+                inf = Logic::calculateSpontaneousInfection(grid, x, y);
+                grid->getFieldByID((*grid)[y][x]).updateVaccination(heal);
+                grid->getFieldByID((*grid)[y][x]).updateInfection(inf);
+            }
         }
+        grid->IncreaseCurrentTick();
     }
-    grid->IncreaseCurrentTick();
 }
 
 int Logic::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, int fieldCoordinateY,
-                                       int healStartTick, unsigned long random1) {
+                                       int healStartTick) {
     size_t currentTick = grid->getCurrentTick();
     if (grid == nullptr) throw std::invalid_argument("grid null pointer");
     Field field = grid->getFieldByID(grid->transformCoordinateToID(fieldCoordinateY, fieldCoordinateX));
@@ -41,19 +44,37 @@ int Logic::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, int fie
     } else {
         //Az előző tickek (pályaméret width + height darabszámú) fertőzöttségi mutatóinak minimuma szorozva az ...
         //a = min(lastInfectionValues[lastInfectionValues.len() - lastTicks->lastInfectionValues.len()]);
+        unsigned long factor1;
+        if (grid->getCurrentTick() == healStartTick) {
+            factor1 = grid->random.getFactor(1);
+        } else {
+            grid->random.next(1);
+        }
         std::deque<int>::iterator tmp = std::min_element(field.getLastInfectionValues().begin(),
                                                          field.getLastInfectionValues().end());
         double a = *tmp;
         //első véletlen faktor 10-zel való osztási maradékával (0-9)
-        double b = int(random1 % 10);
+        double b = int(factor1 % 10);
         //Az eredmény osztva 20-al, és ennek az alsó egészrésze
         return std::floor((a * b) / 20.0);
     }
 }
 
-int Logic::calculateSpontaneousInfection(Grid *grid, size_t fieldCoordinateX, size_t fieldCoordinateY,
-                                         unsigned long random2, unsigned long random3, unsigned long random4) {
+int Logic::calculateSpontaneousInfection(Grid *grid, size_t fieldCoordinateX, size_t fieldCoordinateY) {
     if (grid == nullptr) throw std::invalid_argument("grid null pointer");
+
+    unsigned long random2, random3, random4;
+    /* if (grid->getCurrentTick() == 0) {
+        random2 = grid->random.getFactor(2);
+        random3 = grid->random.getFactor(3);
+        random4 = grid->random.getFactor(4);
+    } else { */
+        random2 = grid->random.next(2);
+
+        random3 = grid->random.next(3);
+        random4 = grid->random.next(4);
+    //}
+
     size_t currentTick = grid->getCurrentTick();
     size_t fieldID = grid->transformCoordinateToID(fieldCoordinateX, fieldCoordinateY);
     size_t districtID = grid->getFieldByID(fieldID).getAssignedDistrictID();

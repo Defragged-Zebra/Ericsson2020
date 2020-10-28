@@ -4,6 +4,7 @@
 
 #ifndef VIRUS_LOGIC_H
 #define VIRUS_LOGIC_H
+
 #include <algorithm>
 #include <vector>
 #include <stdexcept>
@@ -17,24 +18,26 @@
 
 class Logic {
     static Grid *grid;
+
     static int distance(Grid *grid, size_t x1, size_t y1, size_t x2, size_t y2);
 
     static int calculateCrossInfection(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, unsigned long random3);
+
 public:
 
-    Logic()=default;
-    void static setGrid(Grid *newGrid){
-        Logic::grid=newGrid;
+    Logic() = default;
+
+    void static setGrid(Grid *newGrid) {
+        Logic::grid = newGrid;
     }
+
     void static simulateTO(int gameID, int tickID, int countryID);
 
 
     //separate functions, so values can be changed from the visualization directly
-    static int calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, int fieldCoordinateY,
-                                           int healStartTick, unsigned long random1);
+    static int calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, int healStartTick);
 
-    static int calculateSpontaneousInfection(Grid *grid, size_t fieldCoordinateX, size_t fieldCoordinateY,
-                                             unsigned long random2, unsigned long random3, unsigned long random4);
+    static int calculateSpontaneousInfection(Grid *grid, size_t fieldCoordinateX, size_t fieldCoordinateY);
 
 };
 
