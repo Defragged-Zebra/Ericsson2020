@@ -19,13 +19,14 @@ void Logic::simulateTO(int gameID, int tickID, int countryID) {
         size_t healStartTick = grid->getX() + grid->getY();
         for (int x = 0; x < grid->getX(); ++x) {
             for (int y = 0; y < grid->getY(); ++y) {
-                heal = Logic::calculateSpontaneousHealing(grid, x, y, healStartTick);
+                heal = Logic::calculateSpontaneousHealing(grid, y, x, healStartTick);
                 grid->getFieldByID((*grid)[y][x]).updateVaccination(heal);
             }
         }
+
         for (int x = 0; x < grid->getX(); ++x) {
             for (int y = 0; y < grid->getY(); ++y) {
-                inf = Logic::calculateSpontaneousInfection(grid, x, y);
+                inf = Logic::calculateSpontaneousInfection(grid, y, x);
                 inf=std::min(inf, 100 - grid->getFieldByID((*grid)[y][x]).getCurrentInfectionValue() -
                               grid->getFieldByID((*grid)[y][x]).getVaccinationRate());
                 grid->getFieldByID((*grid)[y][x]).updateInfection(inf);
@@ -34,7 +35,8 @@ void Logic::simulateTO(int gameID, int tickID, int countryID) {
     }
 }
 
-int Logic::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, int fieldCoordinateY,
+
+int Logic::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateY, int fieldCoordinateX,
                                        int healStartTick) {
     size_t currentTick = grid->getCurrentTick();
     if (grid == nullptr) throw std::invalid_argument("grid null pointer");
@@ -69,13 +71,13 @@ int Logic::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, int fie
     }
 }
 
-int Logic::calculateSpontaneousInfection(Grid *grid, size_t fieldCoordinateX, size_t fieldCoordinateY) {
+int Logic::calculateSpontaneousInfection(Grid *grid, size_t fieldCoordinateY, size_t fieldCoordinateX) {
 
     if (grid == nullptr) throw std::invalid_argument("grid null pointer");
     unsigned long factor2, factor3, factor4;
 
     size_t currentTick = grid->getCurrentTick();
-    size_t fieldID = grid->transformCoordinateToID(fieldCoordinateX, fieldCoordinateY);
+    size_t fieldID = grid->transformCoordinateToID(fieldCoordinateY, fieldCoordinateX);
     size_t districtID = grid->getFieldByID(fieldID).getAssignedDistrictID();
     if (grid->getDistrictByID(districtID).isClear()) {
         return 0;
@@ -141,10 +143,9 @@ int Logic::calculateCrossInfection(Grid *grid, int fieldCoordinateX, int fieldCo
                              {fieldCoordinateX, fieldCoordinateY + 1},
                              {fieldCoordinateX + 1, fieldCoordinateY},
                              {fieldCoordinateX, fieldCoordinateY - 1}};
-    size_t infectionDequeSize = field.getLastInfectionValues().size() - 1;
     for (int i = 0; i < 5; ++i) {
-        int cX = coordinates[i][0];
         int cY = coordinates[i][1];
+        int cX = coordinates[i][0];
         //boundary check .. -1 because arrays still start at 0
         if (cX < 0 || cY < 0 || cX > grid->getX() - 1 || cY > grid->getY() - 1) {
             continue;
@@ -162,7 +163,9 @@ int Logic::calculateCrossInfection(Grid *grid, int fieldCoordinateX, int fieldCo
         //for C++ dark magic, we can't get the values immediately out of the deque reference
         std::deque<int> lastInfectionValues = cField.getLastInfectionValues();
         //last infection value, or the previous one
+        size_t infectionDequeSize = cField.getLastInfectionValues().size() - 1;
         size_t index;
+        //std::cerr<<"cros_cell_check between: "<<fieldCoordinateY<<" "<<fieldCoordinateX<<"; "<<cY<<" "<<cX<<std::endl;
         if (cX < fieldCoordinateX || cY < fieldCoordinateY) {
             index = infectionDequeSize - 1;
         }
@@ -171,6 +174,7 @@ int Logic::calculateCrossInfection(Grid *grid, int fieldCoordinateX, int fieldCo
             //"beszorított átfertőzési mutató"
             //std::clamp added in C++17
             int d = std::clamp(field.getPopulationDensity() - cField.getPopulationDensity(), 0, 2) + 1;
+            //std::cerr<<"d= "<<d<<std::endl;
             sum += d;
         } else {
             continue;

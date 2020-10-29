@@ -102,7 +102,7 @@ void Protocol::createGrid(std::string& line){
         }
     }
     std::vector<size_t> tmp2 =std::vector<size_t>();
-    for (size_t i = 0; i < numberOfDisticts; ++i) {
+    for (size_t i = 0; i < numberOfDisticts+1; ++i) {
         grid->addDistrict(District(i,tmp2,false));
     }
 }

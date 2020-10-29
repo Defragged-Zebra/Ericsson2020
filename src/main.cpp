@@ -1,6 +1,5 @@
 #include <iostream>
 #include "antiVirus.h"
-#include "mainloop.h"
 
 
 
@@ -8,19 +7,20 @@ void debug() {
     u_long factors[4] = {1569741360, 1785505948, 516548029, 1302116447};
     Random rd = Random(factors);
     size_t i = 0;
-    int index=2;
+    int index=3;
     for (int j = 0; j < 24; ++j) {
         //rd.next(index);
     }
     std::cout<<rd.getFactor(index)<<std::endl;
     bool overrun[4]={false,false, false, false};
     do  {
-        if (rd.getFactor(index)==1022357306) {std::cout << "i at 1022357306 = " << i << std::endl;}
-        if (rd.getFactor(index)==6014329) {std::cout << "i at 6014329 = " << i << std::endl;}
-        if (rd.getFactor(index)==383700820) {std::cout << "i at 383700820 = " << i << std::endl;}
-        if (rd.getFactor(index)==1880906878) {std::cout << "i at 1880906878 = " << i << std::endl;}
+        std::cout << "i= " << i <<" factor: "<<rd.getFactor(index)<< std::endl;
         ++i;
-    } while (rd.next(index) != 1022357306); //6014329);
+    } while (rd.next(index) != 413011888); //6014329);
+    std::cout << "i= " << i <<" factor: "<<rd.getFactor(index)<< std::endl;
+    do  {
+        ++i;
+    } while (rd.next(index) != 413011888); //6014329);
     std::cout << "i= " << i << std::endl;
 
 }

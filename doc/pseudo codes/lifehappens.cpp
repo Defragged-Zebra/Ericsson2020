@@ -32,6 +32,17 @@ int healing() {
 //infecting
 //first element: infection(0, coord) => tick_info[0, coord].infection_rate > 0 ? 1 : 0
 
+
+
+
+//original:
+infection(curr_tick, coord) => ceil((avg(i = [1 .. mini(factor2() % 10 + 10, curr_tick)], infection(curr_tick - i, coord)) +
+sum(c = {coord, neighbours(coord)}; t = factor3() % 7 + 3,
+tick_info[curr_tick-1, c].infection_rate > (start_info[coord].district != start_info[c].district ? 2 : coord != c ? 1 : 0)
+* t ? clamp(start_info[coord].population - start_info[c].population, 0, 2) + 1 : 0)) * (factor4() % 25 + 50) / 100.0)
+
+
+
 int infect (){
     if (sectorIsClear){
         return 0;
