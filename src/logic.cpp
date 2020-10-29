@@ -42,7 +42,7 @@ int Logic::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateY, int fie
     Field field = grid->getFieldByID(grid->transformCoordinateToID(fieldCoordinateY, fieldCoordinateX));
     unsigned long factor1;
     //TODO: might be bad implementation
-    if (currentTick + 1 < healStartTick) {
+    if (currentTick  <= healStartTick) {
         factor1 = grid->random.getFactor(1);
     } else {
         //TODO: bad implementation(?)
