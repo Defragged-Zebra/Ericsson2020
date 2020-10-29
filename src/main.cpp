@@ -14,6 +14,7 @@ void debug() {
         if (rd.getFactor(index) == 6014329) { std::cout << "i at 6014329 = " << i << std::endl; }
         if (rd.getFactor(index) == 383700820) { std::cout << "i at 383700820 = " << i << std::endl; }
         if (rd.getFactor(index) == 1880906878) { std::cout << "i at 1880906878 = " << i << std::endl; }
+
         ++i;
     } while (rd.next(index) != 49058578); //6014329);
     std::cout << "i= " << i << std::endl;
@@ -47,10 +48,11 @@ void debug2() {
 }
 
 int main() {
-    debug2();
+    //debug2();
     //return 0;
     //std::stringstream ss = ex1();
     std::stringstream ss = ex1_1();
+
     for (int i = 0; i < 3; ++i) {
         ss << "REQ 1 " << i << " 0" << std::endl;
         ss << "." << std::endl;

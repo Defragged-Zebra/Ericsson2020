@@ -20,6 +20,7 @@ class Grid {
     size_t x;
     size_t y;
     size_t currentTick=0;
+
     Grid(){
         throw std::runtime_error("grid default ctr");
     }
@@ -66,7 +67,7 @@ public:
     void addField(const Field& newField);
     void addDistrict(const District& newDistrict);
     void addCountry(const Country& newCountry);
-    size_t getCurrentTick();
+    size_t getCurrentTick() const;
     void IncreaseCurrentTick(){currentTick++;}
 };
 

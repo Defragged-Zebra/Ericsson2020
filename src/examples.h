@@ -8,7 +8,6 @@
 #include <iostream>
 #include <sstream>
 
-//small field (website example)
 std::stringstream ex1() {
     std::stringstream ss;
     ss << "START 1 44 1" << std::endl;
