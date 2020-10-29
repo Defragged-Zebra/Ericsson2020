@@ -42,7 +42,7 @@ std::stringstream ex1(){
 }
 std::stringstream ex2(){
     std::stringstream ss2;
-    ss2<<"START 22936 142 1"<< std::endl;
+    ss2<<"START 1 142 1"<< std::endl;
     ss2 <<"FACTORS 1748545418 302329097 1762946389 944841915"<< std::endl;
     ss2 <<"FIELDS 44 27"<< std::endl;
     ss2 <<"FD 0 0 0 0 4"<< std::endl;

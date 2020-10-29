@@ -37,9 +37,9 @@ void debug() {
 int main() {
     //debug();
     //return 0;
-    std::stringstream ss = ex1();
-    //std::stringstream ss = ex2();
-    for (int i = 0; i < 44; ++i) {
+    //std::stringstream ss = ex1();
+    std::stringstream ss = ex2();
+    for (int i = 0; i < 3; ++i) {
         ss << "REQ 1 " << i << " 0" << std::endl;
         ss << "." << std::endl;
     }
