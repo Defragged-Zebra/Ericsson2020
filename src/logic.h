@@ -38,7 +38,7 @@ public:
     static int calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, int healStartTick);
 
     static int calculateSpontaneousInfection(Grid *grid, size_t fieldCoordinateX, size_t fieldCoordinateY);
-
+    static void shiftFactor2to4();
 };
 
 
