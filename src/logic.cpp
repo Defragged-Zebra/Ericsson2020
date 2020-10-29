@@ -26,7 +26,7 @@ void Logic::simulateTO(int gameID, int tickID, int countryID) {
         for (int x = 0; x < grid->getX(); ++x) {
             for (int y = 0; y < grid->getY(); ++y) {
                 inf = Logic::calculateSpontaneousInfection(grid, y, x);
-                inf = std::min(inf, 100 - grid->getFieldByID((*grid)[y][x]).getCurrentInfectionValue() -
+                inf = std::min(inf, 100 - grid->getFieldByID((*grid)[y][x]).getCurrentInfectionRate() -
                                     grid->getFieldByID((*grid)[y][x]).getVaccinationRate());
                 grid->getFieldByID((*grid)[y][x]).updateInfection(inf);
             }
@@ -53,15 +53,15 @@ int Logic::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateY, int fie
     //Ha még nem értük el a width + height -edik kört, akkor 0
     //+1 because Tick starts from 0
     if (currentTick + 1 < healStartTick ||
-        grid->getFieldByID((*grid)[fieldCoordinateX][fieldCoordinateY]).getCurrentInfectionValue() == 0) {
+            grid->getFieldByID((*grid)[fieldCoordinateX][fieldCoordinateY]).getCurrentInfectionRate() == 0) {
         return 0;
     } else {
         //Az előző tickek (pályaméret width + height darabszámú) fertőzöttségi mutatóinak minimuma szorozva az ...
         //a = min(lastInfectionValues[lastInfectionValues.len() - lastTicks->lastInfectionValues.len()]);
 
 
-        std::deque<int>::iterator tmp = std::min_element(field.getLastInfectionValues().begin(),
-                                                         field.getLastInfectionValues().end());
+        std::deque<int>::iterator tmp = std::min_element(field.getLastInfectionRates().begin(),
+                                                         field.getLastInfectionRates().end());
         double a = *tmp;
         //első véletlen faktor 10-zel való osztási maradékával (0-9)
         double b = int(factor1 % 10);
@@ -91,10 +91,11 @@ int Logic::calculateSpontaneousInfection(Grid *grid, size_t fieldCoordinateY, si
         //int average = avg(i =[1..c], infection(curr_tick - i, coord));
         Field &field = grid->getFieldByID(grid->transformCoordinateToID(fieldCoordinateY, fieldCoordinateX));
         //a "rekurzív" függvényhívás miatt szükség van az első elemre, ami a következőképpen néz ki:
-        if (currentTick == 0) {
+
+        /*if (currentTick == 1) {
             //infection(0, coord) => tick_info[0, coord].infection_rate > 0 ? 1 : 0
-            return field.getCurrentInfectionValue() > 0 ? 1 : 0;
-        }
+            return field.getCurrentInfectionRate() > 0 ? 1 : 0;
+        }*/
 
         double average = 0;
         std::deque<int> lastInfectionValues = field.getLastInfectionValues();
@@ -158,9 +159,9 @@ int Logic::calculateCrossInfection(Grid *grid, int fieldCoordinateY, int fieldCo
         //ha az előző körös fertőzöttség nagyobb, mint a hajlandóság és a távolság szorzata.
         Field cField = grid->getFieldByID(grid->transformCoordinateToID(cY, cX));
         //for C++ dark magic, we can't get the values immediately out of the deque reference
-        std::deque<int> lastInfectionValues = cField.getLastInfectionValues();
+        std::deque<int> lastInfectionValues = cField.getLastInfectionRates();
         //last infection value, or the previous one
-        size_t infectionDequeSize = cField.getLastInfectionValues().size() - 1;
+        size_t infectionDequeSize = cField.getLastInfectionRates().size() - 1;
         size_t index;
         //std::cerr<<"cros_cell_check between: "<<fieldCoordinateY<<" "<<fieldCoordinateX<<"; "<<cY<<" "<<cX<<std::endl;
         if (cX < fieldCoordinateX || cY < fieldCoordinateY) {

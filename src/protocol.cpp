@@ -39,7 +39,7 @@ void Protocol::currentResult(int gameID,int tickID,int countryID) {
     os << "RES " << gameID <<" " << tickID <<" "<< countryID <<std::endl;
     for (size_t y = 0; y < grid->getY(); ++y) {
         for (size_t x = 0; x < grid->getX() ; ++x) {
-            os<< grid->getFieldByID((*grid)[y][x]).getCurrentInfectionValue() <<" ";
+            os << grid->getFieldByID((*grid)[y][x]).getCurrentInfectionRate() << " ";
         }
         os<<std::endl;
     }

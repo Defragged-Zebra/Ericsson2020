@@ -19,7 +19,7 @@ class Grid {
     std::vector<Field> fields;
     size_t x;
     size_t y;
-    size_t currentTick;
+    size_t currentTick=0;
     Grid(){
         throw std::runtime_error("grid default ctr");
     }
