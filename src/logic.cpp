@@ -13,6 +13,14 @@ Grid *Logic::grid = nullptr;
 void Logic::simulateTO(int gameID, int tickID, int countryID) {
     for (int i = 0; (grid->getCurrentTick() < tickID); ++i) {
         grid->IncreaseCurrentTick();
+        if(grid->getCurrentTick()==1){
+            //Logic::shiftXtimesY2to4();
+            //Logic::shiftXtimesY2to4();
+            /*for (int j = 0; j < 21; ++j) {
+                Logic::shiftFactor2to4();
+            }*/
+
+        }
         //if(currentTick>maxticks){throw std::runtime_error("antiVirus.cpp: too many ticks");}
         int heal = 0;
         int inf = 0;
@@ -26,7 +34,7 @@ void Logic::simulateTO(int gameID, int tickID, int countryID) {
         for (int x = 0; x < grid->getX(); ++x) {
             for (int y = 0; y < grid->getY(); ++y) {
                 inf = Logic::calculateSpontaneousInfection(grid, y, x);
-                inf = std::min(inf, 100 - grid->getFieldByID((*grid)[y][x]).getCurrentInfectionValue() -
+                inf = std::min(inf, 100 - grid->getFieldByID((*grid)[y][x]).getCurrentInfectionRate() -
                                     grid->getFieldByID((*grid)[y][x]).getVaccinationRate());
                 grid->getFieldByID((*grid)[y][x]).updateInfection(inf);
             }
@@ -40,9 +48,9 @@ int Logic::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateY, int fie
     size_t currentTick = grid->getCurrentTick();
     if (grid == nullptr) throw std::invalid_argument("grid null pointer");
     Field field = grid->getFieldByID(grid->transformCoordinateToID(fieldCoordinateY, fieldCoordinateX));
-    unsigned long factor1;
+    uint64_t factor1;
     //TODO: might be bad implementation
-    if (currentTick + 1 < healStartTick) {
+    if (currentTick <= healStartTick) {
         factor1 = grid->random.getFactor(1);
     } else {
         //TODO: bad implementation(?)
@@ -53,15 +61,15 @@ int Logic::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateY, int fie
     //Ha még nem értük el a width + height -edik kört, akkor 0
     //+1 because Tick starts from 0
     if (currentTick + 1 < healStartTick ||
-        grid->getFieldByID((*grid)[fieldCoordinateX][fieldCoordinateY]).getCurrentInfectionValue() == 0) {
+        grid->getFieldByID((*grid)[fieldCoordinateX][fieldCoordinateY]).getCurrentInfectionRate() == 0) {
         return 0;
     } else {
         //Az előző tickek (pályaméret width + height darabszámú) fertőzöttségi mutatóinak minimuma szorozva az ...
         //a = min(lastInfectionValues[lastInfectionValues.len() - lastTicks->lastInfectionValues.len()]);
 
 
-        std::deque<int>::iterator tmp = std::min_element(field.getLastInfectionValues().begin(),
-                                                         field.getLastInfectionValues().end());
+        std::deque<int>::iterator tmp = std::min_element(field.getLastInfectionRates().begin(),
+                                                         field.getLastInfectionRates().end());
         double a = *tmp;
         //első véletlen faktor 10-zel való osztási maradékával (0-9)
         double b = int(factor1 % 10);
@@ -73,7 +81,7 @@ int Logic::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateY, int fie
 int Logic::calculateSpontaneousInfection(Grid *grid, size_t fieldCoordinateY, size_t fieldCoordinateX) {
 
     if (grid == nullptr) throw std::invalid_argument("grid null pointer");
-    unsigned long factor2, factor3, factor4;
+    uint64_t factor2, factor3, factor4;
 
     size_t currentTick = grid->getCurrentTick();
     size_t fieldID = grid->transformCoordinateToID(fieldCoordinateY, fieldCoordinateX);
@@ -81,9 +89,9 @@ int Logic::calculateSpontaneousInfection(Grid *grid, size_t fieldCoordinateY, si
     if (grid->getDistrictByID(districtID).isClear()) {
         return 0;
     } else {
-        factor2 = grid->random.next(2);
-        factor3 = grid->random.next(3);
-        factor4 = grid->random.next(4);
+        factor2 = grid->random.getFactor(2);
+        factor3 = grid->random.getFactor(3);
+        factor4 = grid->random.getFactor(4);
         //curr_tick: ticks elapsed
         //A második véletlen faktor 10-zel való osztási maradéka + 10 darab előző vírusterjedés átlaga az adott cellán.
         //the -1 in the end is there because we later use it as an array index
@@ -91,10 +99,11 @@ int Logic::calculateSpontaneousInfection(Grid *grid, size_t fieldCoordinateY, si
         //int average = avg(i =[1..c], infection(curr_tick - i, coord));
         Field &field = grid->getFieldByID(grid->transformCoordinateToID(fieldCoordinateY, fieldCoordinateX));
         //a "rekurzív" függvényhívás miatt szükség van az első elemre, ami a következőképpen néz ki:
-        if (currentTick == 0) {
+
+        /*if (currentTick == 1) {
             //infection(0, coord) => tick_info[0, coord].infection_rate > 0 ? 1 : 0
-            return field.getCurrentInfectionValue() > 0 ? 1 : 0;
-        }
+            return field.getCurrentInfectionRate() > 0 ? 1 : 0;
+        }*/
 
         double average = 0;
         std::deque<int> lastInfectionValues = field.getLastInfectionValues();
@@ -108,16 +117,19 @@ int Logic::calculateSpontaneousInfection(Grid *grid, size_t fieldCoordinateY, si
         double a = average + sum;
         //Az így eddig kiszámolt összeget megszorozzuk a negyedik véletlen faktor 25-tel való osztási maradéka + 50-nel,
         //és az egészet leosztjuk 100-al, majd vesszük a felső egészrészét.
+        Logic::shiftFactor2to4();
         return std::ceil(a * (double) (factor4 % 25 + 50) / 100.0);
     }
 }
-
-void Logic::shiftFactor2to4() {
-    for (int i = 0; i < grid->getY() * grid->getX(); ++i) {
-        grid->random.next(2);
-        grid->random.next(3);
-        grid->random.next(4);
+void Logic::shiftXtimesY2to4(){
+    for (size_t i = 0; i < grid->getX()*grid->getY(); ++i) {
+        shiftFactor2to4();
     }
+}
+void Logic::shiftFactor2to4() {
+    grid->random.next(2);
+    grid->random.next(3);
+    grid->random.next(4);
 }
 
 int Logic::distance(Grid *grid, size_t x1, size_t y1, size_t x2, size_t y2) {
@@ -130,49 +142,47 @@ int Logic::distance(Grid *grid, size_t x1, size_t y1, size_t x2, size_t y2) {
     if (district1 != district2) {
         return 2;
     } else {
-        return  1;
+        return 1;
     }
 }
 
-int Logic::calculateCrossInfection(Grid *grid, int fieldCoordinateY, int fieldCoordinateX, unsigned long factor3) {
-    Field &field = grid->getFieldByID(grid->transformCoordinateToID(fieldCoordinateY, fieldCoordinateX));
+int Logic::calculateCrossInfection(Grid *grid, int centerY, int centerX, uint64_t factor3) {
+    Field &field = grid->getFieldByID(grid->transformCoordinateToID(centerY, centerX));
     int sum = 0;
-    int coordinates[5][2] = {{fieldCoordinateX,     fieldCoordinateY},
-                             {fieldCoordinateX - 1, fieldCoordinateY},
-                             {fieldCoordinateX,     fieldCoordinateY + 1},
-                             {fieldCoordinateX + 1, fieldCoordinateY},
-                             {fieldCoordinateX,     fieldCoordinateY - 1}};
+    //Az átfertőződési mutatók kiszámolása előtt a t átfertőződési hajlandóságot generáljuk
+    // a harmadik véletlen faktor 7-tel való osztási maradéka + 3 -mal
+    int t = int(factor3 % 7) + 3;
+    int coordinates[5][2] = {{centerY,centerX},
+                             {centerY, centerX-1},
+                             {centerY-1, centerX},
+                             {centerY+1,centerX},
+                             {centerY, centerX+1}};
     for (int i = 0; i < 5; ++i) {
-        int cY = coordinates[i][1];
-        int cX = coordinates[i][0];
+        int selectedY = coordinates[i][0];
+        int selectedX = coordinates[i][1];
         //boundary check .. -1 because arrays still start at 0
-        if (cX < 0 || cY < 0 || cX > grid->getX() - 1 || cY > grid->getY() - 1) {
+        if (selectedX < 0 || selectedY < 0 || selectedX > grid->getX() - 1 || selectedY > grid->getY() - 1) {
             continue;
         }
-        int dist = distance(grid, fieldCoordinateX, fieldCoordinateY, cX, cY);
-        //Az átfertőződési mutatók kiszámolása előtt a t átfertőződési hajlandóságot generáljuk
-        // a harmadik véletlen faktor 7-tel való osztási maradéka + 3 -mal
-        int t = int(factor3 % 7) + 3;
+        int dist = distance(grid, centerX, centerY, selectedX, selectedY);
         //Az átfertőződési mutatókat akkor adjuk össze a hely populációs különbségéből adódó,
         //1-3 érték közé beszorított fertőzési lehetőséggel,
         //ha az előző körös fertőzöttség nagyobb, mint a hajlandóság és a távolság szorzata.
-        Field cField = grid->getFieldByID(grid->transformCoordinateToID(cY, cX));
+        Field selectedField = grid->getFieldByID(grid->transformCoordinateToID(selectedY, selectedX));
         //for C++ dark magic, we can't get the values immediately out of the deque reference
-        std::deque<int> lastInfectionValues = cField.getLastInfectionValues();
+        std::deque<int> lastInfectionRate = selectedField.getLastInfectionRates();
         //last infection value, or the previous one
-        size_t infectionDequeSize = cField.getLastInfectionValues().size() - 1;
+        size_t infectionDequeSize = selectedField.getLastInfectionRates().size() - 1;
         size_t index;
-        //std::cerr<<"cros_cell_check between: "<<fieldCoordinateY<<" "<<fieldCoordinateX<<"; "<<cY<<" "<<cX<<std::endl;
-        if (cX < fieldCoordinateX || cY < fieldCoordinateY) {
+        //std::cerr<<"cros_cell_check between: "<<centerY<<" "<<centerX<<"; "<<selectedY<<" "<<selectedX<<std::endl;
+        if (selectedX < centerX || selectedY < centerY){
             index = infectionDequeSize - 1;
-        } else { index = infectionDequeSize; }
-        if (lastInfectionValues[index] > dist * t) {
+        } else {
+            index = infectionDequeSize;
+        }
+        if (lastInfectionRate[index] > dist * t) {
             //"beszorított átfertőzési mutató"
-            //std::clamp added in C++17
-            int d = std::clamp(field.getPopulationDensity() - cField.getPopulationDensity(), 0, 2) + 1;
-            //original:
-            //int d = std::clamp(field.getPopulationDensity() - cField.getPopulationDensity(), 0, 2) + 1;
-            //std::cerr<<"d= "<<d<<std::endl;
+            int d = std::clamp(field.getPopulationDensity() - selectedField.getPopulationDensity(), 0, 2) + 1;
             sum += d;
         } else {
             continue;

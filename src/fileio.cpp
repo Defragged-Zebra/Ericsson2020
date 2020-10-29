@@ -68,7 +68,7 @@ void FileIO::saveConfiguration() {
 void FileIO::saveFieldsLastData(size_t tickID) {
     saveFileFieldData << tickID << ": ";
     for (int i = 0; i < grid->getX() * grid->getY(); ++i) {
-        saveFileFieldData << grid->getFieldByID(i).getCurrentInfectionValue() << ", "
+        saveFileFieldData << grid->getFieldByID(i).getCurrentInfectionRate() << ", "
                           << grid->getFieldByID(i).getVaccinationRate() << ", ";
     }
     saveFileFieldData << std::endl;

@@ -38,7 +38,7 @@ void Graphics::terminalGraphicsRun(size_t tickID) {
     for (int i = 0; i < x; ++i) {
         std::cout << "\033[0m| ";
         for (int j = 0; j < y; ++j) {
-            infectionValue = grid->getFieldByID((*grid)[i][j]).getCurrentInfectionValue();
+            infectionValue = grid->getFieldByID((*grid)[i][j]).getCurrentInfectionRate();
             healValue = grid->getFieldByID((*grid)[i][j]).getVaccinationRate();
             activeTransmitters=(infectionValue-healValue);
             if (activeTransmitters == 0) {

@@ -4,9 +4,9 @@
 
 
 //random nums:
-unsigned long factor1 -> factor4 = factor1.next(seed_from_server) //global variable or property of grid
+uint64_t  factor1 -> factor4 = factor1.next(seed_from_server) //global variable or property of grid
 //factor = factor * 48271 % 0x7fffffff
-unsigned long factor1_next(){ //might be better w a class
+uint64_t  factor1_next(){ //might be better w a class
     factor1 = factor1 * 48271 % 0x7fffffff;
     return factor1;
 };

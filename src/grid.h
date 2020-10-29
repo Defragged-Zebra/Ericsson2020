@@ -19,7 +19,8 @@ class Grid {
     std::vector<Field> fields;
     size_t x;
     size_t y;
-    size_t currentTick =0;
+    size_t currentTick=0;
+
     Grid(){
         throw std::runtime_error("grid default ctr");
     }
@@ -32,7 +33,7 @@ class Grid {
 
 public:
     Random random;
-    Grid(size_t y, size_t x, unsigned long seeds[4]){
+    Grid(size_t y, size_t x, uint64_t  seeds[4]){
         this->x=x;
         this->y=y;
         random=Random(seeds);

@@ -16,9 +16,11 @@ void Field::updateVaccination(int value) {
 
 void Field::updateInfection(int value) {
     //check for infection to not extend 100
-    int real_value=std::min(currentInfectionValue + value, 100);
-    lastInfectionValues.push_back(real_value);
+    int newInfectionRate=std::min(infectionRate + value, 100);
+    lastInfectionValues.push_back(value);
+    lastInfectionRates.push_back(newInfectionRate);
+    if (lastInfectionRates.size() > numberOfStoredPastValues) { lastInfectionRates.pop_front(); }
     if (lastInfectionValues.size() > numberOfStoredPastValues) { lastInfectionValues.pop_front(); }
-    currentInfectionValue = real_value;
+    infectionRate = newInfectionRate;
 }
 
