@@ -19,7 +19,13 @@ void Protocol::request(std::string& line){
     ss<<line;
     int gameID,tickID,countryID;
     ss>>tmp>>gameID>>tickID>>countryID;
-    Logic::simulateTO(gameID,tickID,countryID); //TODO ezt meg kell írni, addig tickID-ig szimuláljon!!!
+    std::cerr<<std::endl;
+    for (int i = 1; i <= 4; ++i) {
+        std::cerr<<grid->random.getFactor(i)<<" ";
+    }
+    std::cerr<<std::endl;
+    Logic::simulateTO(gameID,tickID,countryID); //TODO: randomszámok innen jönnek
+
     Protocol::currentResult(gameID,tickID,countryID);
 }
 void Protocol::currentResult(int gameID,int tickID,int countryID) {
@@ -67,8 +73,10 @@ void Protocol::createGrid(std::string& line){
     ss2<<line;
     ss2>>tmp>>iy >> ix;
     grid = new Grid(iy,ix,factors);
+    Logic::setGrid(grid);
     size_t fieldID=0;
     size_t storedValsCnt = grid->getY()+grid->getX();
+    size_t numberOfDisticts=0;
     for (size_t y = 0; y < grid->getY(); ++y) {
         for (size_t x = 0; x < grid->getX(); ++x) {
             std::stringstream ss3;
@@ -77,11 +85,17 @@ void Protocol::createGrid(std::string& line){
             size_t district;
             int infRate, population,tmp2;
             ss3>>tmp>> tmp2 >> tmp2 >> district >> infRate >> population;
+            if (district>numberOfDisticts){numberOfDisticts=district;}
             //TODO field id check
             grid->addField(Field(fieldID,district,infRate,0,population,storedValsCnt));
             grid->uploadGridWithFieldID(y,x,fieldID++);
         }
     }
+    std::vector<size_t> tmp2 =std::vector<size_t>();
+    for (size_t i = 0; i < numberOfDisticts; ++i) {
+        grid->addDistrict(District(i,tmp2,false));
+    }
+
 }
 void Protocol::sendDebugMsg(const std::string &msg) {
     ers << msg << std::endl;

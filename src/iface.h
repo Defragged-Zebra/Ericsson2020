@@ -9,6 +9,7 @@
 #include "fileio.h"
 #include "grid.h"
 #include "iface.h"
+#include "logic.h"
 
 class Iface {
 protected:
@@ -34,6 +35,7 @@ public:
     }
     void setGrid(Grid* g){
         grid=g;
+        Logic::setGrid(g);
     }
     void checkGrid(){
         if(grid==nullptr)throw std::runtime_error("Iface: grid pointer is null");
