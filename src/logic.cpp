@@ -20,10 +20,12 @@ void Logic::simulateTO(int gameID, int tickID, int countryID) {
         for (int y = 0; y < grid->getY(); ++y) {
             for (int x = 0; x < grid->getX(); ++x) {
                 heal = Logic::calculateSpontaneousHealing(grid, x, y, healStartTick);
-
-                inf = Logic::calculateSpontaneousInfection(grid, x, y);
-
                 grid->getFieldByID((*grid)[y][x]).updateVaccination(heal);
+            }
+        }
+        for (int x = 0; x < grid->getX(); ++x) {
+            for (int y = 0; y < grid->getY(); ++y) {
+                inf = Logic::calculateSpontaneousInfection(grid, x, y);
                 grid->getFieldByID((*grid)[y][x]).updateInfection(inf);
             }
         }
