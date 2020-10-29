@@ -12,13 +12,13 @@ Grid *Logic::grid = nullptr;
 
 void Logic::simulateTO(int gameID, int tickID, int countryID) {
     for (int i = 0; (grid->getCurrentTick() < tickID); ++i) {
-
+        grid->IncreaseCurrentTick();
         //if(currentTick>maxticks){throw std::runtime_error("antiVirus.cpp: too many ticks");}
         int heal = 0;
         int inf = 0;
         size_t healStartTick = grid->getX() + grid->getY();
-        for (int x = 0; x < grid->getX(); ++x) {
-            for (int y = 0; y < grid->getY(); ++y) {
+        for (int y = 0; y < grid->getY(); ++y) {
+            for (int x = 0; x < grid->getX(); ++x) {
                 heal = Logic::calculateSpontaneousHealing(grid, x, y, healStartTick);
 
                 inf = Logic::calculateSpontaneousInfection(grid, x, y);
@@ -27,7 +27,6 @@ void Logic::simulateTO(int gameID, int tickID, int countryID) {
                 grid->getFieldByID((*grid)[y][x]).updateInfection(inf);
             }
         }
-        grid->IncreaseCurrentTick();
     }
 }
 
