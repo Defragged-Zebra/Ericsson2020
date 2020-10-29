@@ -70,11 +70,6 @@ int Logic::calculateSpontaneousInfection(Grid *grid, size_t fieldCoordinateX, si
     if (grid == nullptr) throw std::invalid_argument("grid null pointer");
 
     unsigned long factor2, factor3, factor4;
-    if (grid->getCurrentTick() == 0) {
-        grid->random.next(2);
-        grid->random.next(3);
-        grid->random.next(4);
-    }
 
     factor2 = grid->random.next(2);
     factor3 = grid->random.next(3);
@@ -112,6 +107,14 @@ int Logic::calculateSpontaneousInfection(Grid *grid, size_t fieldCoordinateX, si
         //Az így eddig kiszámolt összeget megszorozzuk a negyedik véletlen faktor 25-tel való osztási maradéka + 50-nel,
         //és az egészet leosztjuk 100-al, majd vesszük a felső egészrészét.
         return std::ceil(a * (double) (factor4 % 25 + 50) / 100.0);
+    }
+}
+
+void Logic::shiftFactor2to4() {
+    for (int i = 0; i < grid->getY() * grid->getX(); ++i) {
+        grid->random.next(2);
+        grid->random.next(3);
+        grid->random.next(4);
     }
 }
 

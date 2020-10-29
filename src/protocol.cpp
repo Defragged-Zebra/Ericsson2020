@@ -55,6 +55,9 @@ void Protocol::setStart(std::string& line){
     std::string tmp;
     ss<<line;
     ss>> tmp >> gameid >> maxtickid >> countriescount;
+    this->gameID=gameid;
+    this->maxTickCount=maxtickid;
+    this->countriesCount=countriescount;
 }
 void Protocol::createGrid(std::string& line){
     std::stringstream ss;
