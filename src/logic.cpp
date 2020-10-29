@@ -42,7 +42,7 @@ int Logic::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateY, int fie
     Field field = grid->getFieldByID(grid->transformCoordinateToID(fieldCoordinateY, fieldCoordinateX));
     unsigned long factor1;
     //TODO: might be bad implementation
-    if (currentTick  <= healStartTick) {
+    if (currentTick <= healStartTick) {
         factor1 = grid->random.getFactor(1);
     } else {
         //TODO: bad implementation(?)
@@ -53,7 +53,7 @@ int Logic::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateY, int fie
     //Ha még nem értük el a width + height -edik kört, akkor 0
     //+1 because Tick starts from 0
     if (currentTick + 1 < healStartTick ||
-            grid->getFieldByID((*grid)[fieldCoordinateX][fieldCoordinateY]).getCurrentInfectionRate() == 0) {
+        grid->getFieldByID((*grid)[fieldCoordinateX][fieldCoordinateY]).getCurrentInfectionRate() == 0) {
         return 0;
     } else {
         //Az előző tickek (pályaméret width + height darabszámú) fertőzöttségi mutatóinak minimuma szorozva az ...
@@ -131,7 +131,7 @@ int Logic::distance(Grid *grid, size_t x1, size_t y1, size_t x2, size_t y2) {
     if (district1 != district2) {
         return 2;
     } else {
-        return  1;
+        return 1;
     }
 }
 
