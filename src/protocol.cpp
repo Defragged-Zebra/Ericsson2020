@@ -19,7 +19,7 @@ void Protocol::request(std::string& line){
     ss<<line;
     int gameID,tickID,countryID;
     ss>>tmp>>gameID>>tickID>>countryID;
-    std::cerr<<std::endl<<"Factors before simulation: ";
+    std::cerr<<"Factors before simulation: ";
     for (int i = 1; i <= 4; ++i) {
         std::cerr<<grid->random.getFactor(i)<<" ";
     }
@@ -27,7 +27,13 @@ void Protocol::request(std::string& line){
     Logic::simulateTO(gameID,tickID,countryID);
 
     Protocol::currentResult(gameID,tickID,countryID);
-    if (grid->getCurrentTick()==0){Logic::shiftFactor2to4(); }
+    //if (grid->getCurrentTick()==0){Logic::shiftFactor2to4(); }
+    std::cerr<<std::endl<<"Factors after simulation: ";
+    for (int i = 1; i <= 4; ++i) {
+        std::cerr<<grid->random.getFactor(i)<<" ";
+    }
+    std::cerr<<std::endl;
+    std::cerr<<"-----------------------"<<std::endl;
 }
 void Protocol::currentResult(int gameID,int tickID,int countryID) {
     os << "RES " << gameID <<" " << tickID <<" "<< countryID <<std::endl;
@@ -96,7 +102,7 @@ void Protocol::createGrid(std::string& line){
         }
     }
     std::vector<size_t> tmp2 =std::vector<size_t>();
-    for (size_t i = 0; i < numberOfDisticts; ++i) {
+    for (size_t i = 0; i < numberOfDisticts+1; ++i) {
         grid->addDistrict(District(i,tmp2,false));
     }
 }
