@@ -19,14 +19,15 @@ void Protocol::request(std::string& line){
     ss<<line;
     int gameID,tickID,countryID;
     ss>>tmp>>gameID>>tickID>>countryID;
-    std::cerr<<std::endl;
+    std::cerr<<std::endl<<"Factors before simulation: ";
     for (int i = 1; i <= 4; ++i) {
         std::cerr<<grid->random.getFactor(i)<<" ";
     }
     std::cerr<<std::endl;
-    Logic::simulateTO(gameID,tickID,countryID); //TODO: randomszámok innen jönnek
+    Logic::simulateTO(gameID,tickID,countryID);
 
     Protocol::currentResult(gameID,tickID,countryID);
+    if (grid->getCurrentTick()==0){Logic::shiftFactor2to4(); }
 }
 void Protocol::currentResult(int gameID,int tickID,int countryID) {
     os << "RES " << gameID <<" " << tickID <<" "<< countryID <<std::endl;
@@ -98,7 +99,6 @@ void Protocol::createGrid(std::string& line){
     for (size_t i = 0; i < numberOfDisticts; ++i) {
         grid->addDistrict(District(i,tmp2,false));
     }
-
 }
 void Protocol::sendDebugMsg(const std::string &msg) {
     ers << msg << std::endl;
