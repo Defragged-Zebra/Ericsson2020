@@ -24,10 +24,10 @@ void Protocol::request(std::string& line){
         std::cerr<<grid->random.getFactor(i)<<" ";
     }
     std::cerr<<std::endl;
+    //if (grid->getCurrentTick()==0){Logic::shiftFactor2to4(); }
     Logic::simulateTO(gameID,tickID,countryID);
 
     Protocol::currentResult(gameID,tickID,countryID);
-    //if (grid->getCurrentTick()==0){Logic::shiftFactor2to4(); }
     std::cerr<<std::endl<<"Factors after simulation: ";
     for (int i = 1; i <= 4; ++i) {
         std::cerr<<grid->random.getFactor(i)<<" ";
@@ -71,8 +71,8 @@ void Protocol::createGrid(std::string& line){
     ss<<line;
     std::string tmp;
     ss>> tmp;
-    unsigned long factors[4] ={0};
-    for (unsigned long & factor : factors) {
+    uint64_t  factors[4] ={0};
+    for (uint64_t  & factor : factors) {
         ss>>factor;
     }
 

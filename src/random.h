@@ -9,9 +9,9 @@
 
 class Random {
 private:
-    unsigned long factor[4]{};
+    uint64_t factor[4]{};
 public:
-    Random(unsigned long seeds[4]);
+    Random(const uint64_t seeds[4]);
 
     Random(const Random &r) {
         *this = r;
@@ -27,8 +27,10 @@ public:
         }
         return *this;
     }
-    unsigned long getFactor(int index);
-    unsigned long next(int index);
+
+    uint64_t getFactor(int index) const;
+
+    uint64_t next(int index);
 };
 
 

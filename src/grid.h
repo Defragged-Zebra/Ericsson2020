@@ -32,7 +32,7 @@ class Grid {
 
 public:
     Random random;
-    Grid(size_t y, size_t x, unsigned long seeds[4]){
+    Grid(size_t y, size_t x, uint64_t  seeds[4]){
         this->x=x;
         this->y=y;
         random=Random(seeds);

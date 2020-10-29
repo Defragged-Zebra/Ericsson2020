@@ -21,7 +21,7 @@ class AntiVirus {
     Iface* iface= nullptr;
     int maxticks=0;
     //TODO: this property might not needed, because grid has the public property random
-    unsigned long factors[4]={0};
+    uint64_t  factors[4]={0};
     size_t currentTick=0;
 private:
     AntiVirus()= default;
@@ -32,7 +32,7 @@ public:
         this->iface->initAntiVirus();
         this->grid = this->iface->getGrid();
     }
-    AntiVirus(size_t y, size_t x,size_t ccount,int maxticks, unsigned long factors[4],Iface* iface){
+    AntiVirus(size_t y, size_t x,size_t ccount,int maxticks, uint64_t  factors[4],Iface* iface){
         this->grid = new Grid(y,x, factors);
         //TODO: change here to get values from iface
         grid->init(2,1);
