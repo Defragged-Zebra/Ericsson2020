@@ -23,12 +23,11 @@ void Logic::simulateTO(int gameID, int tickID, int countryID) {
                 grid->getFieldByID((*grid)[y][x]).updateVaccination(heal);
             }
         }
-
         for (int x = 0; x < grid->getX(); ++x) {
             for (int y = 0; y < grid->getY(); ++y) {
                 inf = Logic::calculateSpontaneousInfection(grid, y, x);
-                inf=std::min(inf, 100 - grid->getFieldByID((*grid)[y][x]).getCurrentInfectionValue() -
-                              grid->getFieldByID((*grid)[y][x]).getVaccinationRate());
+                inf = std::min(inf, 100 - grid->getFieldByID((*grid)[y][x]).getCurrentInfectionValue() -
+                                    grid->getFieldByID((*grid)[y][x]).getVaccinationRate());
                 grid->getFieldByID((*grid)[y][x]).updateInfection(inf);
             }
         }
@@ -104,7 +103,7 @@ int Logic::calculateSpontaneousInfection(Grid *grid, size_t fieldCoordinateY, si
             average += lastInfectionValues[size - i - 1];
         }
         average = average / size;
-        int sum = calculateCrossInfection(grid, fieldCoordinateX, fieldCoordinateY, factor3);
+        int sum = calculateCrossInfection(grid, fieldCoordinateY, fieldCoordinateX, factor3);
         //Ehhez hozzáadva az adott cella és a szomszédjainak az átfertőződési mutatóját.
         double a = average + sum;
         //Az így eddig kiszámolt összeget megszorozzuk a negyedik véletlen faktor 25-tel való osztási maradéka + 50-nel,
@@ -131,18 +130,18 @@ int Logic::distance(Grid *grid, size_t x1, size_t y1, size_t x2, size_t y2) {
     if (district1 != district2) {
         return 2;
     } else {
-        return 1;
+        return  1;
     }
 }
 
-int Logic::calculateCrossInfection(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, unsigned long random3) {
+int Logic::calculateCrossInfection(Grid *grid, int fieldCoordinateY, int fieldCoordinateX, unsigned long factor3) {
     Field &field = grid->getFieldByID(grid->transformCoordinateToID(fieldCoordinateY, fieldCoordinateX));
     int sum = 0;
-    int coordinates[5][2] = {{fieldCoordinateX, fieldCoordinateY},
+    int coordinates[5][2] = {{fieldCoordinateX,     fieldCoordinateY},
                              {fieldCoordinateX - 1, fieldCoordinateY},
-                             {fieldCoordinateX, fieldCoordinateY + 1},
+                             {fieldCoordinateX,     fieldCoordinateY + 1},
                              {fieldCoordinateX + 1, fieldCoordinateY},
-                             {fieldCoordinateX, fieldCoordinateY - 1}};
+                             {fieldCoordinateX,     fieldCoordinateY - 1}};
     for (int i = 0; i < 5; ++i) {
         int cY = coordinates[i][1];
         int cX = coordinates[i][0];
@@ -153,9 +152,7 @@ int Logic::calculateCrossInfection(Grid *grid, int fieldCoordinateX, int fieldCo
         int dist = distance(grid, fieldCoordinateX, fieldCoordinateY, cX, cY);
         //Az átfertőződési mutatók kiszámolása előtt a t átfertőződési hajlandóságot generáljuk
         // a harmadik véletlen faktor 7-tel való osztási maradéka + 3 -mal
-        int t = int(random3 % 7) + 3;
-
-
+        int t = int(factor3 % 7) + 3;
         //Az átfertőződési mutatókat akkor adjuk össze a hely populációs különbségéből adódó,
         //1-3 érték közé beszorított fertőzési lehetőséggel,
         //ha az előző körös fertőzöttség nagyobb, mint a hajlandóság és a távolság szorzata.
@@ -168,12 +165,13 @@ int Logic::calculateCrossInfection(Grid *grid, int fieldCoordinateX, int fieldCo
         //std::cerr<<"cros_cell_check between: "<<fieldCoordinateY<<" "<<fieldCoordinateX<<"; "<<cY<<" "<<cX<<std::endl;
         if (cX < fieldCoordinateX || cY < fieldCoordinateY) {
             index = infectionDequeSize - 1;
-        }
-        else { index = infectionDequeSize; }
+        } else { index = infectionDequeSize; }
         if (lastInfectionValues[index] > dist * t) {
             //"beszorított átfertőzési mutató"
             //std::clamp added in C++17
             int d = std::clamp(field.getPopulationDensity() - cField.getPopulationDensity(), 0, 2) + 1;
+            //original:
+            //int d = std::clamp(field.getPopulationDensity() - cField.getPopulationDensity(), 0, 2) + 1;
             //std::cerr<<"d= "<<d<<std::endl;
             sum += d;
         } else {
