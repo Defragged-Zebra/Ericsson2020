@@ -14,7 +14,12 @@ void Logic::simulateTO(int gameID, int tickID, int countryID) {
     for (int i = 0; (grid->getCurrentTick() < tickID); ++i) {
         grid->IncreaseCurrentTick();
         if(grid->getCurrentTick()==1){
-            Logic::shiftXtimesY2to4();}
+            Logic::shiftXtimesY2to4();
+            /*for (int j = 0; j < 21; ++j) {
+                Logic::shiftFactor2to4();
+            }*/
+
+        }
         //if(currentTick>maxticks){throw std::runtime_error("antiVirus.cpp: too many ticks");}
         int heal = 0;
         int inf = 0;
@@ -172,7 +177,7 @@ int Logic::calculateCrossInfection(Grid *grid, int fieldCoordinateY, int fieldCo
         if (cX < fieldCoordinateX || cY < fieldCoordinateY) {
             index = infectionDequeSize - 1;
         } else { index = infectionDequeSize; }
-        if (lastInfectionRate[index] > dist * t) {
+            if (lastInfectionRate[index] > dist * t) {
             //"beszorított átfertőzési mutató"
             //std::clamp added in C++17
             int d = std::clamp(field.getPopulationDensity() - cField.getPopulationDensity(), 0, 2) + 1;

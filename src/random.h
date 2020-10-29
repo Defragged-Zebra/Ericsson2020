@@ -10,6 +10,7 @@
 class Random {
 private:
     uint64_t factor[4]{};
+    size_t counter=0;
 public:
     Random(const uint64_t seeds[4]);
 
