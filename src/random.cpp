@@ -15,7 +15,7 @@ Random::Random (const uint64_t  seeds[4]) {
 uint64_t  Random::next(int index) {
     index --;
     factor[index] = factor[index] * 48271UL % 0x7fffffffUL;
-    if (index==2){    std::cout<<"counter: "<<++counter<<std::endl;}
+    //if (index==2){    std::cout<<"counter: "<<++counter<<std::endl;}
     return factor[index];
 }
 

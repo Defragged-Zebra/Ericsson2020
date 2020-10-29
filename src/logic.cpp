@@ -14,7 +14,8 @@ void Logic::simulateTO(int gameID, int tickID, int countryID) {
     for (int i = 0; (grid->getCurrentTick() < tickID); ++i) {
         grid->IncreaseCurrentTick();
         if(grid->getCurrentTick()==1){
-            Logic::shiftXtimesY2to4();
+            //Logic::shiftXtimesY2to4();
+            //Logic::shiftXtimesY2to4();
             /*for (int j = 0; j < 21; ++j) {
                 Logic::shiftFactor2to4();
             }*/
@@ -145,42 +146,43 @@ int Logic::distance(Grid *grid, size_t x1, size_t y1, size_t x2, size_t y2) {
     }
 }
 
-int Logic::calculateCrossInfection(Grid *grid, int fieldCoordinateY, int fieldCoordinateX, uint64_t factor3) {
-    Field &field = grid->getFieldByID(grid->transformCoordinateToID(fieldCoordinateY, fieldCoordinateX));
+int Logic::calculateCrossInfection(Grid *grid, int centerY, int centerX, uint64_t factor3) {
+    Field &field = grid->getFieldByID(grid->transformCoordinateToID(centerY, centerX));
     int sum = 0;
     //Az átfertőződési mutatók kiszámolása előtt a t átfertőződési hajlandóságot generáljuk
     // a harmadik véletlen faktor 7-tel való osztási maradéka + 3 -mal
     int t = int(factor3 % 7) + 3;
-    int coordinates[5][2] = {{fieldCoordinateX,     fieldCoordinateY},
-                             {fieldCoordinateX - 1, fieldCoordinateY},
-                             {fieldCoordinateX,     fieldCoordinateY + 1},
-                             {fieldCoordinateX + 1, fieldCoordinateY},
-                             {fieldCoordinateX,     fieldCoordinateY - 1}};
+    int coordinates[5][2] = {{centerY,centerX},
+                             {centerY, centerX-1},
+                             {centerY-1, centerX},
+                             {centerY+1,centerX},
+                             {centerY, centerX+1}};
     for (int i = 0; i < 5; ++i) {
-        int cY = coordinates[i][1];
-        int cX = coordinates[i][0];
+        int selectedY = coordinates[i][0];
+        int selectedX = coordinates[i][1];
         //boundary check .. -1 because arrays still start at 0
-        if (cX < 0 || cY < 0 || cX > grid->getX() - 1 || cY > grid->getY() - 1) {
+        if (selectedX < 0 || selectedY < 0 || selectedX > grid->getX() - 1 || selectedY > grid->getY() - 1) {
             continue;
         }
-        int dist = distance(grid, fieldCoordinateX, fieldCoordinateY, cX, cY);
+        int dist = distance(grid, centerX, centerY, selectedX, selectedY);
         //Az átfertőződési mutatókat akkor adjuk össze a hely populációs különbségéből adódó,
         //1-3 érték közé beszorított fertőzési lehetőséggel,
         //ha az előző körös fertőzöttség nagyobb, mint a hajlandóság és a távolság szorzata.
-        Field cField = grid->getFieldByID(grid->transformCoordinateToID(cY, cX));
+        Field selectedField = grid->getFieldByID(grid->transformCoordinateToID(selectedY, selectedX));
         //for C++ dark magic, we can't get the values immediately out of the deque reference
-        std::deque<int> lastInfectionRate = cField.getLastInfectionRates();
+        std::deque<int> lastInfectionRate = selectedField.getLastInfectionRates();
         //last infection value, or the previous one
-        size_t infectionDequeSize = cField.getLastInfectionRates().size() - 1;
+        size_t infectionDequeSize = selectedField.getLastInfectionRates().size() - 1;
         size_t index;
-        //std::cerr<<"cros_cell_check between: "<<fieldCoordinateY<<" "<<fieldCoordinateX<<"; "<<cY<<" "<<cX<<std::endl;
-        if (cX < fieldCoordinateX || cY < fieldCoordinateY) {
+        //std::cerr<<"cros_cell_check between: "<<centerY<<" "<<centerX<<"; "<<selectedY<<" "<<selectedX<<std::endl;
+        if (selectedX < centerX || selectedY < centerY){
             index = infectionDequeSize - 1;
-        } else { index = infectionDequeSize; }
-            if (lastInfectionRate[index] > dist * t) {
+        } else {
+            index = infectionDequeSize;
+        }
+        if (lastInfectionRate[index] > dist * t) {
             //"beszorított átfertőzési mutató"
-            //std::clamp added in C++17
-            int d = std::clamp(field.getPopulationDensity() - cField.getPopulationDensity(), 0, 2) + 1;
+            int d = std::clamp(field.getPopulationDensity() - selectedField.getPopulationDensity(), 0, 2) + 1;
             sum += d;
         } else {
             continue;

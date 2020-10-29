@@ -21,7 +21,7 @@ class Logic {
 
     static int distance(Grid *grid, size_t x1, size_t y1, size_t x2, size_t y2);
 
-    static int calculateCrossInfection(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, uint64_t  factor3);
+    static int calculateCrossInfection(Grid *grid, int centerY, int centerX, uint64_t  factor3);
 
 public:
 
