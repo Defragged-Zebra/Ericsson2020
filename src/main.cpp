@@ -1,6 +1,7 @@
 #include <iostream>
 #include "antiVirus.h"
 #include "examples.h"
+#include "../testfiles/ex3.h"
 
 
 void debug() {
@@ -50,8 +51,8 @@ int main() {
     //debug2();
     //return 0;
     //std::stringstream ss = ex1();
-    std::stringstream ss = ex1_1();
-    for (int i = 0; i < 44; ++i) {
+    std::stringstream ss = ex3();
+    for (int i = 0; i < 3; ++i) {
         ss << "REQ 1 " << i << " 0" << std::endl;
         ss << "." << std::endl;
     }

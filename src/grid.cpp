@@ -99,7 +99,7 @@ void Grid::init(size_t districtCount, size_t countryCount) {
     }
 }
 
-size_t Grid::getCurrentTick() {
+size_t Grid::getCurrentTick() const {
     return currentTick;
 }
 
