@@ -1,6 +1,5 @@
 #include <iostream>
 #include "antiVirus.h"
-#include "examples.h"
 
 
 int main() {
@@ -8,7 +7,7 @@ int main() {
     //return 0;
     //std::stringstream ss = ex1();
     //std::ifstream ifs;
-    //ifs.open("../testfiles/ex3.csv");
+    //ifs.open("../testfiles/test3.csv");
 //    for (int i = 0; i < 43; ++i) {
 //        ex3->ss << "REQ 1 " << i << " 0" << std::endl;
 //        ex3->ss << "." << std::endl;

@@ -106,13 +106,14 @@ int Logic::calculateSpontaneousInfection(Grid *grid, size_t fieldCoordinateY, si
             average += lastInfectionValues[size - i - 1];
         }
         average = average / intervalToAverage;
+        average = (std::floor(average*100000.0))/100000.0;
         int sum = calculateCrossInfection(grid, fieldCoordinateY, fieldCoordinateX, factor3);
         //Ehhez hozzáadva az adott cella és a szomszédjainak az átfertőződési mutatóját.
         double a = average + sum;
         //Az így eddig kiszámolt összeget megszorozzuk a negyedik véletlen faktor 25-tel való osztási maradéka + 50-nel,
         //és az egészet leosztjuk 100-al, majd vesszük a felső egészrészét.
         Logic::shiftFactor2to4();
-        a = ((int)(a*100000000.0))/100000000.0;
+        a = (std::floor(a*100000.0))/100000.0;
         return std::ceil(a * (double) (factor4 % 25 + 50) / 100.0);
     }
 }
