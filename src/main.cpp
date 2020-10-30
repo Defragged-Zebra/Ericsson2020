@@ -46,18 +46,24 @@ void debug2() {
     }
 
 }
+void debug3(){
+    double a = 8.333333333333339;
+    a = ((int)(a*100000000.0))/100000000.0;
+    std::cout<< a;
+}
 
 int main() {
-    //debug2();
+    //debug3();
     //return 0;
-    //std::stringstream ss = ex1();
-    std::stringstream ss = ex3();
-    for (int i = 0; i < 3; ++i) {
-        ss << "REQ 1 " << i << " 0" << std::endl;
-        ss << "." << std::endl;
-    }
-    //AntiVirus av = AntiVirus(new Protocol(std::cin, std::cout, std::cerr));
-    AntiVirus av = AntiVirus(new Protocol(ss, std::cout, std::cout));
+    std::stringstream ss = ex1();
+    std::ifstream ifs;
+    ifs.open("../testfiles/ex3.csv");
+//    for (int i = 0; i < 43; ++i) {
+//        ex3->ss << "REQ 1 " << i << " 0" << std::endl;
+//        ex3->ss << "." << std::endl;
+//    }
+    AntiVirus av = AntiVirus(new Protocol(std::cin, std::cout, std::cerr));
+    //AntiVirus av = AntiVirus(new Protocol(ifs, std::cout, std::cout));
     av.startInterface();
 
     return 0;

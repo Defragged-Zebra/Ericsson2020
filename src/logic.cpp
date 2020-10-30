@@ -112,6 +112,7 @@ int Logic::calculateSpontaneousInfection(Grid *grid, size_t fieldCoordinateY, si
         //Az így eddig kiszámolt összeget megszorozzuk a negyedik véletlen faktor 25-tel való osztási maradéka + 50-nel,
         //és az egészet leosztjuk 100-al, majd vesszük a felső egészrészét.
         Logic::shiftFactor2to4();
+        a = ((int)(a*100000000.0))/100000000.0;
         return std::ceil(a * (double) (factor4 % 25 + 50) / 100.0);
     }
 }
