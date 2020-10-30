@@ -35,7 +35,7 @@ public:
 
 
     //separate functions, so values can be changed from the visualization directly
-    static int calculateSpontaneousHealing(Grid *grid, int fieldCoordinateX, int fieldCoordinateY, int healStartTick);
+    static int calculateSpontaneousHealing(Grid *grid, int centerY, int centerX, int healStartTick);
 
     static int calculateSpontaneousInfection(Grid *grid, size_t fieldCoordinateX, size_t fieldCoordinateY);
     static void shiftFactor2to4();

@@ -4,7 +4,7 @@
 
 #include "protocol.h"
 #include "logic.h"
-
+#include <cmath>
 void Protocol::start() {
     std::string line;
     while (std::getline(is,line)){
@@ -19,21 +19,21 @@ void Protocol::request(std::string& line){
     ss<<line;
     int gameID,tickID,countryID;
     ss>>tmp>>gameID>>tickID>>countryID;
-    std::cerr<<"Factors before simulation: ";
+    ers<<"Factors before simulation: ";
     for (int i = 1; i <= 4; ++i) {
-        std::cerr<<grid->random.getFactor(i)<<" ";
+        ers<<grid->random.getFactor(i)<<" ";
     }
-    std::cerr<<std::endl;
+    ers<<std::endl;
     //if (grid->getCurrentTick()==0){Logic::shiftFactor2to4(); }
     Logic::simulateTO(gameID,tickID,countryID);
 
     Protocol::currentResult(gameID,tickID,countryID);
-    std::cerr<<std::endl<<"Factors after simulation: ";
+    ers<<std::endl<<"Factors after simulation: ";
     for (int i = 1; i <= 4; ++i) {
-        std::cerr<<grid->random.getFactor(i)<<" ";
+        ers<<grid->random.getFactor(i)<<" ";
     }
-    std::cerr<<std::endl;
-    std::cerr<<"-----------------------"<<std::endl;
+    ers<<std::endl;
+    ers<<"-----------------------"<<std::endl;
 }
 void Protocol::currentResult(int gameID,int tickID,int countryID) {
     os << "RES " << gameID <<" " << tickID <<" "<< countryID <<std::endl;
@@ -97,7 +97,7 @@ void Protocol::createGrid(std::string& line){
             ss3>>tmp>> tmp2 >> tmp2 >> district >> infRate >> population;
             if (district>numberOfDisticts){numberOfDisticts=district;}
             //TODO field id check
-            grid->addField(Field(fieldID,district,infRate,0,population,storedValsCnt));
+            grid->addField(Field(fieldID,district,infRate,0,population,std::max((int)storedValsCnt,19)));
             grid->uploadGridWithFieldID(y,x,fieldID++);
         }
     }
