@@ -12,6 +12,8 @@ std::ostream &operator<<(std::ostream &os, const Field &f) {
 void Field::updateVaccination(int value) {
     //check for healing to not extend 100
     vaccinationRate = (std::min(vaccinationRate + value, 100));
+    infectionRate-=value;
+    if(infectionRate<0) throw std::runtime_error("infectionRate <0");
 }
 
 void Field::updateInfection(int value) {

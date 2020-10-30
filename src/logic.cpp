@@ -43,37 +43,31 @@ void Logic::simulateTO(int gameID, int tickID, int countryID) {
 }
 
 
-int Logic::calculateSpontaneousHealing(Grid *grid, int fieldCoordinateY, int fieldCoordinateX,
+int Logic::calculateSpontaneousHealing(Grid *grid, int centerY, int centerX,
                                        int healStartTick) {
     size_t currentTick = grid->getCurrentTick();
     if (grid == nullptr) throw std::invalid_argument("grid null pointer");
-    Field field = grid->getFieldByID(grid->transformCoordinateToID(fieldCoordinateY, fieldCoordinateX));
-    uint64_t factor1;
     //TODO: might be bad implementation
+    //currentTick==11 -> healing start!
     if (currentTick <= healStartTick) {
-        factor1 = grid->random.getFactor(1);
-    } else {
-        //TODO: bad implementation(?)
-        factor1 = grid->random.next(1);
-    }
-    //healStartTick = width + height; -- it should be calculated further up for optimisation
-    //currentTick = hanyadik tick van
-    //Ha még nem értük el a width + height -edik kört, akkor 0
-    //+1 because Tick starts from 0
-    if (currentTick + 1 < healStartTick ||
-        grid->getFieldByID((*grid)[fieldCoordinateX][fieldCoordinateY]).getCurrentInfectionRate() == 0) {
         return 0;
     } else {
+        if(grid->getFieldByID((*grid)[centerY][centerX]).getCurrentInfectionRate() == 0) return 0;
+        uint64_t factor1 = grid->random.getFactor(1);
+        Field field = grid->getFieldByID(grid->transformCoordinateToID(centerY, centerX));
+        //healStartTick = width + height; -- it should be calculated further up for optimisation
+        //currentTick = hanyadik tick van
+        //Ha még nem értük el a width + height -edik kört, akkor 0
         //Az előző tickek (pályaméret width + height darabszámú) fertőzöttségi mutatóinak minimuma szorozva az ...
         //a = min(lastInfectionValues[lastInfectionValues.len() - lastTicks->lastInfectionValues.len()]);
-
-
-        std::deque<int>::iterator tmp = std::min_element(field.getLastInfectionRates().begin(),
+        size_t beginIndex =field.getLastInfectionRates().size()-grid->getX()-grid->getY();
+        std::deque<int>::iterator tmp = std::min_element(field.getLastInfectionRates().begin()+beginIndex,
                                                          field.getLastInfectionRates().end());
         double a = *tmp;
         //első véletlen faktor 10-zel való osztási maradékával (0-9)
         double b = int(factor1 % 10);
         //Az eredmény osztva 20-al, és ennek az alsó egészrésze
+        grid->random.next(1);
         return std::floor((a * b) / 20.0);
     }
 }
@@ -111,7 +105,7 @@ int Logic::calculateSpontaneousInfection(Grid *grid, size_t fieldCoordinateY, si
         for (int i = 0; i < intervalToAverage; ++i) {
             average += lastInfectionValues[size - i - 1];
         }
-        average = average / size;
+        average = average / intervalToAverage;
         int sum = calculateCrossInfection(grid, fieldCoordinateY, fieldCoordinateX, factor3);
         //Ehhez hozzáadva az adott cella és a szomszédjainak az átfertőződési mutatóját.
         double a = average + sum;

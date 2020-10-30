@@ -47,16 +47,16 @@ void debug2() {
 }
 
 int main() {
-    debug2();
+    //debug2();
     //return 0;
     //std::stringstream ss = ex1();
     std::stringstream ss = ex1_1();
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 44; ++i) {
         ss << "REQ 1 " << i << " 0" << std::endl;
         ss << "." << std::endl;
     }
     //AntiVirus av = AntiVirus(new Protocol(std::cin, std::cout, std::cerr));
-    AntiVirus av = AntiVirus(new Protocol(ss, std::cout, std::cerr));
+    AntiVirus av = AntiVirus(new Protocol(ss, std::cout, std::cout));
     av.startInterface();
 
     return 0;
