@@ -9,42 +9,78 @@
 #include <map>
 #include <queue>
 #include <sstream>
+#include "district.h"
 
 class Field {
-    int fieldID;
-    int currentInfectionValue;
+    size_t fieldID;
+    int infectionRate;
     int vaccinationRate;
     int populationDensity;
-    std::map<int,int> storedVaccines;
-    std::queue<int> lastInfectionValues;
+    std::map<int, int> storedVaccines;
+    //this stores the history of the infectionRate-s
+    std::deque<int> lastInfectionRates;
+    //this stores the history of the infection values returned by the Logic::calculateInfectionValue()
+    std::deque<int> lastInfectionValues;
+    size_t assignedDistrictID;
+    size_t numberOfStoredPastValues;
 public:
-    Field()=default;
-    Field(const int fieldID,const int currentInfectionValue, const int vaccinationRate, const int populationDensity){
-        this->fieldID=fieldID;
-        this->currentInfectionValue =currentInfectionValue;
-        this->vaccinationRate =vaccinationRate;
+    Field() = default;
+
+    Field(const int fieldID, const int assignedDistrictID, const int currentInfectionValue, const int vaccinationRate,
+          const int populationDensity, size_t numberOfStoredPastValues) {
+        this->fieldID = fieldID;
+        this->assignedDistrictID = assignedDistrictID;
+        this->infectionRate = currentInfectionValue;
+        this->vaccinationRate = vaccinationRate;
         this->populationDensity = populationDensity;
-        this->storedVaccines = std::map<int,int>();
-        this->lastInfectionValues = std::queue<int>();
+        this->storedVaccines = std::map<int, int>();
+        this->lastInfectionRates = std::deque<int>();
+        this->lastInfectionValues = std::deque<int>();
+        lastInfectionRates.push_back(currentInfectionValue);
+        lastInfectionValues.push_back(currentInfectionValue > 0 ? 1 : 0);
+        this->numberOfStoredPastValues = numberOfStoredPastValues;
     }
-    Field(const Field& f){
+
+    Field(const Field &f) {
         *this = f;
     }
-    Field& operator=(const Field& f){
-        if(this != &f){
-            this->fieldID=f.fieldID;
-            this->lastInfectionValues = f.lastInfectionValues;
-            this->currentInfectionValue = f.currentInfectionValue;
+
+    Field &operator=(const Field &f) {
+        if (this != &f) {
+            this->fieldID = f.fieldID;
+            this->lastInfectionRates = f.lastInfectionRates;
+            this->infectionRate = f.infectionRate;
             this->storedVaccines = f.storedVaccines;
             this->populationDensity = f.populationDensity;
             this->vaccinationRate = f.vaccinationRate;
+            this->assignedDistrictID = f.assignedDistrictID;
+            this->numberOfStoredPastValues = f.numberOfStoredPastValues;
+            this->lastInfectionValues=f.lastInfectionValues;
         }
         return *this;
     }
-    friend std::ostream& operator<<(std::ostream & os,Field f){
-        os << f.fieldID;
-        return os;
-    }
+
+    size_t getFieldID() const { return this->fieldID; }
+
+    friend std::ostream &operator<<(std::ostream &os, const Field &f);
+
+    std::deque<int> &getLastInfectionRates() { return lastInfectionRates; }
+
+    std::deque<int> &getLastInfectionValues() { return lastInfectionValues; }
+
+    int getPopulationDensity() const { return populationDensity; }
+
+    size_t getAssignedDistrictID() const { return assignedDistrictID; }
+
+    void updateVaccination(int value);
+
+    void updateInfection(int value);
+
+    int getCurrentInfectionRate() { return infectionRate; }
+
+    int getVaccinationRate() { return vaccinationRate; }
+
+    void setNumberOfPastValues(size_t values) { numberOfStoredPastValues = values; }
 };
 
 

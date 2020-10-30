@@ -1,9 +1,21 @@
 #include <iostream>
 #include "antiVirus.h"
+#include "examples.h"
+
+
 int main() {
-    std::cout << "Hello, World!" << std::endl;
-    AntiVirus av = AntiVirus(10,10);
-    av.run();
-    std::cout<<av;
+    //debug3();
+    //return 0;
+    //std::stringstream ss = ex1();
+    //std::ifstream ifs;
+    //ifs.open("../testfiles/ex3.csv");
+//    for (int i = 0; i < 43; ++i) {
+//        ex3->ss << "REQ 1 " << i << " 0" << std::endl;
+//        ex3->ss << "." << std::endl;
+//    }
+    AntiVirus av = AntiVirus(new Protocol(std::cin, std::cout, std::cerr));
+    //AntiVirus av = AntiVirus(new Protocol(ifs, std::cout, std::cout));
+    av.startInterface();
+
     return 0;
 }

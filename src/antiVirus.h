@@ -11,32 +11,49 @@
 #include "grid.h"
 #include "country.h"
 #include "logic.h"
-#include "iface.h"
+#include "graphics.h"
+#include "protocol.h"
 
 class AntiVirus {
     Grid* grid= nullptr; //(*av.grid)[y][x] is the way to access this
-    std::vector<Country>coutries;
+    std::vector<Country>countries;
     Logic logic;
-    Iface iface;
+    Iface* iface= nullptr;
+    int maxticks=0;
+    //TODO: this property might not needed, because grid has the public property random
+    uint64_t  factors[4]={0};
+    size_t currentTick=0;
 private:
     AntiVirus()= default;
-    public:
-    AntiVirus(size_t y, size_t x){
-        grid = new Grid(y,x);
+public:
+
+    explicit AntiVirus(Iface* iface){
+        this->iface=iface;
+        this->iface->initAntiVirus();
+        this->grid = this->iface->getGrid();
     }
-    void run();
-    friend std::ostream & operator<<(std::ostream& os, const AntiVirus& av){
-        for (size_t i = 0; i < av.grid->getY(); ++i) {
-            for (size_t j = 0; j < av.grid->getX(); ++j) {
-                os<<(*av.grid)[0][0]<<" ";
-            }
-            os<<std::endl;
+    AntiVirus(size_t y, size_t x,size_t ccount,int maxticks, uint64_t  factors[4],Iface* iface){
+        this->grid = new Grid(y,x, factors);
+        //TODO: change here to get values from iface
+        grid->init(2,1);
+        this->countries = std::vector<Country>(ccount);
+        this->maxticks=maxticks;
+        for (size_t i = 0; i < 4; ++i) {
+            this->factors[i]=factors[i];
         }
-        return os;
+        this->iface = iface;
+        this->iface->setGrid(grid);
+        this->currentTick=0;
     }
+    friend std::ostream & operator<<(std::ostream& os, const AntiVirus& av);
     ~AntiVirus(){
         delete grid;
+        delete iface;
     }
+
+    void startInterface();
+    void play1Tick();
+    void updateInterface();
 };
 
 
