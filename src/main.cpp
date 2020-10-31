@@ -11,11 +11,11 @@ int main() {
 //        ex3->ss << "REQ 1 " << i << " 0" << std::endl;
 //        ex3->ss << "." << std::endl;
 //    }
-    //std::ifstream ifs;
-    //ifs.open("../testfiles/test2.csv");
+    std::ifstream ifs;
+    ifs.open("../testfiles/test2.csv");
     AntiVirus av = AntiVirus(new Protocol(std::cin, std::cout, std::cerr));
-    //AntiVirus av3 = AntiVirus(new Graphics(ifs,std::cout,std::cout));
-    //AntiVirus av2 = AntiVirus(new Protocol(ifs, std::cout, std::cout));
+    //AntiVirus av = AntiVirus(new Graphics(ifs,std::cout,std::cout));
+    //AntiVirus av = AntiVirus(new Protocol(ifs, std::cout, std::cout));
     av.startInterface();
 
     return 0;

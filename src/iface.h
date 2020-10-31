@@ -11,43 +11,63 @@
 
 class Iface {
 protected:
-    Grid* grid;
+    Grid *grid;
     size_t gameID;
     size_t maxTickCount;
     size_t countriesCount;
+    std::string teamToken = "eBPSHlkl";
+    std::istream &is;
+    std::ostream &os;
+    std::ostream &ers;
 public:
-    Iface(){ grid=nullptr; }
-    explicit Iface(Grid* g){
+    Iface() = delete;
+
+    explicit Iface(std::istream &is, std::ostream &os, std::ostream &ers) : is(is), os(os), ers(ers) {
+        this->grid = nullptr;
+    }
+
+    explicit Iface(Grid *g, std::istream &is, std::ostream &os, std::ostream &ers) : is(is), os(os), ers(ers) {
         this->grid = g;
     }
-    Iface(const Iface& iface){
-        *this= iface;
+
+    Iface &operator=(const Iface &iface) = delete;
+
+    Iface(const Iface &iface) = delete;
+
+    void checkGrid() {
+        if (grid == nullptr)throw std::runtime_error("Iface: grid pointer is null");
     }
-    Iface& operator=(const Iface& iface){
-        if(this != &iface){
-            this->grid = iface.grid;
-            this->gameID = iface.gameID;
-            this->maxTickCount = iface.maxTickCount;
-            this->countriesCount = iface.countriesCount;
-        }
-        return *this;
-    }
-    void checkGrid(){
-        if(grid==nullptr)throw std::runtime_error("Iface: grid pointer is null");
-    }
-    void setGrid(Grid* g){
-        grid=g;
+
+    void setGrid(Grid *g) {
+        grid = g;
         Logic::setGrid(g);
     }
-    Grid* getGrid()const{
+
+    Grid *getGrid() const {
         return grid;
     }
-    size_t getGameID()const{return gameID;}
-    size_t getMaxTick()const{return maxTickCount;}
-    size_t getNumberOfCountries()const{return countriesCount;}
-    virtual void start()=0;
-    virtual void initAntiVirus()=0;
-    virtual ~Iface(){}
+
+    void initAntiVirus();
+
+    void login() {
+        os << "START " << teamToken << std::endl << "." << std::endl;
+    }
+
+    void login(int seed) {
+        os << "START " << teamToken << " " << seed << std::endl << "." << std::endl;
+    }
+
+    void createGrid();
+
+    size_t getGameID() const { return gameID; }
+
+    size_t getMaxTick() const { return maxTickCount; }
+
+    size_t getNumberOfCountries() const { return countriesCount; }
+
+    virtual void start() = 0;
+
+    virtual ~Iface() {}
 };
 
 

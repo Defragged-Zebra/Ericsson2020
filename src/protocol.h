@@ -4,40 +4,30 @@
 
 #ifndef VIRUS_PROTOCOL_H
 #define VIRUS_PROTOCOL_H
+
 #include <iostream>
 
 #include "iface.h"
 
 
-class Protocol: public Iface {
-    std::string teamToken = "eBPSHlkl";
-    std::istream& is;
-    std::ostream& os;
-    std::ostream& ers;
+class Protocol : public Iface {
 public:
-    Protocol():is(std::cin),os(std::cout),ers(std::cerr), Iface() {}
-    Protocol(std::istream& is,std::ostream& os,std::ostream& ers):is(is),os(os),ers(ers), Iface(){}
-    Protocol(const Protocol &p)=delete;
-    Protocol &operator=(const Protocol &g)=delete;
-    void init();
+    Protocol() = delete;
 
-    void init(int seed);
+    Protocol(std::istream &is, std::ostream &os, std::ostream &ers) : Iface(is, os, ers) {}
 
-    void sendDebugMsg(const std::string &msg);
+    Protocol(const Protocol &p) = delete;
 
-    void initValues();
+    Protocol &operator=(const Protocol &g) = delete;
+
 
     void start() override;
-
-    void setStart(std::string &line);
-
-    void initAntiVirus() override;
-
-    void createGrid(std::string &line);
 
     void request(std::string &line);
 
     void currentResult(int gameID, int tickID, int countryID);
+
+    void sendDebugMsg(const std::string &msg);
 };
 
 
