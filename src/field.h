@@ -16,12 +16,13 @@ class Field {
     int infectionRate;
     int vaccinationRate;
     int populationDensity;
+    size_t assignedDistrictID;
     std::map<int, int> storedVaccines;
     //this stores the history of the infectionRate-s
     std::deque<int> lastInfectionRates;
     //this stores the history of the infection values returned by the Logic::calculateInfectionValue()
     std::deque<int> lastInfectionValues;
-    size_t assignedDistrictID;
+    //TODO Ez szar
     size_t numberOfStoredPastValues;
 public:
     Field() = default;
@@ -64,9 +65,9 @@ public:
 
     friend std::ostream &operator<<(std::ostream &os, const Field &f);
 
-    std::deque<int> &getLastInfectionRates() { return lastInfectionRates; }
+    std::deque<int> &getLastInfectionRates(){ return lastInfectionRates; }
 
-    std::deque<int> &getLastInfectionValues() { return lastInfectionValues; }
+    std::deque<int> &getLastInfectionValues(){ return lastInfectionValues; }
 
     int getPopulationDensity() const { return populationDensity; }
 
@@ -76,9 +77,9 @@ public:
 
     void updateInfection(int value);
 
-    int getCurrentInfectionRate() { return infectionRate; }
+    int getCurrentInfectionRate() const{ return infectionRate; }
 
-    int getVaccinationRate() { return vaccinationRate; }
+    int getVaccinationRate() const{ return vaccinationRate; }
 
     void setNumberOfPastValues(size_t values) { numberOfStoredPastValues = values; }
 };

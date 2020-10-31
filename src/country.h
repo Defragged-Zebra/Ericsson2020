@@ -9,19 +9,20 @@
 #include <vector>
 #include <iostream>
 
+//TODO refactor
 class Country {
     size_t countryID{};
     int totalProductionCapacity{};
-    int reserveVaccines{};
+    int reservedVaccines{};
     std::vector<size_t> assignedDistrictIDs;
 public:
-    Country(size_t ID, std::vector<size_t> districts) {
-        countryID=ID;
-        assignedDistrictIDs = districts;
-    }
-
     Country() {
         assignedDistrictIDs = std::vector<size_t>();
+    }
+
+    Country(size_t ID, const std::vector<size_t> &districts) {
+        countryID = ID;
+        assignedDistrictIDs = districts;
     }
 
     Country(const Country &c) {
@@ -32,23 +33,23 @@ public:
         if (this != &c) {
             countryID = c.countryID;
             totalProductionCapacity = c.totalProductionCapacity;
-            reserveVaccines = c.reserveVaccines;
+            reservedVaccines = c.reservedVaccines;
             assignedDistrictIDs = c.assignedDistrictIDs;
         }
         return *this;
     }
 
-    std::vector<size_t> getAssignedDistrictIDs() const { return assignedDistrictIDs; }
+    [[nodiscard]] std::vector<size_t> getAssignedDistrictIDs() const { return assignedDistrictIDs; }
 
     friend std::ostream &operator<<(std::ostream &os, const Country &c);
 
-    int getTotalProductionCapacity() const { return totalProductionCapacity; }
+    [[nodiscard]] int getTotalProductionCapacity() const { return totalProductionCapacity; }
 
     void setTotalProductionCapacity(int tpc) { totalProductionCapacity = tpc; }
 
-    int getReserveVaccines() const { return reserveVaccines; }
+    [[nodiscard]] int getReserveVaccines() const { return reservedVaccines; }
 
-    void setReserveVaccines(int rv) { reserveVaccines = rv; }
+    void setReserveVaccines(int rv) { reservedVaccines = rv; }
 };
 
 

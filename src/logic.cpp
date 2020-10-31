@@ -166,6 +166,7 @@ int Logic::calculateCrossInfection(Grid *grid, int centerY, int centerX, uint64_
         //ha az előző körös fertőzöttség nagyobb, mint a hajlandóság és a távolság szorzata.
         Field selectedField = grid->getFieldByID(grid->transformCoordinateToID(selectedY, selectedX));
         //for C++ dark magic, we can't get the values immediately out of the deque reference
+        //TODO ez pure faszság lsd: field.h
         std::deque<int> lastInfectionRate = selectedField.getLastInfectionRates();
         //last infection value, or the previous one
         size_t infectionDequeSize = selectedField.getLastInfectionRates().size() - 1;

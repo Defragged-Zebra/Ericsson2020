@@ -17,7 +17,11 @@ private:
 public:
     District() = default;
 
-    District(size_t sectorID, const std::vector<size_t> &assignedFieldIDs, bool clear);
+    District(size_t sectorID, const std::vector<size_t> &assignedFieldIDs, bool clear= false) {
+        this->districtID = sectorID;
+        this->assignedFieldIDs = assignedFieldIDs;
+        this->clear = clear;
+    }
 
     std::vector<size_t> getAssignedFields() const { return assignedFieldIDs; }
 
