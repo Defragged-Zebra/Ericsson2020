@@ -8,21 +8,32 @@
 #include "iface.h"
 
 class Graphics : public Iface{
+    std::string teamToken = "eBPSHlkl";
+    std::istream& is;
+    std::ostream& os;
+    std::ostream& ers;
 public:
-    Graphics():Iface(){
-    }
-    Graphics(const Graphics& g):Iface(g){
-        *this= g;
-    }
-    Graphics& operator=(const Graphics& g){
-        if(this != &g){
-        }
-        return *this;
-    }
+    Graphics():is(std::cin),os(std::cout),ers(std::cerr), Iface() {}
+    Graphics(std::istream& is,std::ostream& os,std::ostream& ers):is(is),os(os),ers(ers), Iface(){}
+    Graphics(const Graphics &p)=delete;
+    Graphics &operator=(const Graphics &g)=delete;
     void start() override;
-    void update(size_t tickID) override;
-    void terminalGraphicsStart();
-    void terminalGraphicsRun(size_t tickID);
+
+    void initAntiVirus()override;
+
+    void init();
+
+    void init(int seed);
+
+    void initValues();
+
+    void setStart(std::string &line);
+
+    void createGrid(std::string &line);
+
+    void request(std::string &line);
+
+    void terminalGraphicsRun(size_t gameID, size_t tickID, size_t countryID);
 };
 
 

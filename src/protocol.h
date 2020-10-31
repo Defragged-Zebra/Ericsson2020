@@ -15,10 +15,10 @@ class Protocol: public Iface {
     std::ostream& os;
     std::ostream& ers;
 public:
-    Protocol &operator=(const Protocol &g)=delete;
-    Protocol(const Protocol &p)=delete;
     Protocol():is(std::cin),os(std::cout),ers(std::cerr), Iface() {}
     Protocol(std::istream& is,std::ostream& os,std::ostream& ers):is(is),os(os),ers(ers), Iface(){}
+    Protocol(const Protocol &p)=delete;
+    Protocol &operator=(const Protocol &g)=delete;
     void init();
 
     void init(int seed);
@@ -26,6 +26,7 @@ public:
     void sendDebugMsg(const std::string &msg);
 
     void initValues();
+
     void start() override;
 
     void setStart(std::string &line);

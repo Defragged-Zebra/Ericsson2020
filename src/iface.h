@@ -5,15 +5,12 @@
 #ifndef VIRUS_IFACE_H
 #define VIRUS_IFACE_H
 
-
-#include "fileio.h"
 #include "grid.h"
 #include "iface.h"
 #include "logic.h"
 
 class Iface {
 protected:
-    FileIO fileio;
     Grid* grid;
     size_t gameID;
     size_t maxTickCount;
@@ -28,28 +25,27 @@ public:
     }
     Iface& operator=(const Iface& iface){
         if(this != &iface){
-            this->fileio=iface.fileio;
             this->grid = iface.grid;
+            this->gameID = iface.gameID;
+            this->maxTickCount = iface.maxTickCount;
+            this->countriesCount = iface.countriesCount;
         }
         return *this;
+    }
+    void checkGrid(){
+        if(grid==nullptr)throw std::runtime_error("Iface: grid pointer is null");
     }
     void setGrid(Grid* g){
         grid=g;
         Logic::setGrid(g);
     }
-    void checkGrid(){
-        if(grid==nullptr)throw std::runtime_error("Iface: grid pointer is null");
-    }
-    Grid* getGrid(){
+    Grid* getGrid()const{
         return grid;
     }
+    size_t getGameID()const{return gameID;}
+    size_t getMaxTick()const{return maxTickCount;}
+    size_t getNumberOfCountries()const{return countriesCount;}
     virtual void start()=0;
-    virtual void update(size_t tickID){
-
-    };
-    size_t getGameID(){return gameID;}
-    size_t getMaxTick(){return maxTickCount;}
-    size_t getNumberOfCountries(){return countriesCount;}
     virtual void initAntiVirus()=0;
     virtual ~Iface(){}
 };
