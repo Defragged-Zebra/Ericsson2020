@@ -62,3 +62,21 @@ void Iface::createGrid() {
         grid->addDistrict(District(i, std::vector<size_t>(), false));
     }
 }
+void Iface::start() {
+    std::string line;
+    while (std::getline(is, line)) {
+        if (line != ".") {
+            Iface::request(line);
+        }
+    }
+}
+void Iface::request(std::string &line) {
+    std::string tmp;
+    std::stringstream ss;
+    ss << line;
+    int _gameID, tickID, countryID;
+    ss >> tmp >> _gameID >> tickID >> countryID;
+    Logic::simulateTO(_gameID, tickID, countryID);
+
+    this->currentResult(_gameID, tickID, countryID);
+}

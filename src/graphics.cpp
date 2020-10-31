@@ -8,42 +8,6 @@
 #include <ctime>
 
 
-void Graphics::start() {
-    size_t x = grid->getWidth();
-    size_t y = grid->getHeight();
-    std::cout << "initial setup:" << std::endl;
-    std::cout << "x=" << x << ", y=" << y << std::endl;
-    std::string line;
-    while (std::getline(is, line)) {
-        if (line != ".") {
-            Graphics::request(line);
-        }
-    }
-}
-
-void Graphics::request(std::string &line) {
-    std::string tmp;
-    std::stringstream ss;
-    ss << line;
-    int gameID, tickID, countryID;
-    ss >> tmp >> gameID >> tickID >> countryID;
-    //ers<<"Factors before simulation: ";
-    //for (int i = 1; i <= 4; ++i) {
-    //    ers<<grid->random.getFactor(i)<<" ";
-    // }
-    //ers<<std::endl;
-    //if (grid->getCurrentTick()==0){Logic::shiftFactor2to4(); }
-    Logic::simulateTO(gameID, tickID, countryID);
-
-    Graphics::terminalGraphicsRun(gameID, tickID, countryID);
-    //ers<<std::endl<<"Factors after simulation: ";
-    //for (int i = 1; i <= 4; ++i) {
-    //ers<<grid->random.getFactor(i)<<" ";
-    //}
-    //ers<<std::endl;
-    //ers<<"-----------------------"<<std::endl;
-}
-
 void Graphics::terminalGraphicsRun(size_t gameID, size_t tickID, size_t countryID) {
     std::cout << std::endl;
     //std::system("clear");
@@ -80,15 +44,6 @@ void Graphics::terminalGraphicsRun(size_t gameID, size_t tickID, size_t countryI
             } else {
                 color = 35;
             }
-            //debug mode for healing
-            /*
-            if (healValue < 10) {
-                std::cout << "\033[" << color << "m"<< healValue<<"   ";
-            } else if(healValue<100) {
-                std::cout << "\033[" << color << "m"<< healValue<<"  ";
-            } else{
-                std::cout << "\033[" << color << "m"<< healValue<<" ";
-            }*/
             std::cout << "\033[" << color << "m* ";
         }
         std::cout << "\033[0m|" << std::endl;

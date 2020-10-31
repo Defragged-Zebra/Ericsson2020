@@ -21,13 +21,11 @@ public:
     Protocol &operator=(const Protocol &g) = delete;
 
 
-    void start() override;
+    void currentResult(int gameID, int tickID, int countryID)override{
+        this->displayResult(gameID,tickID,countryID);
+    }
+    void displayResult(int gameID, int tickID, int countryID);
 
-    void request(std::string &line);
-
-    void currentResult(int gameID, int tickID, int countryID);
-
-    void sendDebugMsg(const std::string &msg);
 };
 
 

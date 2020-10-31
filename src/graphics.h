@@ -17,9 +17,11 @@ public:
 
     Graphics &operator=(const Graphics &g) = delete;
 
-    void start() override;
 
-    void request(std::string &line);
+
+    void currentResult(int gameID, int tickID, int countryID) override {
+        this->terminalGraphicsRun(gameID, tickID, countryID);
+    }
 
     void terminalGraphicsRun(size_t gameID, size_t tickID, size_t countryID);
 };
