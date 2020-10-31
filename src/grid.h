@@ -17,8 +17,8 @@ class Grid {
     std::vector<Country> countries;
     std::vector<District> districts;
     std::vector<Field> fields;
-    size_t x;
-    size_t y;
+    size_t width;
+    size_t height;
     size_t currentTick=0;
 
     Grid(){
@@ -34,8 +34,8 @@ class Grid {
 public:
     Random random;
     Grid(size_t y, size_t x, uint64_t  seeds[4]){
-        this->x=x;
-        this->y=y;
+        this->width=x;
+        this->height=y;
         random=Random(seeds);
         grid = std::vector<std::vector<size_t>>();
         grid.reserve(y);
@@ -48,8 +48,8 @@ public:
     }
     void init(size_t districtCount, size_t countryCount);
     inline std::vector<size_t> operator[](size_t i){return grid[i];};
-    inline size_t getX() const {return x;} //grid[0].size();}
-    inline size_t getY() const {return y;} //grid.size();}
+    inline size_t getX() const {return width;} //grid[0].size();}
+    inline size_t getY() const {return height;} //grid.size();}
     //TODO: refactor y-x stuff
     size_t transformCoordinateToID(size_t y, size_t x){
                 return grid[y][x];

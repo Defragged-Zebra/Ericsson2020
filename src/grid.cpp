@@ -63,7 +63,7 @@ void Grid::init(size_t districtCount, size_t countryCount) {
     //TODO refactor it asap
     for (size_t i = 0; i < getX(); ++i) {
         for (size_t j = 0; j < getY(); ++j) {
-            size_t ID = i * y + j;
+            size_t ID = i * height + j;
             if ((i == 0 && j == 0) ) {
                 addField(Field(ID, 0, 1, 0, 1, 20));
             } else if ((i==0&&j == 1)){
@@ -82,7 +82,7 @@ void Grid::init(size_t districtCount, size_t countryCount) {
                 fieldsToAssign.push_back(j);
             }
         } else if (i == 1) {}
-        for (int j = 2; j < x * y; ++j) {
+        for (int j = 2; j < width * height; ++j) {
             fieldsToAssign.push_back(j);
         }
         addDistrict(District(i, fieldsToAssign, false));
