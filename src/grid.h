@@ -4,6 +4,7 @@
 
 #ifndef VIRUS_GRID_H
 #define VIRUS_GRID_H
+
 #include <vector>
 #include <stdexcept>
 #include "field.h"
@@ -19,56 +20,74 @@ class Grid {
     std::vector<Field> fields;
     size_t width;
     size_t height;
-    size_t currentTick=0;
-
-    Grid(){
-        throw std::runtime_error("grid default ctr");
-    }
-    Grid(const Grid&){
-        throw std::runtime_error("grid copy ctr");
-    }
-    Grid& operator=(const Grid&){
-        throw std::runtime_error("grid operator=");
-    }
+    size_t currentTick = 0;
 
 public:
+    Grid() = delete;
+
+    Grid(const Grid &) = delete;
+
+    Grid &operator=(const Grid &) = delete;
+
     Random random;
-    Grid(size_t y, size_t x, uint64_t  seeds[4]){
-        this->width=x;
-        this->height=y;
-        random=Random(seeds);
+
+    Grid(size_t height, size_t width, uint64_t seeds[4]) {
+        this->height = height;
+        this->width = width;
+        random = Random(seeds);
         grid = std::vector<std::vector<size_t>>();
-        grid.reserve(y);
-        for (size_t i = 0; i < y; ++i) {
-            std::vector<size_t> sor = std::vector<size_t>(x);
+        grid.reserve(height);
+        for (size_t i = 0; i < height; ++i) {
+            std::vector<size_t> sor = std::vector<size_t>(width);
             grid.push_back(sor);
         }
-        this->countries=std::vector<Country>();
-        this->districts=std::vector<District>();
+        this->countries = std::vector<Country>();
+        this->districts = std::vector<District>();
     }
-    void init(size_t districtCount, size_t countryCount);
-    inline std::vector<size_t> operator[](size_t i){return grid[i];};
-    inline size_t getX() const {return width;} //grid[0].size();}
-    inline size_t getY() const {return height;} //grid.size();}
-    //TODO: refactor y-x stuff
-    size_t transformCoordinateToID(size_t y, size_t x){
-                return grid[y][x];
+    //soronként töltjük fel a gridet(sorfolytonosan)
+    std::vector<size_t> operator[](size_t i) { return grid[i]; };
+
+    [[nodiscard]] size_t getWidth() const { return width; } //grid[0].size();}
+    [[nodiscard]] size_t getHeight() const { return height; } //grid.size();}
+    //TODO kibaszni a picsába
+    size_t transformCoordinateToID(size_t y, size_t x) {
+        return grid[y][x];
     }
-    Country &getCountryByID(size_t ID){return countries[ID];}
-    District &getDistrictByID(size_t ID){return districts[ID];}
-    Field &getFieldByID(size_t ID){return fields[ID];}
+
+    Country &getCountryByID(size_t ID) { return countries[ID]; }
+
+    District &getDistrictByID(size_t ID) { return districts[ID]; }
+
+    Field &getFieldByID(size_t ID) { return fields[ID]; }
 
     template<typename FUNC>
     FUNC executeOnEveryElement(FUNC func);
-
+    //TODO újraírni a picsába
     friend std::ostream &operator<<(std::ostream &os, const Grid &g);
-    void uploadGridWithFieldID(size_t y, size_t x, size_t fieldID);
+
+    //TODO kibaszni a picsába
+    void uploadGridWithFieldID(size_t y, size_t x, size_t fieldID) {
+        grid[y][x] = fieldID;
+    }
+
     //WARNING: this might generate some problems if grid is not newly created
-    void addField(const Field& newField);
-    void addDistrict(const District& newDistrict);
-    void addCountry(const Country& newCountry);
-    size_t getCurrentTick() const;
-    void IncreaseCurrentTick(){currentTick++;}
+    void addField(const Field &newField) {
+        fields.push_back(newField);
+    }
+
+    void addDistrict(const District &newDistrict) {
+        districts.push_back(newDistrict);
+    }
+
+    void addCountry(const Country &newCountry) {
+        countries.push_back(newCountry);
+    }
+
+    [[nodiscard]] size_t getCurrentTick() const {
+        return currentTick;
+    }
+
+    void IncreaseCurrentTick() { currentTick++; }
 };
 
 

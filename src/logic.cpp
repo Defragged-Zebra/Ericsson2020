@@ -24,15 +24,15 @@ void Logic::simulateTO(int gameID, int tickID, int countryID) {
         //if(currentTick>maxticks){throw std::runtime_error("antiVirus.cpp: too many ticks");}
         int heal = 0;
         int inf = 0;
-        size_t healStartTick = grid->getX() + grid->getY();
-        for (int x = 0; x < grid->getX(); ++x) {
-            for (int y = 0; y < grid->getY(); ++y) {
+        size_t healStartTick = grid->getWidth() + grid->getHeight();
+        for (int x = 0; x < grid->getWidth(); ++x) {
+            for (int y = 0; y < grid->getHeight(); ++y) {
                 heal = Logic::calculateSpontaneousHealing(grid, y, x, healStartTick);
                 grid->getFieldByID((*grid)[y][x]).updateVaccination(heal);
             }
         }
-        for (int x = 0; x < grid->getX(); ++x) {
-            for (int y = 0; y < grid->getY(); ++y) {
+        for (int x = 0; x < grid->getWidth(); ++x) {
+            for (int y = 0; y < grid->getHeight(); ++y) {
                 inf = Logic::calculateSpontaneousInfection(grid, y, x);
                 inf = std::min(inf, 100 - grid->getFieldByID((*grid)[y][x]).getCurrentInfectionRate() -
                                     grid->getFieldByID((*grid)[y][x]).getVaccinationRate());
@@ -60,7 +60,7 @@ int Logic::calculateSpontaneousHealing(Grid *grid, int centerY, int centerX,
         //Ha még nem értük el a width + height -edik kört, akkor 0
         //Az előző tickek (pályaméret width + height darabszámú) fertőzöttségi mutatóinak minimuma szorozva az ...
         //a = min(lastInfectionValues[lastInfectionValues.len() - lastTicks->lastInfectionValues.len()]);
-        size_t beginIndex =field.getLastInfectionRates().size()-grid->getX()-grid->getY();
+        size_t beginIndex = field.getLastInfectionRates().size() - grid->getWidth() - grid->getHeight();
         std::deque<int>::iterator tmp = std::min_element(field.getLastInfectionRates().begin()+beginIndex,
                                                          field.getLastInfectionRates().end());
         double a = *tmp;
@@ -118,7 +118,7 @@ int Logic::calculateSpontaneousInfection(Grid *grid, size_t fieldCoordinateY, si
     }
 }
 void Logic::shiftXtimesY2to4(){
-    for (size_t i = 0; i < grid->getX()*grid->getY(); ++i) {
+    for (size_t i = 0; i < grid->getWidth() * grid->getHeight(); ++i) {
         shiftFactor2to4();
     }
 }
@@ -157,7 +157,7 @@ int Logic::calculateCrossInfection(Grid *grid, int centerY, int centerX, uint64_
         int selectedY = coordinates[i][0];
         int selectedX = coordinates[i][1];
         //boundary check .. -1 because arrays still start at 0
-        if (selectedX < 0 || selectedY < 0 || selectedX > grid->getX() - 1 || selectedY > grid->getY() - 1) {
+        if (selectedX < 0 || selectedY < 0 || selectedX > grid->getWidth() - 1 || selectedY > grid->getHeight() - 1) {
             continue;
         }
         int dist = distance(grid, centerX, centerY, selectedX, selectedY);

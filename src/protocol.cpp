@@ -37,8 +37,8 @@ void Protocol::request(std::string& line){
 }
 void Protocol::currentResult(int gameID,int tickID,int countryID) {
     os << "RES " << gameID <<" " << tickID <<" "<< countryID <<std::endl;
-    for (size_t y = 0; y < grid->getY(); ++y) {
-        for (size_t x = 0; x < grid->getX() ; ++x) {
+    for (size_t y = 0; y < grid->getHeight(); ++y) {
+        for (size_t x = 0; x < grid->getWidth() ; ++x) {
             os << grid->getFieldByID((*grid)[y][x]).getCurrentInfectionRate() << " ";
             //if(grid->getCurrentTick()==25&&y==4&&x==6)std::cerr<<"Curr rate: "<<grid->getFieldByID((*grid)[y][x]).getCurrentInfectionRate()<<std::endl;
         }
@@ -86,10 +86,11 @@ void Protocol::createGrid(std::string& line){
     grid = new Grid(iy,ix,factors);
     Logic::setGrid(grid);
     size_t fieldID=0;
-    size_t storedValsCnt = grid->getY()+grid->getX();
+    size_t storedValsCnt = grid->getHeight() + grid->getWidth();
     size_t numberOfDisticts=0;
-    for (size_t y = 0; y < grid->getY(); ++y) {
-        for (size_t x = 0; x < grid->getX(); ++x) {
+    //according to input from ericsson
+    for (size_t y = 0; y < grid->getHeight(); ++y){
+         for (size_t x = 0; x < grid->getWidth(); ++x){
             std::stringstream ss3;
             std::getline(is,line);
             ss3<<line;

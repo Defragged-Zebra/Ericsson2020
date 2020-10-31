@@ -13,7 +13,7 @@ int main() {
 //        ex3->ss << "." << std::endl;
 //    }
     AntiVirus av = AntiVirus(new Protocol(std::cin, std::cout, std::cerr));
-    //AntiVirus av = AntiVirus(new Protocol(ifs, std::cout, std::cout));
+    //AntiVirus av2 = AntiVirus(new Protocol(ifs, std::cout, std::cout));
     av.startInterface();
 
     return 0;

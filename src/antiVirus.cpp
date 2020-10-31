@@ -8,14 +8,15 @@ void AntiVirus::startInterface() {
     iface->checkGrid();
     iface->start();
 }
-std::ostream & operator<<(std::ostream& os, const AntiVirus& av){
-    for (size_t i = 0; i < av.grid->getY(); ++i) {
-        for (size_t j = 0; j < av.grid->getX(); ++j) {
-            os<<(*av.grid)[0][0]<<" ";
+
+std::ostream &operator<<(std::ostream &os, const AntiVirus &av) {
+    for (size_t i = 0; i < av.grid->getHeight(); ++i) {
+        for (size_t j = 0; j < av.grid->getWidth(); ++j) {
+            os << (*av.grid)[0][0] << " ";
         }
-        os<<std::endl;
+        os << std::endl;
     }
-    os<<std::endl;
-    os<<(*av.grid);
+    os << std::endl;
+    os << (*av.grid);
     return os;
 }

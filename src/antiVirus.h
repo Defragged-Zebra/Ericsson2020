@@ -15,19 +15,22 @@
 #include "protocol.h"
 
 class AntiVirus {
-    Grid* grid= nullptr; //(*av.grid)[y][x] is the way to access this
-    Iface* iface= nullptr;
+    Grid *grid = nullptr; //(*av.grid)[y][x] is the way to access this
+    Iface *iface = nullptr;
 private:
-    AntiVirus()= default;
+    AntiVirus() = default;
+
 public:
 
-    explicit AntiVirus(Iface* iface){
-        this->iface=iface;
+    explicit AntiVirus(Iface *iface) {
+        this->iface = iface;
         this->iface->initAntiVirus();
         this->grid = this->iface->getGrid();
     }
-    friend std::ostream & operator<<(std::ostream& os, const AntiVirus& av);
-    ~AntiVirus(){
+
+    friend std::ostream &operator<<(std::ostream &os, const AntiVirus &av);
+
+    ~AntiVirus() {
         delete grid;
         delete iface;
     }

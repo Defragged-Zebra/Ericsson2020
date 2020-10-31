@@ -5,21 +5,27 @@
 #include "random.h"
 #include <iostream>
 
-Random::Random (const uint64_t  seeds[4]) {
+Random::Random(const uint64_t seeds[4]) {
     for (int i = 0; i < 4; ++i) {
         factor[i] = seeds[i];
     }
 }
 
-//e.g. index 2 refers to factor2
-uint64_t  Random::next(int index) {
-    index --;
-    factor[index] = factor[index] * 48271UL % 0x7fffffffUL;
-    //if (index==2){    std::cout<<"counter: "<<++counter<<std::endl;}
-    return factor[index];
+Random &Random::operator=(const Random &r) {
+    if (this != &r) {
+        for (size_t i = 0; i < 4; ++i) {
+            this->factor[i] = r.factor[i];
+        }
+    }
+    return *this;
 }
 
-uint64_t  Random::getFactor (int index) const{
-    index --;
-    return factor[index];
+//e.g. index 2 refers to factor2
+uint64_t Random::next(int index) {
+    factor[index-1] = factor[index-1] * 48271UL % 0x7fffffffUL;
+    return factor[index-1];
+}
+
+uint64_t Random::getFactor(int index) const {
+    return factor[index-1];
 }

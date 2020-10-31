@@ -13,8 +13,8 @@ void Graphics::start() {
 }
 
 void Graphics::terminalGraphicsStart() {
-    size_t x = grid->getX();
-    size_t y = grid->getY();
+    size_t x = grid->getWidth();
+    size_t y = grid->getHeight();
     std::cout << "initial setup:" << std::endl;
     std::cout << "x=" << x << ", y=" << y << std::endl;
     terminalGraphicsRun(0);
@@ -24,8 +24,8 @@ void Graphics::terminalGraphicsRun(size_t tickID) {
     std::cout<<std::endl;
     std::system("clear");
     std::cout << "State after tick: " << tickID << std::endl;
-    size_t x = grid->getX();
-    size_t y = grid->getY();
+    size_t x = grid->getWidth();
+    size_t y = grid->getHeight();
     std::cout << "\033[0m+";
     for (int i = 0; i < y; ++i) {
         std::cout << "-";
