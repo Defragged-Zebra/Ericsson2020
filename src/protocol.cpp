@@ -47,7 +47,7 @@ void Protocol::currentResult(int gameID,int tickID,int countryID) {
     os << "." <<std::endl;
 }
 void Protocol::initAntiVirus() {
-    init(4);
+    init();
     initValues();
 }
 void Protocol::initValues() {

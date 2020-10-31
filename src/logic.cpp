@@ -34,8 +34,6 @@ void Logic::simulateTO(int gameID, int tickID, int countryID) {
         for (int x = 0; x < grid->getWidth(); ++x) {
             for (int y = 0; y < grid->getHeight(); ++y) {
                 inf = Logic::calculateSpontaneousInfection(grid, y, x);
-                inf = std::min(inf, 100 - grid->getFieldByID((*grid)[y][x]).getCurrentInfectionRate() -
-                                    grid->getFieldByID((*grid)[y][x]).getVaccinationRate());
                 grid->getFieldByID((*grid)[y][x]).updateInfection(inf);
             }
         }

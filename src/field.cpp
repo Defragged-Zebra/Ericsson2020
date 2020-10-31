@@ -9,17 +9,18 @@ std::ostream &operator<<(std::ostream &os, const Field &f) {
     return os;
 }
 
-void Field::updateVaccination(int value) {
+void Field::updateVaccination(int healed) {
     //check for healing to not extend 100
-    vaccinationRate = (std::min(vaccinationRate + value, 100));
-    infectionRate-=value;
-    if(infectionRate<0) throw std::runtime_error("infectionRate <0");
+    if (vaccinationRate + healed > 100) throw std::runtime_error("vaccinationRate + healed>100");
+    vaccinationRate = std::min(vaccinationRate + healed, 100);
+    infectionRate -= healed;
+    if (infectionRate < 0) throw std::runtime_error("infectionRate <0");
 }
 
-void Field::updateInfection(int value) {
+void Field::updateInfection(int infected) {
     //check for infection to not extend 100
-    int newInfectionRate=std::min(infectionRate + value, 100);
-    lastInfectionValues.push_back(value);
+    int newInfectionRate = std::min(infected + infectionRate, 100 - vaccinationRate);
+    lastInfectionValues.push_back(infected);
     lastInfectionRates.push_back(newInfectionRate);
     if (lastInfectionRates.size() > numberOfStoredPastValues) { lastInfectionRates.pop_front(); }
     if (lastInfectionValues.size() > numberOfStoredPastValues) { lastInfectionValues.pop_front(); }
