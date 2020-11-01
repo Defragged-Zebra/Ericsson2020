@@ -5,10 +5,10 @@
 #ifndef VIRUS_DEBUG_H
 #define VIRUS_DEBUG_H
 #include <iostream>
-#include "random.h"
+#include "utils.h"
 void debug() {
     u_long factors[4] = {1569741360, 1785505948, 516548029, 1302116447};
-    Random rd = Random(factors);
+    Utils::Random rd = Utils::Random(factors);
     size_t i = 0;
     int index = 4;
     bool overrun[4] = {false, false, false, false};
@@ -39,7 +39,7 @@ void debug() {
 
 void debug2() {
     u_long factors[4] = {1569741360, 1785505948, 516548029, 1302116447};
-    Random rd = Random(factors);
+    auto rd = Utils::Random(factors);
     int i = 1;
 
     while (i < 240) {

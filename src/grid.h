@@ -8,7 +8,7 @@
 #include <vector>
 #include <stdexcept>
 #include "field.h"
-#include "random.h"
+#include "utils.h"
 #include "country.h"
 #include "district.h"
 #include <algorithm>
@@ -29,12 +29,12 @@ public:
 
     Grid &operator=(const Grid &) = delete;
 
-    Random random;
+    Utils::Random random;
 
     Grid(size_t height, size_t width, uint64_t seeds[4]) {
         this->height = height;
         this->width = width;
-        random = Random(seeds);
+        random = Utils::Random(seeds);
         grid = std::vector<std::vector<size_t>>();
         grid.reserve(height);
         for (size_t i = 0; i < height; ++i) {
@@ -50,15 +50,21 @@ public:
     [[nodiscard]] size_t getWidth() const { return width; } //grid[0].size();}
     [[nodiscard]] size_t getHeight() const { return height; } //grid.size();}
     //TODO kibaszni a picsába
-    size_t transformCoordinateToID(size_t y, size_t x) {
-        return grid[y][x];
+    size_t transformCoordinateToID(const Point& p) {
+        return grid[p.getY()][p.getX()];
     }
 
     Country &getCountryByID(size_t ID) { return countries[ID]; }
 
     District &getDistrictByID(size_t ID) { return districts[ID]; }
+    District &getDistrictByPoint(const Point& p){
+        return getDistrictByID(getFieldByPoint(p).getAssignedDistrictID());
+    }
 
     Field &getFieldByID(size_t ID) { return fields[ID]; }
+    Field &getFieldByPoint(const Point& p){
+        return getFieldByID(grid[p.getY()][p.getX()]);
+    }
 
     template<typename FUNC>
     FUNC executeOnEveryElement(FUNC func);

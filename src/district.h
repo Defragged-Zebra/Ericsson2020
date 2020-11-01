@@ -30,6 +30,12 @@ public:
     bool isClear() const { return clear; }
 
     void setClear(bool clear) { this->clear = clear; }
+    bool operator==(const District&d){
+        return this->districtID==d.districtID;
+    }
+    bool operator!=(const District&d){
+        return this->districtID!=d.districtID;
+    }
 
     friend std::ostream &operator<<(std::ostream &os, const District &d);
 };
