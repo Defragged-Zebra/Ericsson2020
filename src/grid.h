@@ -50,10 +50,6 @@ public:
 
     [[nodiscard]] size_t getWidth() const { return width; } //grid[0].size();}
     [[nodiscard]] size_t getHeight() const { return height; } //grid.size();}
-    //TODO kibaszni a picsába
-    size_t transformCoordinateToID(const Point& p) {
-        return grid[p.getY()][p.getX()];
-    }
 
     Country &getCountryByID(size_t ID) { return countries[ID]; }
 
@@ -73,7 +69,7 @@ public:
     friend std::ostream &operator<<(std::ostream &os, const Grid &g);
 
     //TODO kibaszni a picsába
-    void uploadGridWithFieldID(size_t y, size_t x, size_t fieldID) {
+    void setGridFieldID(size_t y, size_t x, size_t fieldID) {
         grid[y][x] = fieldID;
     }
 

@@ -54,8 +54,8 @@ void Iface::createGrid() {
             ss >> tmp >> tmp2 >> tmp2 >> district >> infRate >> population;
             if (district > numberOfDisticts) numberOfDisticts = district;
             grid->addField(Field(fieldID, district, infRate, 0, population,
-                                 std::max((int) storedValsCnt, 19)));
-            grid->uploadGridWithFieldID(y, x, fieldID++);
+                                 storedValsCnt));
+            grid->setGridFieldID(y, x, fieldID++);
         }
     }
     for (size_t i = 0; i < numberOfDisticts + 1; ++i) {

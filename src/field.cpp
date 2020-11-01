@@ -22,8 +22,8 @@ void Field::updateInfection(int infected) {
     int newInfectionRate = std::min(infected + infectionRate, 100 - vaccinationRate);
     lastInfectionValues.push_back(infected);
     lastInfectionRates.push_back(newInfectionRate);
-    if (lastInfectionRates.size() > numberOfStoredPastValues) { lastInfectionRates.pop_front(); }
-    if (lastInfectionValues.size() > numberOfStoredPastValues) { lastInfectionValues.pop_front(); }
+    if (lastInfectionRates.size() > lastInfRateLen) { lastInfectionRates.pop_front(); }
+    if (lastInfectionValues.size() > 19) { lastInfectionValues.pop_front(); }
     infectionRate = newInfectionRate;
 }
 

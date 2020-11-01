@@ -22,8 +22,7 @@ class Field {
     std::deque<int> lastInfectionRates;
     //this stores the history of the infection values returned by the Logic::calculateInfectionValue()
     std::deque<int> lastInfectionValues;
-    //TODO Ez szar
-    size_t numberOfStoredPastValues;
+    size_t lastInfRateLen;
 public:
     Field() = default;
 
@@ -39,7 +38,7 @@ public:
         this->lastInfectionValues = std::deque<int>();
         lastInfectionRates.push_back(currentInfectionValue);
         lastInfectionValues.push_back(currentInfectionValue > 0 ? 1 : 0);
-        this->numberOfStoredPastValues = numberOfStoredPastValues;
+        this->lastInfRateLen = numberOfStoredPastValues;
     }
 
     Field(const Field &f) {
@@ -55,7 +54,7 @@ public:
             this->populationDensity = f.populationDensity;
             this->vaccinationRate = f.vaccinationRate;
             this->assignedDistrictID = f.assignedDistrictID;
-            this->numberOfStoredPastValues = f.numberOfStoredPastValues;
+            this->lastInfRateLen = f.lastInfRateLen;
             this->lastInfectionValues = f.lastInfectionValues;
         }
         return *this;
@@ -81,7 +80,6 @@ public:
 
     int getVaccinationRate() const { return vaccinationRate; }
 
-    void setNumberOfPastValues(size_t values) { numberOfStoredPastValues = values; }
 };
 
 
