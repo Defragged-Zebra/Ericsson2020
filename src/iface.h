@@ -5,53 +5,76 @@
 #ifndef VIRUS_IFACE_H
 #define VIRUS_IFACE_H
 
-
-#include "fileio.h"
 #include "grid.h"
 #include "iface.h"
 #include "logic.h"
 
 class Iface {
 protected:
-    FileIO fileio;
-    Grid* grid;
+    Grid *grid;
     size_t gameID;
     size_t maxTickCount;
     size_t countriesCount;
+    std::string teamToken = "eBPSHlkl";
+    std::istream &is;
+    std::ostream &os;
+    std::ostream &ers;
 public:
-    Iface(){ grid=nullptr; }
-    explicit Iface(Grid* g){
+    Iface() = delete;
+
+    explicit Iface(std::istream &is, std::ostream &os, std::ostream &ers) : is(is), os(os), ers(ers) {
+        this->grid = nullptr;
+    }
+
+    explicit Iface(Grid *g, std::istream &is, std::ostream &os, std::ostream &ers) : is(is), os(os), ers(ers) {
         this->grid = g;
     }
-    Iface(const Iface& iface){
-        *this= iface;
+
+    Iface &operator=(const Iface &iface) = delete;
+
+    Iface(const Iface &iface) = delete;
+
+    void checkGrid() {
+        if (grid == nullptr)throw std::runtime_error("Iface: grid pointer is null");
     }
-    Iface& operator=(const Iface& iface){
-        if(this != &iface){
-            this->fileio=iface.fileio;
-            this->grid = iface.grid;
-        }
-        return *this;
-    }
-    void setGrid(Grid* g){
-        grid=g;
+
+    void setGrid(Grid *g) {
+        grid = g;
         Logic::setGrid(g);
     }
-    void checkGrid(){
-        if(grid==nullptr)throw std::runtime_error("Iface: grid pointer is null");
-    }
-    Grid* getGrid(){
+
+    Grid *getGrid() const {
         return grid;
     }
-    virtual void start()=0;
-    virtual void update(size_t tickID){
 
-    };
-    size_t getGameID(){return gameID;}
-    size_t getMaxTick(){return maxTickCount;}
-    size_t getNumberOfCountries(){return countriesCount;}
-    virtual void initAntiVirus()=0;
-    virtual ~Iface(){}
+    void initAntiVirus();
+
+    void login() {
+        os << "START " << teamToken << std::endl << "." << std::endl;
+    }
+
+    void login(int seed) {
+        os << "START " << teamToken << " " << seed << std::endl << "." << std::endl;
+    }
+
+    void createGrid();
+
+    size_t getGameID() const { return gameID; }
+
+    size_t getMaxTick() const { return maxTickCount; }
+
+    size_t getNumberOfCountries() const { return countriesCount; }
+
+    virtual void start();
+    virtual void currentResult(int gameID,int tickID,int countryID){};
+
+    void request(std::string &line);
+    void sendDebugMsg(const std::string &msg) {
+        ers << msg << std::endl;
+    }
+
+    virtual ~Iface() {}
+
 };
 
 

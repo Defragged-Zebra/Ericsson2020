@@ -67,7 +67,7 @@ void FileIO::saveConfiguration() {
 
 void FileIO::saveFieldsLastData(size_t tickID) {
     saveFileFieldData << tickID << ": ";
-    for (int i = 0; i < grid->getX() * grid->getY(); ++i) {
+    for (int i = 0; i < grid->getWidth() * grid->getHeight(); ++i) {
         saveFileFieldData << grid->getFieldByID(i).getCurrentInfectionRate() << ", "
                           << grid->getFieldByID(i).getVaccinationRate() << ", ";
     }
@@ -76,7 +76,7 @@ void FileIO::saveFieldsLastData(size_t tickID) {
 
 void FileIO::saveDistrictsLastData(size_t tickID) {
     saveFileDistrictData << tickID << ": ";
-    for (int i = 0; i < grid->getX() * grid->getY(); ++i) {
+    for (int i = 0; i < grid->getWidth() * grid->getHeight(); ++i) {
         saveFileDistrictData << grid->getDistrictByID(i).isClear() << ", ";
     }
     saveFileDistrictData << std::endl;
@@ -84,7 +84,7 @@ void FileIO::saveDistrictsLastData(size_t tickID) {
 
 void FileIO::saveCountryLastData(size_t tickID) {
     saveFileCountryData << tickID<<": ";
-    for (int i = 0; i < grid->getX() * grid->getY(); ++i) {
+    for (int i = 0; i < grid->getWidth() * grid->getHeight(); ++i) {
         saveFileCountryData << grid->getCountryByID(i).getReserveVaccines() << ", "
                             << grid->getCountryByID(i).getTotalProductionCapacity() << ", ";
     }
