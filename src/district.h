@@ -11,13 +11,17 @@
 class District {
 private:
     size_t districtID;
-    size_t assignedCountryID;
+    //size_t assignedCountryID;
     std::vector<size_t> assignedFieldIDs;
     bool clear;
 public:
     District() = default;
 
-    District(size_t sectorID, const std::vector<size_t> &assignedFieldIDs, bool clear);
+    District(size_t sectorID, const std::vector<size_t> &assignedFieldIDs, bool clear = false) {
+        this->districtID = sectorID;
+        this->assignedFieldIDs = assignedFieldIDs;
+        this->clear = clear;
+    }
 
     std::vector<size_t> getAssignedFields() const { return assignedFieldIDs; }
 
@@ -26,6 +30,12 @@ public:
     bool isClear() const { return clear; }
 
     void setClear(bool clear) { this->clear = clear; }
+    bool operator==(const District&d){
+        return this->districtID==d.districtID;
+    }
+    bool operator!=(const District&d){
+        return this->districtID!=d.districtID;
+    }
 
     friend std::ostream &operator<<(std::ostream &os, const District &d);
 };

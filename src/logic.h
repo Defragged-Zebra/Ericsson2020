@@ -15,13 +15,14 @@
 //for debug purposes
 #include <iostream>
 #include <stdexcept>
+#include "utils.h"
 
 class Logic {
     static Grid *grid;
 
-    static int distance(Grid *grid, size_t x1, size_t y1, size_t x2, size_t y2);
+    static int distance ( const Point& p1, const Point& p2);
 
-    static int calculateCrossInfection(Grid *grid, int centerY, int centerX, uint64_t  factor3);
+    static int calculateCrossInfection(const Point& center, uint64_t  factor3);
 
 public:
 
@@ -33,14 +34,11 @@ public:
 
     void static simulateTO(int gameID, int tickID, int countryID);
 
+    static int calculateSpontaneousHealing(const Point& p, int healStartTick);
 
-    //separate functions, so values can be changed from the visualization directly
-    static int calculateSpontaneousHealing(Grid *grid, int centerY, int centerX, int healStartTick);
-
-    static int calculateSpontaneousInfection(Grid *grid, size_t fieldCoordinateX, size_t fieldCoordinateY);
+    static int calculateSpontaneousInfection(const Point& p);
     static void shiftFactor2to4();
 
-    static void shiftXtimesY2to4();
 };
 
 

@@ -7,22 +7,23 @@
 
 #include "iface.h"
 
-class Graphics : public Iface{
+class Graphics : public Iface {
 public:
-    Graphics():Iface(){
+    Graphics() = delete;
+
+    Graphics(std::istream &is, std::ostream &os, std::ostream &ers) : Iface(is, os, ers) {}
+
+    Graphics(const Graphics &p) = delete;
+
+    Graphics &operator=(const Graphics &g) = delete;
+
+
+
+    void currentResult(int gameID, int tickID, int countryID) override {
+        this->terminalGraphicsRun(gameID, tickID, countryID);
     }
-    Graphics(const Graphics& g):Iface(g){
-        *this= g;
-    }
-    Graphics& operator=(const Graphics& g){
-        if(this != &g){
-        }
-        return *this;
-    }
-    void start() override;
-    void update(size_t tickID) override;
-    void terminalGraphicsStart();
-    void terminalGraphicsRun(size_t tickID);
+
+    void terminalGraphicsRun(size_t gameID, size_t tickID, size_t countryID);
 };
 
 
