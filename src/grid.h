@@ -43,6 +43,7 @@ public:
         }
         this->countries = std::vector<Country>();
         this->districts = std::vector<District>();
+        currentTick = 0;
     }
     //soronként töltjük fel a gridet(sorfolytonosan)
     std::vector<size_t> operator[](size_t i) { return grid[i]; };

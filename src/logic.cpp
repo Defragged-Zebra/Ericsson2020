@@ -11,7 +11,6 @@ Grid *Logic::grid = nullptr;
 
 void Logic::simulateTO(int gameID, int tickID, int countryID) {
     for (int i = 0; (grid->getCurrentTick() < tickID); ++i) {
-        grid->IncreaseCurrentTick();
 
         int heal = 0;
         size_t healStartTick = grid->getWidth() + grid->getHeight();
@@ -29,6 +28,7 @@ void Logic::simulateTO(int gameID, int tickID, int countryID) {
                 grid->getFieldByPoint(Point(y, x)).updateInfection(inf);
             }
         }
+        grid->IncreaseCurrentTick();
     }
 }
 
@@ -36,7 +36,7 @@ void Logic::simulateTO(int gameID, int tickID, int countryID) {
 int Logic::calculateSpontaneousHealing(const Point& p, int healStartTick) {
     size_t currentTick = grid->getCurrentTick();
     if (grid == nullptr) throw std::invalid_argument("grid null pointer");
-    if (currentTick <= healStartTick) {
+    if (currentTick < healStartTick) {
         return 0;
     } else {
         if(grid->getFieldByPoint(p).getCurrentInfectionRate() == 0) return 0;
@@ -65,7 +65,7 @@ int Logic::calculateSpontaneousInfection(const Point& p) {
         factor2 = grid->random.getFactor(2);
         factor3 = grid->random.getFactor(3);
         factor4 = grid->random.getFactor(4);
-        int intervalToAverage = std::min(int(factor2 % 10) + 10, (int) currentTick);
+        int intervalToAverage = std::min(int(factor2 % 10) + 10, (int) currentTick+1);
         Field &field = grid->getFieldByPoint(p);
 
         double average = 0;
