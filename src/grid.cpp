@@ -17,8 +17,8 @@ FUNC Grid::executeOnEveryElement(FUNC func) {
 std::ostream &operator<<(std::ostream &os, const Grid &g) {
     os << "section1: grid x-y to id codes:" << std::endl;
     os << "size of the grid: " << g.grid[0].size() << ", " << g.grid.size() << std::endl;
-    for (int x = 0; x < g.grid[0].size(); ++x) {
-        for (int y = 0; y < g.grid.size(); ++y) {
+    for (size_t x = 0; x < g.grid[0].size(); ++x) {
+        for (size_t y = 0; y < g.grid.size(); ++y) {
             os << g.grid[y][x] << ",";
         }
         os << std::endl;
@@ -27,7 +27,7 @@ std::ostream &operator<<(std::ostream &os, const Grid &g) {
     os << std::endl;
     for (size_t i = 0; i < g.districts.size(); ++i) {
         os << g.districts[i] << ": ";
-        for (int j = 0; j < g.districts[i].getAssignedFields().size(); ++j) {
+        for (size_t j = 0; j < g.districts[i].getAssignedFields().size(); ++j) {
             os << g.districts[i].getAssignedFields()[j] << ", ";
         }
         os << std::endl;
@@ -35,7 +35,7 @@ std::ostream &operator<<(std::ostream &os, const Grid &g) {
     os << "section3: districts assigned to a country" << std::endl;
     for (size_t i = 0; i < g.countries.size(); ++i) {
         os << g.countries[i] << ", ";
-        for (int j = 0; j < g.countries[i].getAssignedDistrictIDs().size(); ++j) {
+        for (size_t j = 0; j < g.countries[i].getAssignedDistrictIDs().size(); ++j) {
             os << g.countries[j].getAssignedDistrictIDs()[j] << ", ";
         }
         os << std::endl;
