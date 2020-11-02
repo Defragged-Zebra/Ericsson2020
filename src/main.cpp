@@ -13,9 +13,10 @@ int main() {
 //    }
     std::ifstream ifs;
     ifs.open("../testfiles/test2.csv");
-    AntiVirus av = AntiVirus(new Protocol(std::cin, std::cout, std::cerr));
+    //AntiVirus av = AntiVirus(new Protocol(std::cin, std::cout, std::cerr));
     //AntiVirus av = AntiVirus(new Graphics(ifs,std::cout,std::cout));
     //AntiVirus av = AntiVirus(new Protocol(ifs, std::cout, std::cout));
+    AntiVirus av = AntiVirus(new Visualization(ifs, std::cout, std::cout));
     av.startInterface();
 
     return 0;

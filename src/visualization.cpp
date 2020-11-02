@@ -1,12 +1,10 @@
 //
-// Created by woranhun on 2020. 10. 17..
+// Created by woranhun on 2020. 11. 02..
 //
 
-#include "protocol.h"
-#include "logic.h"
-#include <cmath>
+#include "visualization.h"
 
-void Protocol::displayResult(int gameID, int tickID, int countryID) {
+void Visualization::displayResult(int gameID, int tickID, int countryID) {
     os << "RES " << gameID << " " << tickID << " " << countryID << std::endl;
     for (size_t y = 0; y < grid->getHeight(); ++y) {
         for (size_t x = 0; x < grid->getWidth(); ++x) {
@@ -15,4 +13,5 @@ void Protocol::displayResult(int gameID, int tickID, int countryID) {
         os << std::endl;
     }
     os << "." << std::endl;
+    // show windows comes here
 }
