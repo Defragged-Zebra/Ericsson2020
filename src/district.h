@@ -8,22 +8,30 @@
 #include <vector>
 #include "field.h"
 
+#include <vector>
+#include <stdexcept>
+#include "field.h"
+#include "utils.h"
+#include "country.h"
+#include "district.h"
+#include <algorithm>
+
 class District {
-private:
     size_t districtID;
     //size_t assignedCountryID;
-    std::vector<size_t> assignedFieldIDs;
+    std::vector<Field> fields;
+    std::vector<Field&> assignedFields;
     bool clear;
 public:
     District() = default;
 
-    District(size_t sectorID, const std::vector<size_t> &assignedFieldIDs, bool clear = false) {
+    District(size_t sectorID, const std::vector<Field&> &assignedFields, bool clear = false) {
         this->districtID = sectorID;
-        this->assignedFieldIDs = assignedFieldIDs;
+        this->assignedFields = assignedFields;
         this->clear = clear;
     }
 
-    std::vector<size_t> getAssignedFields() const { return assignedFieldIDs; }
+    std::vector<size_t> getAssignedFields() const { return assignedFields; }
 
     size_t getDistrictID() const { return districtID; }
 
@@ -38,6 +46,8 @@ public:
     }
 
     friend std::ostream &operator<<(std::ostream &os, const District &d);
+
+    void updateIsClear();
 };
 
 

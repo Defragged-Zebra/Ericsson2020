@@ -9,3 +9,13 @@ std::ostream &operator<<(std::ostream &os, const District &d) {
     return os;
 }
 
+//TODO: unit test/review this
+void District::updateIsClear() {
+    if (clear) return;
+    bool tmp=true;
+    for (int i = 0; i < assignedFields.size(); ++i) {
+        tmp&=assignedFields[i].isClear()
+    }
+    clear=tmp;
+}
+

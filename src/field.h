@@ -80,6 +80,7 @@ public:
 
     int getVaccinationRate() const { return vaccinationRate; }
 
+    bool isClear() { return infectionRate == 0 ? true : false; }
 };
 
 
