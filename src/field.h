@@ -9,7 +9,6 @@
 #include <map>
 #include <queue>
 #include <sstream>
-#include "district.h"
 
 class Field {
     size_t fieldID;

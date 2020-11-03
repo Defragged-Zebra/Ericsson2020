@@ -42,9 +42,10 @@ void Iface::createGrid() {
     grid = new Grid(iy, ix, factors);
     size_t fieldID = 0;
     size_t storedValsCnt = grid->getHeight() + grid->getWidth();
-    size_t numberOfDisticts = 0;
+    size_t numberOfDistricts = 0;
     size_t district;
     int infRate, population, tmp2;
+
     //according to input from ericsson
     for (size_t y = 0; y < grid->getHeight(); ++y) {
         for (size_t x = 0; x < grid->getWidth(); ++x) {
@@ -52,16 +53,28 @@ void Iface::createGrid() {
             std::getline(is, line);
             ss << line;
             ss >> tmp >> tmp2 >> tmp2 >> district >> infRate >> population;
-            if (district > numberOfDisticts) numberOfDisticts = district;
+            if (district > numberOfDistricts) numberOfDistricts = district;
             grid->addField(Field(fieldID, district, infRate, 0, population,
                                  storedValsCnt));
             grid->setGridFieldID(y, x, fieldID++);
         }
     }
-    for (size_t i = 0; i < numberOfDisticts + 1; ++i) {
-        grid->addDistrict(District(i, std::vector<size_t>(), false));
+    //create the districts
+    for (size_t i = 0; i < numberOfDistricts + 1; ++i) {
+        grid->addDistrict(District(i, std::vector<Field *>(), false));
     }
+    //district update
+    for (size_t y = 0; y < grid->getHeight(); ++y) {
+        for (size_t x = 0; x < grid->getWidth(); ++x) {
+//            ers << "Field - y: " << y << "\tx: " << x << "\tAssigned district: "
+//                      << grid->getDistrictByPoint(Point(y, x)) << std::endl;
+//            grid->getDistrictByPoint(Point(y, x)).addAssignedField(&grid->getFieldByPoint(Point(y, x)));
+
+        }
+    }
+
 }
+
 void Iface::start() {
     std::string line;
     while (std::getline(is, line)) {
@@ -70,6 +83,7 @@ void Iface::start() {
         }
     }
 }
+
 void Iface::request(std::string &line) {
     std::string tmp;
     std::stringstream ss;

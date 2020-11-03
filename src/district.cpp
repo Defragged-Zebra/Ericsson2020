@@ -11,11 +11,13 @@ std::ostream &operator<<(std::ostream &os, const District &d) {
 
 //TODO: unit test/review this
 void District::updateIsClear() {
-    if (clear) return;
-    bool tmp=true;
+    if (clear)
+        throw std::runtime_error(
+                "district.cpp - You tried to update the clean-ness of a clean field. This shouldn't happen, pls notify Spark");
+    bool tmp = true;
     for (int i = 0; i < assignedFields.size(); ++i) {
-        tmp&=assignedFields[i].isClear()
+        tmp &= (*assignedFields[i]).isClear();
     }
-    clear=tmp;
+    clear = tmp;
 }
 
