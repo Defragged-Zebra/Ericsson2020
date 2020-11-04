@@ -9,6 +9,7 @@
 #include <map>
 #include <queue>
 #include <sstream>
+#include <cmath>
 
 class Field {
     size_t fieldID;
@@ -16,7 +17,7 @@ class Field {
     int vaccinationRate;
     int populationDensity;
     size_t assignedDistrictID;
-    std::map<int, int> storedVaccines;
+    std::map<size_t, int> storedVaccines; //countryID, stored amount
     //this stores the history of the infectionRate-s
     std::deque<int> lastInfectionRates;
     //this stores the history of the infection values returned by the Logic::calculateInfectionValue()
@@ -32,7 +33,7 @@ public:
         this->infectionRate = currentInfectionValue;
         this->vaccinationRate = vaccinationRate;
         this->populationDensity = populationDensity;
-        this->storedVaccines = std::map<int, int>();
+        this->storedVaccines = std::map<size_t, int>();
         this->lastInfectionRates = std::deque<int>();
         this->lastInfectionValues = std::deque<int>();
         lastInfectionRates.push_back(currentInfectionValue);
@@ -80,6 +81,10 @@ public:
     int getVaccinationRate() const { return vaccinationRate; }
 
     bool isClear() { return infectionRate == 0 ? true : false; }
+
+    std::map<size_t,int>& getStoredVaccines(){return storedVaccines;}
+
+    void updateRemainingVaccines(int vaccinated);
 };
 
 
