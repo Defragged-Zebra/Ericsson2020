@@ -85,6 +85,7 @@ public:
     std::map<size_t,int>& getStoredVaccines(){return storedVaccines;}
 
     void updateRemainingVaccines(int vaccinated);
+
 };
 
 
