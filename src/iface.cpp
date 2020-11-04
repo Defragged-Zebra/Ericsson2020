@@ -63,6 +63,7 @@ void Iface::createGrid() {
     for (size_t i = 0; i < numberOfDistricts + 1; ++i) {
         grid->addDistrict(District(i, std::vector<Field *>(), false));
     }
+    //TODO ez itt mi a fasz?
     //district update
     for (size_t y = 0; y < grid->getHeight(); ++y) {
         for (size_t x = 0; x < grid->getWidth(); ++x) {
@@ -78,13 +79,31 @@ void Iface::createGrid() {
 void Iface::start() {
     std::string line;
     while (std::getline(is, line)) {
-        if (line != ".") {
-            Iface::request(line);
+        if (line == "." or line.empty()) {
+            continue;
+        } else if (line == "SUCCESS") {
+            Iface::sendDebugMsg("SUCCESS");
+            break;
+        } else if (line.find("WRONG") != std::string::npos) {
+            Iface::sendDebugMsg(line);
+            break;
+        } else if (line.find("FAILED") != std::string::npos) {
+            Iface::sendDebugMsg(line);
+            break;
+        } else if (line.find("WARN") != std::string::npos) {
+            Iface::sendDebugMsg(line);
+            throw std::runtime_error("Beszoptuk a faszt!!444!!!");
+        } else if (line.find("REQ") != std::string::npos) {
+            Iface::round(line);
+        } else {
+            Iface::sendDebugMsg("Miafasz történt?");
+            Iface::sendDebugMsg("[DEBUG] Hibát okozta\""+line+"\" [DEBUG VEGE]");
+            throw std::runtime_error("Miafasz történt?");
         }
     }
 }
 
-void Iface::request(std::string &line) {
+void Iface::requestLEGACY(std::string &line) {
     std::string tmp;
     std::stringstream ss;
     ss << line;
@@ -92,5 +111,39 @@ void Iface::request(std::string &line) {
     ss >> tmp >> _gameID >> tickID >> countryID;
     Logic::simulateTO(_gameID, tickID, countryID);
 
-    this->currentResult(_gameID, tickID, countryID);
+    this->displayCurrentRound(_gameID, tickID, countryID);
+}
+
+void Iface::round(std::string &line) {
+    std::string tmp;
+    std::stringstream ss;
+    ss << line;
+    int _gameID, tickID, countryID;
+    ss >> tmp >> _gameID >> tickID >> countryID;
+
+    //Process input values
+    tmp="";
+    while(std::getline(is,tmp)){
+        Iface::sendDebugMsg("[NOTIFY] "+tmp);
+        if(tmp!=".")continue;
+        else break;
+    }
+
+    Logic::simulateTO(_gameID, tickID, countryID);
+
+    //Send result back
+    os << "RES " << _gameID << " " << tickID << " " << countryID << std::endl;
+    std::vector<VaccineData> back;// Ha hozzá nyúlsz letöröm a kezed!!!!
+    back= Logic::calculateBackVaccines(back, tickID);
+    for (auto &i : back) {
+        os << "BACK " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
+    }
+    std::vector<VaccineData> put;// Ha hozzá nyúlsz letöröm a kezed!!!!
+    put = Logic::calculatePutVaccines(put, tickID);
+    for (auto &i : back) {
+        os << "PUT " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
+    }
+
+    this->displayCurrentRound(_gameID, tickID, countryID);
+
 }

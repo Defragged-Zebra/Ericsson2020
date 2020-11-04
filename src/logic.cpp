@@ -39,6 +39,7 @@ void Logic::simulateTO(int gameID, int tickID, int countryID) {
 }
 
 
+
 int Logic::calculateSpontaneousHealingLEGACY(const Point &p, int healStartTick) {
     size_t currentTick = grid->getCurrentTick();
     if (grid == nullptr) throw std::invalid_argument("grid null pointer");
@@ -59,6 +60,7 @@ int Logic::calculateSpontaneousHealingLEGACY(const Point &p, int healStartTick) 
 }
 
 int Logic::calculateSpontaneousInfection(const Point &p) {
+
     if (grid == nullptr) throw std::invalid_argument("grid null pointer");
     uint64_t factor2, factor3, factor4;
 
@@ -116,7 +118,9 @@ int Logic::calculateSpontaneousInfectionLEGACY(const Point &p) {
         average = average / intervalToAverage;
         //round error
         average = (std::floor(average * 100000.0)) / 100000.0;
+
         int sum = calculateCrossInfectionLEGACY(p, factor3);
+
         double a = average + sum;
 
         Logic::shiftFactor2to4();
@@ -138,6 +142,7 @@ int Logic::distance(const Point &p1, const Point &p2) {
     else return 1;
 }
 
+
 int Logic::calculateCrossInfectionLEGACY(const Point &center, uint64_t factor3) {
     Field &field = grid->getFieldByPoint(center);
     int sum = 0;
@@ -149,7 +154,7 @@ int Logic::calculateCrossInfectionLEGACY(const Point &center, uint64_t factor3) 
                             {centerY - 1, centerX},
                             {centerY + 1, centerX},
                             {centerY,     centerX + 1}};
-
+  
     for (const auto &selected : coordinates) {
         if (selected.getX() < 0 || selected.getY() < 0 || selected.getX() > grid->getWidth() - 1 ||
             selected.getY() > grid->getHeight() - 1) {
@@ -174,6 +179,16 @@ int Logic::calculateCrossInfectionLEGACY(const Point &center, uint64_t factor3) 
     }
     return sum;
 }
+
+
+std::vector<VaccineData> &Logic::calculateBackVaccines(std::vector<VaccineData> &back, size_t tickID) {
+    //TODO make this
+    return back;
+}
+
+std::vector<VaccineData> &Logic::calculatePutVaccines(std::vector<VaccineData> &put, size_t tickID) {
+    //TODO make this
+    return put;
 
 double Logic::calculateCrossInfection(const Point &center, uint64_t factor3) {
     Field &field = grid->getFieldByPoint(center);

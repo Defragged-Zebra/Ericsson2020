@@ -10,11 +10,11 @@
 
 
 class District {
-    size_t districtID;
+    size_t districtID{};
     //size_t assignedCountryID;
     //"cannot store reference in std::vector, it is simply not allowed" - stackoverflow
     std::vector<Field*> assignedFields;
-    bool clear;
+    bool clear{};
 public:
     District() = default;
 

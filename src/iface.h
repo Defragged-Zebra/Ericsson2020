@@ -66,15 +66,18 @@ public:
     size_t getNumberOfCountries() const { return countriesCount; }
 
     virtual void start();
-    virtual void currentResult(int gameID,int tickID,int countryID){};
 
-    void request(std::string &line);
+    virtual void displayCurrentRound(int gameID, int tickID, int countryID) {};
+
+    void requestLEGACY(std::string &line);
+
     void sendDebugMsg(const std::string &msg) {
         ers << msg << std::endl;
     }
 
     virtual ~Iface() {}
 
+    void round(std::string &line);
 };
 
 
