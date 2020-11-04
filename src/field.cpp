@@ -27,3 +27,19 @@ void Field::updateInfection(int infected) {
     infectionRate = newInfectionRate;
 }
 
+void Field::updateRemainingVaccines(int vaccinated) {
+    //m: used vaccines (thx ericsson for the straightforward variable naming)
+    // a tartalék vakcinaszám csökkenni fog m = ceil(X / P) -nel.
+    int m = std::ceil(vaccinated / (double) populationDensity);
+    int n = 0;
+    for (auto tmp:storedVaccines) {
+        n += tmp.second;
+    }
+    for (auto tmp:storedVaccines) {
+        /*Országokra levetítve n1 n2 két ország vakcinaszáma n1 = floor(n1 * (n - m) / n)
+        * és n2 = floor(n2 * (n - m) / n) lesz. */
+        int usedVaccinesByIndividualCountry = floor((tmp.second) * (n - m) / (double) n);
+        storedVaccines[tmp.first] =usedVaccinesByIndividualCountry;
+    }
+}
+
