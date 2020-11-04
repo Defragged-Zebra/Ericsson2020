@@ -20,9 +20,9 @@
 class Logic {
     static Grid *grid;
 
-    static int distance ( const Point& p1, const Point& p2);
+    static int distance(const Point &p1, const Point &p2);
 
-    static int calculateCrossInfection(const Point& center, uint64_t  factor3);
+    static int calculateCrossInfection(const Point &center, uint64_t factor3);
 
 public:
 
@@ -34,10 +34,15 @@ public:
 
     void static simulateTO(int gameID, int tickID, int countryID);
 
-    static int calculateSpontaneousHealing(const Point& p, int healStartTick);
+    static int calculateSpontaneousHealing(const Point &p, int healStartTick);
 
-    static int calculateSpontaneousInfection(const Point& p);
+    static int calculateSpontaneousInfection(const Point &p);
+
     static void shiftFactor2to4();
+
+    static std::vector<VaccineData> &calculateBackVaccines(std::vector<VaccineData> &back, size_t tickID);
+
+    static std::vector<VaccineData> &calculatePutVaccines(std::vector<VaccineData> &put, size_t tickID);
 
 };
 

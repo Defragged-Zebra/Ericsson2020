@@ -21,7 +21,7 @@ public:
     Protocol &operator=(const Protocol &g) = delete;
 
 
-    void currentResult(int gameID, int tickID, int countryID)override{
+    void displayCurrentRound(int gameID, int tickID, int countryID)override{
         this->displayResult(gameID,tickID,countryID);
     }
     void displayResult(int gameID, int tickID, int countryID);
