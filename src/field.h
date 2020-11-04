@@ -9,7 +9,6 @@
 #include <map>
 #include <queue>
 #include <sstream>
-#include "district.h"
 
 class Field {
     size_t fieldID;
@@ -80,6 +79,7 @@ public:
 
     int getVaccinationRate() const { return vaccinationRate; }
 
+    bool isClear() { return infectionRate == 0 ? true : false; }
 };
 
 

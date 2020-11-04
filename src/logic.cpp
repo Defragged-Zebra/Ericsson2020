@@ -18,6 +18,7 @@ void Logic::simulateTO(int gameID, int tickID, int countryID) {
             for (int y = 0; y < grid->getHeight(); ++y) {
                 heal = Logic::calculateSpontaneousHealing(Point(y,x),healStartTick);
                 grid->getFieldByPoint(Point(y,x)).updateVaccination(heal);
+                if (heal>0) grid->getDistrictByPoint(Point(y,x)).updateIsClear();
             }
         }
 
