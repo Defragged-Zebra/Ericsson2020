@@ -6,6 +6,7 @@
 #define VIRUS_UTILS_H
 
 #include <stdexcept>
+#include <climits>
 
 class Utils {
 public:
@@ -108,6 +109,12 @@ public:
         double profitabilityIndex;
         int vaccinesNeededForTotalHealing = 0;
     public:
+        ScoreHolder() {
+            changeInDefenseVaccines = INT_MAX;
+            changeInProducedVaccines = INT_MIN;
+            profitabilityIndex = changeInProducedVaccines / (double) changeInDefenseVaccines;
+        }
+
         ScoreHolder(int changeInProducedVaccines, int changeInDefenseVaccines) {
             this->changeInDefenseVaccines = changeInDefenseVaccines;
             this->changeInProducedVaccines = changeInProducedVaccines;
@@ -116,7 +123,7 @@ public:
 
         void setVaccinesNeededForHealing(int value) { vaccinesNeededForTotalHealing = value; }
 
-        int getVaccinesNeededForHealing() { return vaccinesNeededForTotalHealing; }
+        [[nodiscard]] int getVaccinesNeededForHealing() const { return vaccinesNeededForTotalHealing; }
 
         [[nodiscard]] int ChangeInProducedVaccines() const { return changeInProducedVaccines; };
 

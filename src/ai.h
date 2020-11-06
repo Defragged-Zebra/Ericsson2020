@@ -4,7 +4,6 @@
 
 #include "grid.h"
 #include "logic.h"
-#include <climits>
 #include "utils.h"
 
 #ifndef VIRUS_AI_H
