@@ -9,11 +9,11 @@ const double AI::parameter2 = -1;
 std::map<size_t, Utils::ScoreHolder> AI::districtScores = std::map<size_t, Utils::ScoreHolder>();
 
 void AI::calculateDistrictScoresForNextRound(Grid grid, size_t countryID) {
-    //throw std::runtime_error(
+    throw std::runtime_error(
     "ai.cpp: monolith encountered, execution stopped to admire the lack of Sparks coding skills");
-    //throw std::runtime_error(
+    throw std::runtime_error(
     "ai.cpp: untested behaviour, double check before implementing it -- especially if the calculation happens at the next gridTick, or it fuck up everything");
-    //throw std::runtime_error("ai.cpp: heavily unoptimised code for readability");
+    throw std::runtime_error("ai.cpp: heavily unoptimised code for readability");
 
     AI::simulateTO(0, grid.getCurrentTick() + 1, countryID);
     for (size_t i = 0; i < grid.numberOfDistricts(); ++i) {
