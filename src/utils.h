@@ -4,7 +4,9 @@
 
 #ifndef VIRUS_UTILS_H
 #define VIRUS_UTILS_H
+
 #include <stdexcept>
+
 class Utils {
 public:
     class Random {
@@ -26,61 +28,106 @@ public:
 
         [[nodiscard]] uint64_t getFactor(int index) const;
     };
-    class Point{
-        size_t y,x;
+
+    class Point {
+        size_t y, x;
     public:
-        Point()=default;
-        Point(size_t y, size_t x){
-            this->y=y;
-            this->x=x;
+        Point() = default;
+
+        Point(size_t y, size_t x) {
+            this->y = y;
+            this->x = x;
         }
-        Point& operator=(const Point& p){
-            if(this!=&p){
-                this->y=p.y;
-                this->x=p.x;
+
+        Point &operator=(const Point &p) {
+            if (this != &p) {
+                this->y = p.y;
+                this->x = p.x;
             }
             return *this;
         }
-        Point(const Point& p){
-            *this=p;
+
+        Point(const Point &p) {
+            *this = p;
         }
-        bool operator==(const Point& p) const{
-            return this->y==p.y&&this->x==p.x;
+
+        bool operator==(const Point &p) const {
+            return this->y == p.y && this->x == p.x;
         }
-        [[nodiscard]] size_t getY()const{return y;}
-        [[nodiscard]] size_t getX()const{return x;}
-        void setX(const size_t _x){this->x=_x;}
-        void setY(const size_t _y){this->y=_y;}
+
+        [[nodiscard]] size_t getY() const { return y; }
+
+        [[nodiscard]] size_t getX() const { return x; }
+
+        void setX(const size_t _x) { this->x = _x; }
+
+        void setY(const size_t _y) { this->y = _y; }
     };
-    class VaccineData{
+
+    class VaccineData {
         Point gridCell{};
         int vaccines{};
     public:
-        VaccineData()=default;
-        VaccineData(const Point& gc, int vaccines){
-            this->gridCell=gc;
-            this->vaccines=vaccines;
+        VaccineData() = default;
+
+        VaccineData(const Point &gc, int vaccines) {
+            this->gridCell = gc;
+            this->vaccines = vaccines;
         }
-        VaccineData(size_t y, size_t x, int vaccines){
-            this->gridCell=Point(y,x);
-            this->vaccines=vaccines;
+
+        VaccineData(size_t y, size_t x, int vaccines) {
+            this->gridCell = Point(y, x);
+            this->vaccines = vaccines;
         }
-        VaccineData& operator=(const VaccineData& bd){
-            if(this!=&bd){
-                this->gridCell=bd.gridCell;
-                this->vaccines=bd.vaccines;
+
+        VaccineData &operator=(const VaccineData &bd) {
+            if (this != &bd) {
+                this->gridCell = bd.gridCell;
+                this->vaccines = bd.vaccines;
             }
             return *this;
         }
-        VaccineData(const VaccineData& bd){
-            *this=bd;
+
+        VaccineData(const VaccineData &bd) {
+            *this = bd;
         }
-        [[nodiscard]] Point getPoint()const{return this->gridCell;}
-        [[nodiscard]] int getVaccines() const{return  this->vaccines;}
-        [[nodiscard]] size_t getX()const{return this->gridCell.getX();}
-        [[nodiscard]] size_t getY()const{return this->gridCell.getY();}
+
+        [[nodiscard]] Point getPoint() const { return this->gridCell; }
+
+        [[nodiscard]] int getVaccines() const { return this->vaccines; }
+
+        [[nodiscard]] size_t getX() const { return this->gridCell.getX(); }
+
+        [[nodiscard]] size_t getY() const { return this->gridCell.getY(); }
+    };
+
+    class ScoreHolder {
+        int changeInProducedVaccines;
+        int changeInDefenseVaccines;
+        double score = 0;
+        double profitabilityIndex;
+        int vaccinesNeededForTotalHealing = 0;
+    public:
+        ScoreHolder(int changeInProducedVaccines, int changeInDefenseVaccines) {
+            this->changeInDefenseVaccines = changeInDefenseVaccines;
+            this->changeInProducedVaccines = changeInProducedVaccines;
+            profitabilityIndex = changeInProducedVaccines / (double) changeInDefenseVaccines;
+        }
+
+        void setVaccinesNeededForHealing(int value) { vaccinesNeededForTotalHealing = value; }
+
+        int getVaccinesNeededForHealing() { return vaccinesNeededForTotalHealing; }
+
+        [[nodiscard]] int ChangeInProducedVaccines() const { return changeInProducedVaccines; };
+
+        [[nodiscard]] int ChangeInDefenseVaccines() const { return changeInDefenseVaccines; }
+
+        void updateScore(double newScore) { score = newScore; }
+
+        [[nodiscard]] double getProfitabilityIndex() const { return profitabilityIndex; }
     };
 };
+
 typedef Utils::Point Point;
 typedef Utils::VaccineData VaccineData;
 

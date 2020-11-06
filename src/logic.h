@@ -35,7 +35,7 @@ public:
         Logic::grid = newGrid;
     }
 
-    void static simulateTO(int gameID, int tickID, int countryID);
+    void static simulateTO(int gameID, size_t tickID, size_t countryID);
 
     static int calculateSpontaneousHealing(const Point &p, int healStartTick, int vaccinated);
     static int calculateSpontaneousHealingLEGACY(const Point &p, int healStartTick);

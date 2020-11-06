@@ -25,9 +25,31 @@ class Grid {
 public:
     Grid() = delete;
 
-    Grid(const Grid &) = delete;
+    Grid(const Grid &g){
+        throw std::runtime_error("grid.h copy operator: untested behaviour");
+        if (this != &g) {
+            width = g.width;
+            height = g.height;
+            currentTick = g.currentTick;
+            random = g.random;
+            for (int i = 0; i < countries.size(); ++i) {
+                countries.push_back(g.countries[i]);
+            }
+            for (int i = 0; i < districts.size(); ++i) {
+                districts.push_back(g.districts[i]);
+            }
+            for (int i = 0; i < fields.size(); ++i) {
+                fields.push_back(g.fields[i]);
+            }
+            for (int y = 0; y < height; ++y) {
+                for (int x = 0; x < width; ++x) {
+                    grid[y][x] = g.grid[y][x];
+                }
+            }
+        }
+    }
 
-    Grid &operator=(const Grid &) = delete;
+    Grid &operator=(const Grid &g) = delete;
 
     Utils::Random random;
 
@@ -46,7 +68,7 @@ public:
         currentTick = 0;
     }
     //soronként töltjük fel a gridet(sorfolytonosan)
-    std::vector<size_t> operator[](size_t i) { return grid[i]; };
+    std::vector<size_t> operator[](size_t i) { return grid[i]; }
 
     [[nodiscard]] size_t getWidth() const { return width; } //grid[0].size();}
     [[nodiscard]] size_t getHeight() const { return height; } //grid.size();}
@@ -91,6 +113,8 @@ public:
     }
 
     void IncreaseCurrentTick() { currentTick++; }
+    size_t numberOfDistricts(){return districts.size();}
+    Point getCoordinatesByID(size_t ID);
 };
 
 

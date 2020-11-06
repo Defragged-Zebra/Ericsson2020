@@ -10,7 +10,7 @@
 
 Grid *Logic::grid = nullptr;
 
-void Logic::simulateTO(int gameID, int tickID, int countryID) {
+void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
     for (int i = 0; (grid->getCurrentTick() < tickID); ++i) {
 
         int heal = 0;
@@ -37,7 +37,6 @@ void Logic::simulateTO(int gameID, int tickID, int countryID) {
         grid->IncreaseCurrentTick();
     }
 }
-
 
 
 int Logic::calculateSpontaneousHealingLEGACY(const Point &p, int healStartTick) {
@@ -154,7 +153,7 @@ int Logic::calculateCrossInfectionLEGACY(const Point &center, uint64_t factor3) 
                             {centerY - 1, centerX},
                             {centerY + 1, centerX},
                             {centerY,     centerX + 1}};
-  
+
     for (const auto &selected : coordinates) {
         if (selected.getX() < 0 || selected.getY() < 0 || selected.getX() > grid->getWidth() - 1 ||
             selected.getY() > grid->getHeight() - 1) {
@@ -189,6 +188,7 @@ std::vector<VaccineData> &Logic::calculateBackVaccines(std::vector<VaccineData> 
 std::vector<VaccineData> &Logic::calculatePutVaccines(std::vector<VaccineData> &put, size_t tickID) {
     //TODO make this
     return put;
+}
 
 double Logic::calculateCrossInfection(const Point &center, uint64_t factor3) {
     Field &field = grid->getFieldByPoint(center);

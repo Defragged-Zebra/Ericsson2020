@@ -42,3 +42,9 @@ std::ostream &operator<<(std::ostream &os, const Grid &g) {
     }
     return os;
 }
+
+Point Grid::getCoordinatesByID(size_t ID) {
+    size_t y=ID/width; //integer division is a design choice
+    size_t x=ID-(width*y);
+    return Point(y,x);
+}
