@@ -7,7 +7,7 @@
 #include <cmath>
 
 void Protocol::displayResult(int gameID, int tickID, int countryID) {
-    ers << "[DEBUG]"<<std::endl;
+    ers << "[DEBUG - GRID]"<<std::endl;
     ers <<"RES " << gameID << " " << tickID << " " << countryID << std::endl;
     for (size_t y = 0; y < grid->getHeight(); ++y) {
         for (size_t x = 0; x < grid->getWidth(); ++x) {
@@ -16,5 +16,5 @@ void Protocol::displayResult(int gameID, int tickID, int countryID) {
         }
         ers << std::endl;
     }
-    ers << "[DEBUG VEGE]" <<std::endl;
+    ers << "[DEBUG - GRID ENDS]" <<std::endl;
 }

@@ -39,6 +39,7 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
 }
 
 
+
 int Logic::calculateSpontaneousHealingLEGACY(const Point &p, int healStartTick) {
     size_t currentTick = grid->getCurrentTick();
     if (grid == nullptr) throw std::invalid_argument("grid null pointer");
@@ -189,7 +190,6 @@ std::vector<VaccineData> &Logic::calculatePutVaccines(std::vector<VaccineData> &
     //TODO make this
     return put;
 }
-
 double Logic::calculateCrossInfection(const Point &center, uint64_t factor3) {
     Field &field = grid->getFieldByPoint(center);
     double sum = 0;
