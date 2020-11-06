@@ -189,7 +189,7 @@ std::vector<VaccineData> &Logic::calculateBackVaccines(std::vector<VaccineData> 
 std::vector<VaccineData> &Logic::calculatePutVaccines(std::vector<VaccineData> &put, size_t tickID) {
     //TODO make this
     return put;
-
+}
 double Logic::calculateCrossInfection(const Point &center, uint64_t factor3) {
     Field &field = grid->getFieldByPoint(center);
     double sum = 0;
