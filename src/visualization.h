@@ -5,6 +5,7 @@
 #ifndef VIRUS_VISUALIZATION_H
 #define VIRUS_VISUALIZATION_H
 #include "iface.h"
+#include "draw.h"
 
 class Visualization : public Iface{
 public:
