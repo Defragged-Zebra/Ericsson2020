@@ -25,8 +25,10 @@ class Grid {
 public:
     Grid() = delete;
 
-    Grid(const Grid &g){
-        throw std::runtime_error("grid.h copy operator: untested behaviour");
+    Grid(const Grid &g) = delete;
+
+    Grid &operator=(const Grid &g) {
+        //throw std::runtime_error("grid.h copy operator: untested behaviour");
         if (this != &g) {
             width = g.width;
             height = g.height;
@@ -41,15 +43,18 @@ public:
             for (int i = 0; i < fields.size(); ++i) {
                 fields.push_back(g.fields[i]);
             }
+            for (size_t i = 0; i < height; ++i) {
+                std::vector<size_t> sor = std::vector<size_t>(width);
+                grid.push_back(sor);
+            }
             for (int y = 0; y < height; ++y) {
                 for (int x = 0; x < width; ++x) {
                     grid[y][x] = g.grid[y][x];
                 }
             }
         }
+        return *this;
     }
-
-    Grid &operator=(const Grid &g) = delete;
 
     Utils::Random random;
 
@@ -67,6 +72,7 @@ public:
         this->districts = std::vector<District>();
         currentTick = 0;
     }
+
     //soronként töltjük fel a gridet(sorfolytonosan)
     std::vector<size_t> operator[](size_t i) { return grid[i]; }
 
@@ -76,17 +82,20 @@ public:
     Country &getCountryByID(size_t ID) { return countries[ID]; }
 
     District &getDistrictByID(size_t ID) { return districts[ID]; }
-    District &getDistrictByPoint(const Point& p){
+
+    District &getDistrictByPoint(const Point &p) {
         return getDistrictByID(getFieldByPoint(p).getAssignedDistrictID());
     }
 
     Field &getFieldByID(size_t ID) { return fields[ID]; }
-    Field &getFieldByPoint(const Point& p){
+
+    Field &getFieldByPoint(const Point &p) {
         return getFieldByID(grid[p.getY()][p.getX()]);
     }
 
     template<typename FUNC>
     FUNC executeOnEveryElement(FUNC func);
+
     //TODO újraírni a picsába
     friend std::ostream &operator<<(std::ostream &os, const Grid &g);
 
@@ -113,7 +122,9 @@ public:
     }
 
     void IncreaseCurrentTick() { currentTick++; }
-    size_t numberOfDistricts(){return districts.size();}
+
+    size_t numberOfDistricts() { return districts.size(); }
+
     Point getCoordinatesByID(size_t ID);
 };
 

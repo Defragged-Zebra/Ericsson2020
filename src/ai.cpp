@@ -7,8 +7,10 @@
 const double AI::parameter1 = 1;
 const double AI::parameter2 = -1;
 std::map<size_t, Utils::ScoreHolder> AI::districtScores = std::map<size_t, Utils::ScoreHolder>();
+uint64_t fuckCpp[4]={0};
+Grid AI::grid = Grid(0,0, fuckCpp);
 
-void AI::calculateDistrictScoresForNextRound(Grid grid, size_t countryID) {
+void AI::calculateDistrictScoresForNextRound(size_t countryID) {
 //    throw std::runtime_error(
 //    "ai.cpp: monolith encountered, execution stopped to admire the lack of Sparks coding skills");
 //    throw std::runtime_error(
@@ -62,7 +64,7 @@ void AI::calculateDistrictScoresForNextRound(Grid grid, size_t countryID) {
 
 std::vector<VaccineData> AI::chooseDistrictsToHeal(Grid &grid, int numberOfVaccinesToDistribute, size_t countryID) {
     reset();
-    AI::calculateDistrictScoresForNextRound(grid, countryID);
+    AI::calculateDistrictScoresForNextRound(countryID);
     std::vector<VaccineData> districtsToHeal = std::vector<VaccineData>();
     for (auto scoreHolder : AI::districtScores) {
         scoreHolder.second.updateScore(parameter1 * scoreHolder.second.ChangeInDefenseVaccines() +
@@ -92,9 +94,10 @@ void AI::reset() {
 }
 
 std::vector<VaccineData> &
-AI::calculateBackVaccines(std::vector<VaccineData> &back, size_t tickID, Grid &grid, int &numberOfVaccinesToDistribute,
+AI::calculateBackVaccines(std::vector<VaccineData> &back, size_t tickID, int &numberOfVaccinesToDistribute,
                           size_t countryID) {
-    for (int i = 0; (grid.getCurrentTick() < tickID); ++i) {
+    //TODO: a healthy integer underflow happens here if TickID is 0, don't mind it
+    for (int i = 0; (grid.getCurrentTick()-1 < tickID); ++i) {
         for (int y = 0; y < grid.getHeight(); ++y) {
             for (int x = 0; x < grid.getWidth(); ++x) {
                 std::map<size_t, int> &allStoredVaccines = grid.getFieldByPoint(Point(y, x)).getStoredVaccines();
@@ -112,11 +115,13 @@ AI::calculateBackVaccines(std::vector<VaccineData> &back, size_t tickID, Grid &g
 }
 
 std::vector<VaccineData> &
-AI::calculatePutVaccines(std::vector<VaccineData> &put, size_t tickID, Grid &grid, int numberOfVaccinesToDistribute,
+AI::calculatePutVaccines(std::vector<VaccineData> &put, size_t tickID, int numberOfVaccinesToDistribute,
                          size_t countryID) {
-    for (int i = 0; (grid.getCurrentTick() < tickID); ++i) {
+    for (int i = 0; (grid.getCurrentTick()-1 < tickID); ++i) {
         //overwrite, bc you need to return the last values (thx Ericsson )
         put = chooseDistrictsToHeal(grid, numberOfVaccinesToDistribute, countryID);
     }
     return put;
 }
+
+

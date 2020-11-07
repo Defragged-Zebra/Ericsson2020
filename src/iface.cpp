@@ -139,15 +139,16 @@ void Iface::round(std::string &line) {
 
     //TODO: calculate this
     int numberOfVaccinesToDistribute=0;
+    AI::copyGrid(grid);
     //Send result back
     os << "RES " << _gameID << " " << tickID << " " << countryID << std::endl;
     std::vector<VaccineData> back; // don't change this
-    back = AI::calculateBackVaccines(back, tickID, *grid,numberOfVaccinesToDistribute,countryID);
+    back = AI::calculateBackVaccines(back, tickID,numberOfVaccinesToDistribute,countryID);
     for (auto &i : back) {
         os << "BACK " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
     }
     std::vector<VaccineData> put; // don't change this
-    put = AI::calculatePutVaccines(put, tickID, *grid, numberOfVaccinesToDistribute,countryID);
+    put = AI::calculatePutVaccines(put, tickID, numberOfVaccinesToDistribute,countryID);
     for (auto &i : back) {
         os << "PUT " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
     }

@@ -27,13 +27,14 @@ public:
     Field() = default;
 
     Field(const int fieldID, const int assignedDistrictID, const int currentInfectionValue, const int vaccinationRate,
-          const int populationDensity, size_t numberOfStoredPastValues) {
+          const int populationDensity, size_t numberOfStoredPastValues, std::map<size_t, int>initialVaccineData) {
         this->fieldID = fieldID;
         this->assignedDistrictID = assignedDistrictID;
         this->infectionRate = currentInfectionValue;
         this->vaccinationRate = vaccinationRate;
         this->populationDensity = populationDensity;
-        this->storedVaccines = std::map<size_t, int>();
+        //TODO: megnezni hogy ezt masolhatom-e referenciakent
+        this->storedVaccines = initialVaccineData;
         this->lastInfectionRates = std::deque<int>();
         this->lastInfectionValues = std::deque<int>();
         lastInfectionRates.push_back(currentInfectionValue);
