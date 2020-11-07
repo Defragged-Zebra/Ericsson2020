@@ -22,7 +22,6 @@ class Logic {
 
     static int distance(const Point &p1, const Point &p2);
 
-
     static int calculateCrossInfectionLEGACY(const Point &center, uint64_t factor3);
 
     static double calculateCrossInfection(const Point &center, uint64_t factor3);
@@ -47,11 +46,6 @@ public:
     static int calculateVaccination(const Point &p, int &spontaneousHealAmount);
 
     static void shiftFactor2to4();
-
-    static std::vector<VaccineData> &calculateBackVaccines(std::vector<VaccineData> &back, size_t tickID);
-
-    static std::vector<VaccineData> &calculatePutVaccines(std::vector<VaccineData> &put, size_t tickID);
-
 };
 
 

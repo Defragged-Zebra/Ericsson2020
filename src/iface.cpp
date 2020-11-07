@@ -126,6 +126,7 @@ void Iface::round(std::string &line) {
     tmp = "";
     while (std::getline(is, tmp)) {
         Iface::sendDebugMsg("[NOTIFY] " + tmp);
+        //TODO: parse game-data here
         if (tmp.find("WARN") != std::string::npos) {
             Iface::sendDebugMsg(line);
             throw std::runtime_error("We've fucked it up!!444!!!");
@@ -134,18 +135,19 @@ void Iface::round(std::string &line) {
         else break;
     }
 
-
     Logic::simulateTO(_gameID, tickID, countryID);
 
+    //TODO: calculate this
+    int numberOfVaccinesToDistribute=0;
     //Send result back
     os << "RES " << _gameID << " " << tickID << " " << countryID << std::endl;
-    std::vector<VaccineData> back;// Ha hozzá nyúlsz letöröm a kezed!!!!
-    back = Logic::calculateBackVaccines(back, tickID);
+    std::vector<VaccineData> back; // don't change this
+    back = AI::calculateBackVaccines(back, tickID, *grid,numberOfVaccinesToDistribute,countryID);
     for (auto &i : back) {
         os << "BACK " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
     }
-    std::vector<VaccineData> put;// Ha hozzá nyúlsz letöröm a kezed!!!!
-    put = Logic::calculatePutVaccines(put, tickID);
+    std::vector<VaccineData> put; // don't change this
+    put = AI::calculatePutVaccines(put, tickID, *grid, numberOfVaccinesToDistribute,countryID);
     for (auto &i : back) {
         os << "PUT " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
     }

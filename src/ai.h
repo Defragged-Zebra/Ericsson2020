@@ -10,15 +10,27 @@
 #define VIRUS_AI_H
 
 
-class AI:public Logic {
+class AI : Logic {
     static std::map<size_t, Utils::ScoreHolder> districtScores;
+
     //it is important to COPY the grid
-    void calculateDistrictScoresForNextRound(Grid grid, size_t countryID);
+    static void calculateDistrictScoresForNextRound(Grid grid, size_t countryID);
+
+    static void reset();
 
     static const double parameter1;
     static const double parameter2;
+
+    static std::vector<VaccineData> chooseDistrictsToHeal(Grid &grid, int numberOfVaccinesToDistribute, size_t countryID);
+
 public:
-    std::vector<size_t> chooseDistrictsToHeal(Grid &grid, int numberOfVaccinesToDistribute, size_t countryID);
+
+    static std::vector<VaccineData> &
+    calculateBackVaccines(std::vector<VaccineData> &back, size_t tickID, Grid &grid, int &numberOfVaccinesToDistribute,
+                          size_t countryID);
+
+    static std::vector<VaccineData> &calculatePutVaccines(std::vector<VaccineData> &put, size_t tickID, Grid &grid, int numberOfVaccinesToDistribute,
+                                                          size_t countryID);
 };
 
 
