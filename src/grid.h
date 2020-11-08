@@ -27,21 +27,21 @@ public:
 
     Grid(const Grid &g) = delete;
 
-    Grid &operator=(const Grid &g) {
+    Grid &operator=(const Grid *g) {
         //throw std::runtime_error("grid.h copy operator: untested behaviour");
-        if (this != &g) {
-            width = g.width;
-            height = g.height;
-            currentTick = g.currentTick;
-            random = g.random;
-            for (int i = 0; i < countries.size(); ++i) {
-                countries.push_back(g.countries[i]);
+        if (this != g) {
+            width = g->width;
+            height = g->height;
+            currentTick = g->currentTick;
+            random = g->random;
+            for (int i = 0; i < g->countries.size(); ++i) {
+                countries.push_back(g->countries[i]);
             }
-            for (int i = 0; i < districts.size(); ++i) {
-                districts.push_back(g.districts[i]);
+            for (int i = 0; i < g->districts.size(); ++i) {
+                districts.push_back(g->districts[i]);
             }
-            for (int i = 0; i < fields.size(); ++i) {
-                fields.push_back(g.fields[i]);
+            for (int i = 0; i < g->fields.size(); ++i) {
+                fields.push_back(g->fields[i]);
             }
             for (size_t i = 0; i < height; ++i) {
                 std::vector<size_t> sor = std::vector<size_t>(width);
@@ -49,7 +49,7 @@ public:
             }
             for (int y = 0; y < height; ++y) {
                 for (int x = 0; x < width; ++x) {
-                    grid[y][x] = g.grid[y][x];
+                    grid[y][x] = g->grid[y][x];
                 }
             }
         }

@@ -7,8 +7,8 @@
 const double AI::parameter1 = 1;
 const double AI::parameter2 = -1;
 std::map<size_t, Utils::ScoreHolder> AI::districtScores = std::map<size_t, Utils::ScoreHolder>();
-uint64_t fuckCpp[4]={0};
-Grid AI::grid = Grid(0,0, fuckCpp);
+uint64_t fuckCpp[4] = {0};
+Grid AI::grid = Grid(0, 0, fuckCpp);
 
 void AI::calculateDistrictScoresForNextRound(size_t countryID) {
 //    throw std::runtime_error(
@@ -97,18 +97,20 @@ std::vector<VaccineData> &
 AI::calculateBackVaccines(std::vector<VaccineData> &back, size_t tickID, int &numberOfVaccinesToDistribute,
                           size_t countryID) {
     //TODO: a healthy integer underflow happens here if TickID is 0, don't mind it
-    for (int i = 0; (grid.getCurrentTick()-1 < tickID); ++i) {
-        for (int y = 0; y < grid.getHeight(); ++y) {
-            for (int x = 0; x < grid.getWidth(); ++x) {
-                std::map<size_t, int> &allStoredVaccines = grid.getFieldByPoint(Point(y, x)).getStoredVaccines();
-                int countryStoredVaccines = allStoredVaccines[countryID];
-                //Egy területről az összes tartalék vakcinát nem lehet visszavenni, legalább 1 egységnyit ott kell hagyni.
-                if (countryStoredVaccines > 1) {
-                    back.emplace_back(Point(y, x), countryStoredVaccines - 1);
-                    numberOfVaccinesToDistribute += countryStoredVaccines - 1;
-                }
+
+    for (int y = 0; y < grid.getHeight(); ++y) {
+        for (int x = 0; x < grid.getWidth(); ++x) {
+            std::map<size_t, int> &allStoredVaccines = grid.getFieldByPoint(Point(y, x)).getStoredVaccines();
+            int countryStoredVaccines;
+            try { countryStoredVaccines = allStoredVaccines.at(countryID); }
+            catch (std::out_of_range &exc) { countryStoredVaccines = 0; }
+            //Egy területről az összes tartalék vakcinát nem lehet visszavenni, legalább 1 egységnyit ott kell hagyni.
+            if (countryStoredVaccines > 1) {
+                back.emplace_back(Point(y, x), countryStoredVaccines - 1);
+                numberOfVaccinesToDistribute += countryStoredVaccines - 1;
             }
         }
+
     }
     //return only the last
     return back;
@@ -117,10 +119,10 @@ AI::calculateBackVaccines(std::vector<VaccineData> &back, size_t tickID, int &nu
 std::vector<VaccineData> &
 AI::calculatePutVaccines(std::vector<VaccineData> &put, size_t tickID, int numberOfVaccinesToDistribute,
                          size_t countryID) {
-    for (int i = 0; (grid.getCurrentTick()-1 < tickID); ++i) {
-        //overwrite, bc you need to return the last values (thx Ericsson )
-        put = chooseDistrictsToHeal(grid, numberOfVaccinesToDistribute, countryID);
-    }
+
+    //overwrite, bc you need to return the last values (thx Ericsson )
+    put = chooseDistrictsToHeal(grid, numberOfVaccinesToDistribute, countryID);
+
     return put;
 }
 

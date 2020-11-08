@@ -28,7 +28,7 @@ class AI : Logic {
 
 public:
     static void copyGrid(Grid *g) {
-        AI::grid = *g;
+        AI::grid = g;
     }
 
     static std::vector<VaccineData> &
