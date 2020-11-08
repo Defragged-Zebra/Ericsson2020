@@ -79,7 +79,7 @@ void Iface::createGrid() {
 void Iface::start() {
     std::string line;
     while (std::getline(is, line)) {
-        if (line == "." or line.empty()) {
+        if (line == "." or line.empty() or line == ".\r" or line == "\r") {
             continue;
         } else if (line == "SUCCESS") {
             Iface::sendDebugMsg("SUCCESS");
@@ -97,7 +97,7 @@ void Iface::start() {
             Iface::round(line);
         } else {
             Iface::sendDebugMsg("Miafasz történt?");
-            Iface::sendDebugMsg("[DEBUG] Hibát okozta\""+line+"\" [DEBUG VEGE]");
+            Iface::sendDebugMsg("[DEBUG] Hibát okozta\"" + line + "\" [DEBUG VEGE]");
             throw std::runtime_error("Miafasz történt?");
         }
     }
@@ -122,19 +122,22 @@ void Iface::round(std::string &line) {
     ss >> tmp >> _gameID >> tickID >> countryID;
 
     //Process input values
-    tmp="";
-    while(std::getline(is,tmp)){
-        Iface::sendDebugMsg("[NOTIFY] "+tmp);
-        if(tmp!=".")continue;
+    tmp = "";
+    while (std::getline(is, tmp)) {
+        Iface::sendDebugMsg("[NOTIFY] " + tmp);
+        if (tmp.find("WARN") != std::string::npos) {
+            Iface::sendDebugMsg(line);
+            throw std::runtime_error("We've fucked it up!!444!!!");
+        }
+        if (tmp != ".\r" and tmp!=".")continue;
         else break;
     }
-
     Logic::simulateTO(_gameID, tickID, countryID);
 
     //Send result back
     os << "RES " << _gameID << " " << tickID << " " << countryID << std::endl;
     std::vector<VaccineData> back;// Ha hozzá nyúlsz letöröm a kezed!!!!
-    back= Logic::calculateBackVaccines(back, tickID);
+    back = Logic::calculateBackVaccines(back, tickID);
     for (auto &i : back) {
         os << "BACK " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
     }
