@@ -40,6 +40,7 @@ void Iface::createGrid() {
     ss << line;
     ss >> tmp >> iy >> ix;
     grid = new Grid(iy, ix, factors);
+
     size_t fieldID = 0;
     size_t storedValsCnt = grid->getHeight() + grid->getWidth();
     size_t numberOfDistricts = 0;
@@ -73,13 +74,14 @@ void Iface::createGrid() {
 
         }
     }
+    setGrid(grid);
 
 }
 
 void Iface::start() {
     std::string line;
     while (std::getline(is, line)) {
-        if (line == "." or line.empty() or line == ".\r" or line == "\r") {
+        if (line == ".\r" or line == "\r" or line ==".") { // Lécci hadd működjön linuxon is :(
             continue;
         } else if (line == "SUCCESS") {
             Iface::sendDebugMsg("SUCCESS");

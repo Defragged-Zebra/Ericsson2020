@@ -12,10 +12,11 @@ int main() {
 //        ex3->ss << "." << std::endl;
 //    }
     std::ifstream ifs;
-    ifs.open("../testfiles/round2/test1.csv");
+    ifs.open("../testfiles/round2/visual.csv");
     //AntiVirus av = AntiVirus(new Protocol(std::cin, std::cout, std::cerr));
     //AntiVirus av = AntiVirus(new Graphics(ifs,std::cout,std::cout));
-    AntiVirus av = AntiVirus(new Protocol(ifs, std::cout, std::cout));
+    //AntiVirus av = AntiVirus(new Protocol(ifs, std::cout, std::cout));
+    AntiVirus av = AntiVirus(new Visualization(ifs, std::cout, std::cout));
     av.startInterface();
 
     return 0;
