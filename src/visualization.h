@@ -5,25 +5,25 @@
 #ifndef VIRUS_VISUALIZATION_H
 #define VIRUS_VISUALIZATION_H
 #include "iface.h"
-#include "draw.h"
+#include "window.h"
 
 class Visualization : public Iface{
+    Window ablak;
 public:
     Visualization() = delete;
 
-    Visualization(std::istream &is, std::ostream &os, std::ostream &ers) : Iface(is, os, ers) {
-        // window init comes here
-    }
+    Visualization(std::istream &is, std::ostream &os, std::ostream &ers) : Iface(is, os, ers) {}
 
     Visualization(const Visualization &p) = delete;
 
     Visualization &operator=(const Visualization &g) = delete;
 
-
-    void currentResult(int gameID, int tickID, int countryID)override{
-        this->displayResult(gameID,tickID,countryID);
+    void setGrid(Grid* g)override{
+        grid = g;
+        Logic::setGrid(g);
+        ablak.setGrid(grid);
     }
-    void displayResult(int gameID, int tickID, int countryID);
+    void displayCurrentRound(int gameID, int tickID, int countryID) override;
 };
 
 

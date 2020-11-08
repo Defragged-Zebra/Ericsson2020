@@ -9,20 +9,20 @@
 #include <map>
 #include <queue>
 #include <sstream>
-#include "district.h"
+#include <cmath>
 
 class Field {
-    size_t fieldID;
-    int infectionRate;
-    int vaccinationRate;
-    int populationDensity;
-    size_t assignedDistrictID;
-    std::map<int, int> storedVaccines;
+    size_t fieldID{};
+    int infectionRate{};
+    int vaccinationRate{};
+    int populationDensity{};
+    size_t assignedDistrictID{};
+    std::map<size_t, int> storedVaccines; //countryID, stored amount
     //this stores the history of the infectionRate-s
     std::deque<int> lastInfectionRates;
     //this stores the history of the infection values returned by the Logic::calculateInfectionValue()
     std::deque<int> lastInfectionValues;
-    size_t lastInfRateLen;
+    size_t lastInfRateLen{};
 public:
     Field() = default;
 
@@ -33,7 +33,7 @@ public:
         this->infectionRate = currentInfectionValue;
         this->vaccinationRate = vaccinationRate;
         this->populationDensity = populationDensity;
-        this->storedVaccines = std::map<int, int>();
+        this->storedVaccines = std::map<size_t, int>();
         this->lastInfectionRates = std::deque<int>();
         this->lastInfectionValues = std::deque<int>();
         lastInfectionRates.push_back(currentInfectionValue);
@@ -60,7 +60,7 @@ public:
         return *this;
     }
 
-    size_t getFieldID() const { return this->fieldID; }
+    [[nodiscard]] size_t getFieldID() const { return this->fieldID; }
 
     friend std::ostream &operator<<(std::ostream &os, const Field &f);
 
@@ -68,17 +68,23 @@ public:
 
     std::deque<int> &getLastInfectionValues() { return lastInfectionValues; }
 
-    int getPopulationDensity() const { return populationDensity; }
+    [[nodiscard]] int getPopulationDensity() const { return populationDensity; }
 
-    size_t getAssignedDistrictID() const { return assignedDistrictID; }
+    [[nodiscard]] size_t getAssignedDistrictID() const { return assignedDistrictID; }
 
     void updateVaccination(int value);
 
     void updateInfection(int value);
 
-    int getCurrentInfectionRate() const { return infectionRate; }
+    [[nodiscard]] int getCurrentInfectionRate() const { return infectionRate; }
 
-    int getVaccinationRate() const { return vaccinationRate; }
+    [[nodiscard]] int getVaccinationRate() const { return vaccinationRate; }
+
+    [[nodiscard]] bool isClear() const { return infectionRate == 0; }
+
+    std::map<size_t,int>& getStoredVaccines(){return storedVaccines;}
+
+    void updateRemainingVaccines(int vaccinated);
 
 };
 

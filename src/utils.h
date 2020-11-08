@@ -27,7 +27,7 @@ public:
         [[nodiscard]] uint64_t getFactor(int index) const;
     };
     class Point{
-        size_t y,x;
+        size_t y{},x{};
     public:
         Point()=default;
         Point(size_t y, size_t x){
@@ -41,7 +41,7 @@ public:
             }
             return *this;
         }
-        Point(Point& p){
+        Point(const Point& p){
             *this=p;
         }
         bool operator==(const Point& p) const{
@@ -52,7 +52,36 @@ public:
         void setX(const size_t _x){this->x=_x;}
         void setY(const size_t _y){this->y=_y;}
     };
+    class VaccineData{
+        Point gridCell{};
+        int vaccines{};
+    public:
+        VaccineData()=default;
+        VaccineData(const Point& gc, int vaccines){
+            this->gridCell=gc;
+            this->vaccines=vaccines;
+        }
+        VaccineData(size_t y, size_t x, int vaccines){
+            this->gridCell=Point(y,x);
+            this->vaccines=vaccines;
+        }
+        VaccineData& operator=(const VaccineData& bd){
+            if(this!=&bd){
+                this->gridCell=bd.gridCell;
+                this->vaccines=bd.vaccines;
+            }
+            return *this;
+        }
+        VaccineData(const VaccineData& bd){
+            *this=bd;
+        }
+        [[nodiscard]] Point getPoint()const{return this->gridCell;}
+        [[nodiscard]] int getVaccines() const{return  this->vaccines;}
+        [[nodiscard]] size_t getX()const{return this->gridCell.getX();}
+        [[nodiscard]] size_t getY()const{return this->gridCell.getY();}
+    };
 };
 typedef Utils::Point Point;
+typedef Utils::VaccineData VaccineData;
 
 #endif //VIRUS_UTILS_H

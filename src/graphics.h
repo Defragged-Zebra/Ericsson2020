@@ -19,7 +19,7 @@ public:
 
 
 
-    void currentResult(int gameID, int tickID, int countryID) override {
+    void displayCurrentRound(int gameID, int tickID, int countryID) override {
         this->terminalGraphicsRun(gameID, tickID, countryID);
     }
 

@@ -2,21 +2,35 @@
 // Created by flow on 2020. 11. 06..
 //
 
-#ifndef VIRUS_DRAW_H
-#define VIRUS_DRAW_H
+#ifndef VIRUS_WINDOW_H
+#define VIRUS_WINDOW_H
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL_ttf.h>
+#include <SDL.h>
+#include <vector>
 
-class Draw {
+#include "grid.h"
+#include "utils.h"
+
+class Window {
     SDL_Window* window;
     SDL_Surface* screen;
     SDL_Renderer* renderer;
     TTF_Font* font;
+    size_t districtCount;
+    Grid* grid= nullptr;
+    SDL_Color red={255,0,0};
+    SDL_Color black={0,0,0 };
+    SDL_Color green={0, 255, 0};
+    SDL_Color blue={0, 0, 255};
+    std::vector<SDL_Color> colors;
 
 public:
-    explicit Draw(size_t w=640, size_t h=480){
+    Window& operator=(const Window&)=delete;
+    Window(const Window&)=delete;
+    explicit Window(size_t w=1000, size_t h=1000){
         //itt van-e a cucli
         if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
             throw std::runtime_error( "Failed to initialize the SDL2 library");
@@ -44,7 +58,7 @@ public:
         //felület létrehozása, ezt tudjuk animálni ha jól értem, az ablak basically csak a keret
         this->screen = SDL_GetWindowSurface(window);
 
-        SDL_FillRect(screen, nullptr, SDL_MapRGB (screen->format, 255, 255, 255));
+        SDL_FillRect(screen, nullptr, SDL_MapRGB (screen->format, 0, 0, 0));
 
         TTF_Init();
 
@@ -56,16 +70,34 @@ public:
 
 
     }
-    void run();
+    void update();
+    void setGrid(Grid* g){
+        this->grid=g;
+        this->districtCount=g->getNumberOfDistricts();
+        setColors();
+    }
 
-    void createNumbers(SDL_Color color, int x, int y, int w, int h, const char* text);
+    void setColors();
+
+    void createText(const Point& p, size_t w, size_t h,size_t sep, const std::string& text);
+    void createText(const Point& p, size_t w, size_t h,size_t sep, int val);
+    void createText(const Point &p, size_t w, size_t h,size_t sep, double val);
 
     //hány sor, hány oszlop, köztük hely, négyzet mérete
-    void createGrid(size_t sy,size_t sx,size_t sep=10,size_t sidelen=20);
+    void createGrid(const Point& p,size_t sep=10,size_t sidelen=30);
 
-    void createRect(size_t x, size_t y, size_t w, size_t h, SDL_Color color);
+    void createRect(const Point& p,size_t w, size_t h, size_t sep);
+
+    void createCell(const Point &p, size_t w, size_t h, size_t sep);
+
+    ~Window(){
+        TTF_CloseFont(font);
+        SDL_DestroyWindow(window);
+        SDL_DestroyRenderer(renderer);
+        SDL_Quit();
+    }
 
 };
 
 
-#endif //VIRUS_DRAW_H
+#endif //VIRUS_WINDOW_H

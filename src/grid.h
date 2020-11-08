@@ -45,6 +45,7 @@ public:
         this->districts = std::vector<District>();
         currentTick = 0;
     }
+
     //soronként töltjük fel a gridet(sorfolytonosan)
     std::vector<size_t> operator[](size_t i) { return grid[i]; };
 
@@ -54,17 +55,20 @@ public:
     Country &getCountryByID(size_t ID) { return countries[ID]; }
 
     District &getDistrictByID(size_t ID) { return districts[ID]; }
-    District &getDistrictByPoint(const Point& p){
+
+    District &getDistrictByPoint(const Point &p) {
         return getDistrictByID(getFieldByPoint(p).getAssignedDistrictID());
     }
 
     Field &getFieldByID(size_t ID) { return fields[ID]; }
-    Field &getFieldByPoint(const Point& p){
+
+    Field &getFieldByPoint(const Point &p) {
         return getFieldByID(grid[p.getY()][p.getX()]);
     }
 
     template<typename FUNC>
     FUNC executeOnEveryElement(FUNC func);
+
     //TODO újraírni a picsába
     friend std::ostream &operator<<(std::ostream &os, const Grid &g);
 
@@ -88,6 +92,10 @@ public:
 
     [[nodiscard]] size_t getCurrentTick() const {
         return currentTick;
+    }
+
+    [[nodiscard]] size_t getNumberOfDistricts() const {
+        return districts.size();
     }
 
     void IncreaseCurrentTick() { currentTick++; }

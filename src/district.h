@@ -8,28 +8,29 @@
 #include <vector>
 #include "field.h"
 
+
 class District {
-private:
-    size_t districtID;
+    size_t districtID{};
     //size_t assignedCountryID;
-    std::vector<size_t> assignedFieldIDs;
-    bool clear;
+    //"cannot store reference in std::vector, it is simply not allowed" - stackoverflow
+    std::vector<Field*> assignedFields;
+    bool clear{};
 public:
     District() = default;
 
-    District(size_t sectorID, const std::vector<size_t> &assignedFieldIDs, bool clear = false) {
+    District(size_t sectorID, const std::vector<Field*> &assignedFields, bool clear = false) {
         this->districtID = sectorID;
-        this->assignedFieldIDs = assignedFieldIDs;
+        this->assignedFields = assignedFields;
         this->clear = clear;
     }
 
-    std::vector<size_t> getAssignedFields() const { return assignedFieldIDs; }
+    [[nodiscard]] std::vector<Field*> getAssignedFields() const { return assignedFields; }
 
-    size_t getDistrictID() const { return districtID; }
+    [[nodiscard]] size_t getDistrictID() const { return districtID; }
 
-    bool isClear() const { return clear; }
+    [[nodiscard]] bool isClear() const { return clear; }
 
-    void setClear(bool clear) { this->clear = clear; }
+    void setClear(bool value) { this->clear = value; }
     bool operator==(const District&d){
         return this->districtID==d.districtID;
     }
@@ -38,6 +39,8 @@ public:
     }
 
     friend std::ostream &operator<<(std::ostream &os, const District &d);
+    void addAssignedField(Field* assignedField){assignedFields.push_back(assignedField);}
+    void updateIsClear();
 };
 
 
