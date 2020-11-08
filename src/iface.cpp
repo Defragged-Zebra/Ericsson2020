@@ -79,7 +79,7 @@ void Iface::createGrid() {
 void Iface::start() {
     std::string line;
     while (std::getline(is, line)) {
-        if (line == ".\r" or line == "\r") {
+        if (line == "." or line.empty() or line == ".\r" or line == "\r") {
             continue;
         } else if (line == "SUCCESS") {
             Iface::sendDebugMsg("SUCCESS");
@@ -90,7 +90,6 @@ void Iface::start() {
         } else if (line.find("FAILED") != std::string::npos) {
             Iface::sendDebugMsg(line);
             break;
-            //this else is never reached
         } else if (line.find("WARN") != std::string::npos) {
             Iface::sendDebugMsg(line);
             throw std::runtime_error("Beszoptuk a faszt!!444!!!");
@@ -130,11 +129,9 @@ void Iface::round(std::string &line) {
             Iface::sendDebugMsg(line);
             throw std::runtime_error("We've fucked it up!!444!!!");
         }
-        if (tmp != ".\r")continue;
+        if (tmp != ".\r" and tmp!=".")continue;
         else break;
     }
-
-
     Logic::simulateTO(_gameID, tickID, countryID);
 
     //Send result back
