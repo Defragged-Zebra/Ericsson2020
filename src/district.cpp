@@ -15,8 +15,8 @@ void District::updateIsClear() {
         throw std::runtime_error(
                 "district.cpp - You tried to update the clean-ness of a clean field. This shouldn't happen, pls notify Spark");
     bool tmp = true;
-    for (int i = 0; i < assignedFields.size(); ++i) {
-        tmp &= (*assignedFields[i]).isClear();
+    for (auto & assignedField : assignedFields) {
+        tmp &= (*assignedField).isClear();
     }
     clear = tmp;
 }

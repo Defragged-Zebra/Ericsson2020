@@ -30,13 +30,14 @@ public:
 
     Logic() = default;
 
-    void static setGrid(Grid *newGrid) {
-        Logic::grid = newGrid;
-    }
+    void static setGrid(Grid *newGrid) { Logic::grid = newGrid; }
 
-    void static simulateTO(int gameID, size_t tickID, size_t countryID);
+    static Grid *getGrid() { return grid; }
+
+    static void simulateTO(int gameID, size_t tickID, size_t countryID);
 
     static int calculateSpontaneousHealing(const Point &p, int healStartTick, int vaccinated);
+
     static int calculateSpontaneousHealingLEGACY(const Point &p, int healStartTick);
 
     static int calculateSpontaneousInfection(const Point &p);

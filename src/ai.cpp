@@ -16,9 +16,12 @@ void AI::calculateDistrictScoresForNextRound(size_t countryID) {
 //    throw std::runtime_error(
 //    "ai.cpp: untested behaviour, double check before implementing it -- especially if the calculation happens at the next gridTick, or it fuck up everything");
 //    throw std::runtime_error("ai.cpp: heavily unoptimised code for readability");
+    Grid *logicGrid = Logic::getGrid();
+    Logic::setGrid(&AI::grid);
     AI::simulateTO(0, grid.getCurrentTick() + 1, countryID);
+    Logic::setGrid(logicGrid);
     for (size_t i = 0; i < grid.numberOfDistricts(); ++i) {
-        District district = grid.getDistrictByID(i);
+        District &district = grid.getDistrictByID(i);
         Utils::ScoreHolder score = Utils::ScoreHolder();
         if (!district.isClear()) {
             int vaccinesNeededForTotalHealing = 0;
@@ -28,7 +31,6 @@ void AI::calculateDistrictScoresForNextRound(size_t countryID) {
                         (fieldPointer->getCurrentInfectionRate() - fieldPointer->getVaccinationRate()) /
                         fieldPointer->getPopulationDensity());
             }
-            score.setVaccinesNeededForHealing(vaccinesNeededForTotalHealing);
             int changeInProducedVaccines = 0;
             int changeInDefenseVaccines = 0;
             for (Field *fieldPointer:district.getAssignedFields()) {
@@ -45,7 +47,12 @@ void AI::calculateDistrictScoresForNextRound(size_t countryID) {
                      * nem tiszta kerülethez tartozó területek 6 - start_info[coord].population különbségösszege,
                      * osztva 3-mal, ennek a felső egészrésze.
                      */
+                    if (selected.getX() < 0 || selected.getY() < 0 || selected.getX() > grid.getWidth() - 1 ||
+                        selected.getY() > grid.getHeight() - 1) {
+                        continue;
+                    }
                     if (grid.getDistrictByPoint(selected) == grid.getDistrictByPoint(center)) continue;
+                    //todo: calculation assumes only 1 district healed/tick, this iw wrong
                     if (grid.getDistrictByPoint(selected).isClear()) {
                         changeInDefenseVaccines -= std::ceil(
                                 (6 - grid.getFieldByPoint(center).getPopulationDensity()) / (double) 3);
@@ -54,9 +61,9 @@ void AI::calculateDistrictScoresForNextRound(size_t countryID) {
                                 (6 - grid.getFieldByPoint(selected).getPopulationDensity()) / (double) 3);
                     }
                 }
-                score = Utils::ScoreHolder(changeInProducedVaccines, changeInDefenseVaccines);
             }
-
+            score = Utils::ScoreHolder(changeInProducedVaccines, changeInDefenseVaccines,
+                                       vaccinesNeededForTotalHealing);
         }
         districtScores[district.getDistrictID()] = score;
     }
@@ -66,25 +73,37 @@ std::vector<VaccineData> AI::chooseDistrictsToHeal(Grid &grid, int numberOfVacci
     reset();
     AI::calculateDistrictScoresForNextRound(countryID);
     std::vector<VaccineData> districtsToHeal = std::vector<VaccineData>();
+    // "score" might be not needed at all
     for (auto scoreHolder : AI::districtScores) {
         scoreHolder.second.updateScore(parameter1 * scoreHolder.second.ChangeInDefenseVaccines() +
                                        parameter2 * scoreHolder.second.ChangeInProducedVaccines());
     }
-    while (numberOfVaccinesToDistribute < 0) {
+    while (numberOfVaccinesToDistribute > 0) {
         size_t maxScoredDistrict = AI::districtScores.begin()->first;
         //how many vaccines needed for healing
         int amount = 0;
         for (auto scores:AI::districtScores) {
+            //check proposed by woranhun WARNING in extreme cases it can make problem
+            if (scores.second.getProfitabilityIndex() < 1) break;
             if (scores.second.getProfitabilityIndex() > AI::districtScores[maxScoredDistrict].getProfitabilityIndex()) {
                 maxScoredDistrict = scores.first;
                 amount = scores.second.getVaccinesNeededForHealing();
             }
         }
-        VaccineData vc = VaccineData(grid.getCoordinatesByID(maxScoredDistrict), amount);
-        districtsToHeal.push_back(vc);
+        //get the fields of the district
+        for (auto field:grid.getDistrictByID(maxScoredDistrict).getAssignedFields()) {
+            int vaccines = std::ceil(
+                    (field->getCurrentInfectionRate() - field->getVaccinationRate()) / field->getPopulationDensity());
+            if (vaccines > 0) {
+                VaccineData vc = VaccineData(grid.getCoordinatesByID(field->getFieldID()), vaccines);
+                districtsToHeal.push_back(vc);
+            }
+        }
         numberOfVaccinesToDistribute -= AI::districtScores[maxScoredDistrict].getVaccinesNeededForHealing();
+        auto it=districtScores.find(maxScoredDistrict);
+        districtScores.erase(it);
     }
-    //needed bc while loop condition.pop_back();
+    //TODO: might need to districtsToHeal.pop_back(), if yes, don't forget to put the if loop after the profitability check
     //TODO: look after I have internet access, if it's passed on reference will it be fucked-up?
     return districtsToHeal;
 }

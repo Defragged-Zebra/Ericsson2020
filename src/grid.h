@@ -28,20 +28,19 @@ public:
     Grid(const Grid &g) = delete;
 
     Grid &operator=(const Grid *g) {
-        //throw std::runtime_error("grid.h copy operator: untested behaviour");
         if (this != g) {
             width = g->width;
             height = g->height;
             currentTick = g->currentTick;
             random = g->random;
-            for (int i = 0; i < g->countries.size(); ++i) {
-                countries.push_back(g->countries[i]);
+            for (const auto & country: g->countries) {
+                countries.push_back(country);
             }
-            for (int i = 0; i < g->districts.size(); ++i) {
-                districts.push_back(g->districts[i]);
+            for (const auto & district : g->districts) {
+                districts.push_back(district);
             }
-            for (int i = 0; i < g->fields.size(); ++i) {
-                fields.push_back(g->fields[i]);
+            for (const auto & field : g->fields) {
+                fields.push_back(field);
             }
             for (size_t i = 0; i < height; ++i) {
                 std::vector<size_t> sor = std::vector<size_t>(width);

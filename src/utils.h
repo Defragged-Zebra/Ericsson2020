@@ -111,17 +111,20 @@ public:
     public:
         ScoreHolder() {
             changeInDefenseVaccines = INT_MAX;
-            changeInProducedVaccines = INT_MIN;
+            changeInProducedVaccines = 0;
             profitabilityIndex = changeInProducedVaccines / (double) changeInDefenseVaccines;
         }
 
-        ScoreHolder(int changeInProducedVaccines, int changeInDefenseVaccines) {
+        ScoreHolder(int changeInProducedVaccines, int changeInDefenseVaccines, int vaccinesNeededForTotalHealing) {
             this->changeInDefenseVaccines = changeInDefenseVaccines;
             this->changeInProducedVaccines = changeInProducedVaccines;
             profitabilityIndex = changeInProducedVaccines / (double) changeInDefenseVaccines;
+            this->vaccinesNeededForTotalHealing = vaccinesNeededForTotalHealing;
         }
 
-        void setVaccinesNeededForHealing(int value) { vaccinesNeededForTotalHealing = value; }
+        void setVaccinesNeededForHealing(int value) {
+            vaccinesNeededForTotalHealing = value;
+        }
 
         [[nodiscard]] int getVaccinesNeededForHealing() const { return vaccinesNeededForTotalHealing; }
 

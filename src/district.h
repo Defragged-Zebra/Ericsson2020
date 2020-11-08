@@ -18,6 +18,16 @@ class District {
 public:
     District() = default;
 
+    District& operator= (const District &d){
+        if (this != &d) {
+            districtID=d.districtID;
+            for (auto assignedField : d.assignedFields) {
+                assignedFields.push_back(assignedField);
+            }
+        }
+        return *this;
+    }
+
     District(size_t sectorID, const std::vector<Field*> &assignedFields, bool clear = false) {
         this->districtID = sectorID;
         this->assignedFields = assignedFields;
