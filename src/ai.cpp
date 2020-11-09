@@ -72,7 +72,7 @@ std::vector<VaccineData> AI::chooseDistrictsToHeal(int numberOfVaccinesToDistrib
     std::vector<VaccineData> districtsToHeal = std::vector<VaccineData>();
     while (!AI::districtScores.empty()) {
         size_t maxScoredDistrict = findBestDistrict();
-        if (numberOfVaccinesToDistribute - AI::districtScores[maxScoredDistrict].getVaccinesNeededForHealing() >= 0) {
+        if (numberOfVaccinesToDistribute >= AI::districtScores[maxScoredDistrict].getVaccinesNeededForHealing()) {
             //get the fields of the district
             for (auto field:grid.getDistrictByID(maxScoredDistrict).getAssignedFields()) {
                 int vaccines = std::ceil(
@@ -101,6 +101,7 @@ size_t AI::findBestDistrict() {
     size_t maxScoredDistrict = AI::districtScores.begin()->first;
     for (auto scores:districtScores) {
         //check proposed by woranhun WARNING in extreme cases it can make problem
+        //TODO: priority queue-t ide
         if (scores.second.getProfitabilityIndex() < 1) break;
         if (scores.second.getProfitabilityIndex() > districtScores[maxScoredDistrict].getProfitabilityIndex()) {
             maxScoredDistrict = scores.first;
