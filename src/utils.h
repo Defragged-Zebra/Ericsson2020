@@ -103,36 +103,23 @@ public:
     };
 
     class ScoreHolder {
-        int changeInProducedVaccines;
-        int changeInDefenseVaccines;
-        double score = 0;
+        int changeInVaccines=INT_MIN;
         double profitabilityIndex;
-        int vaccinesNeededForTotalHealing = 0;
+        int vaccinesNeededForTotalHealing = INT_MAX;
     public:
         ScoreHolder() {
-            changeInDefenseVaccines = INT_MAX;
-            changeInProducedVaccines = 0;
-            profitabilityIndex = changeInProducedVaccines / (double) changeInDefenseVaccines;
+            profitabilityIndex = changeInVaccines/(double)vaccinesNeededForTotalHealing;
         }
 
-        ScoreHolder(int changeInProducedVaccines, int changeInDefenseVaccines, int vaccinesNeededForTotalHealing) {
-            this->changeInDefenseVaccines = changeInDefenseVaccines;
-            this->changeInProducedVaccines = changeInProducedVaccines;
-            profitabilityIndex = changeInProducedVaccines / (double) changeInDefenseVaccines;
+        ScoreHolder(int changeInVaccines, int vaccinesNeededForTotalHealing) {
+            this->changeInVaccines = changeInVaccines;
+            profitabilityIndex = changeInVaccines/(double)vaccinesNeededForTotalHealing;
             this->vaccinesNeededForTotalHealing = vaccinesNeededForTotalHealing;
-        }
-
-        void setVaccinesNeededForHealing(int value) {
-            vaccinesNeededForTotalHealing = value;
         }
 
         [[nodiscard]] int getVaccinesNeededForHealing() const { return vaccinesNeededForTotalHealing; }
 
-        [[nodiscard]] int ChangeInProducedVaccines() const { return changeInProducedVaccines; };
-
-        [[nodiscard]] int ChangeInDefenseVaccines() const { return changeInDefenseVaccines; }
-
-        void updateScore(double newScore) { score = newScore; }
+        [[nodiscard]] int ChangeInVaccines() const { return changeInVaccines; };
 
         [[nodiscard]] double getProfitabilityIndex() const { return profitabilityIndex; }
     };

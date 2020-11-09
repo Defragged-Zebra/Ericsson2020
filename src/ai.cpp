@@ -62,7 +62,7 @@ void AI::calculateDistrictScoresForNextRound(size_t countryID) {
                     }
                 }
             }
-            score = Utils::ScoreHolder(changeInProducedVaccines, changeInDefenseVaccines,
+            score = Utils::ScoreHolder(changeInProducedVaccines - changeInDefenseVaccines,
                                        vaccinesNeededForTotalHealing);
         }
         districtScores[district.getDistrictID()] = score;
@@ -71,36 +71,33 @@ void AI::calculateDistrictScoresForNextRound(size_t countryID) {
 
 std::vector<VaccineData> AI::chooseDistrictsToHeal(Grid &grid, int numberOfVaccinesToDistribute, size_t countryID) {
     reset();
+    //TODO: calculate-scores update with a* algorithm
     AI::calculateDistrictScoresForNextRound(countryID);
     std::vector<VaccineData> districtsToHeal = std::vector<VaccineData>();
-    // "score" might be not needed at all
-    for (auto scoreHolder : AI::districtScores) {
-        scoreHolder.second.updateScore(parameter1 * scoreHolder.second.ChangeInDefenseVaccines() +
-                                       parameter2 * scoreHolder.second.ChangeInProducedVaccines());
-    }
-    while (numberOfVaccinesToDistribute > 0) {
+    while (!AI::districtScores.empty()) {
         size_t maxScoredDistrict = AI::districtScores.begin()->first;
-        //how many vaccines needed for healing
-        int amount = 0;
         for (auto scores:AI::districtScores) {
             //check proposed by woranhun WARNING in extreme cases it can make problem
             if (scores.second.getProfitabilityIndex() < 1) break;
             if (scores.second.getProfitabilityIndex() > AI::districtScores[maxScoredDistrict].getProfitabilityIndex()) {
                 maxScoredDistrict = scores.first;
-                amount = scores.second.getVaccinesNeededForHealing();
             }
         }
-        //get the fields of the district
-        for (auto field:grid.getDistrictByID(maxScoredDistrict).getAssignedFields()) {
-            int vaccines = std::ceil(
-                    (field->getCurrentInfectionRate() - field->getVaccinationRate()) / field->getPopulationDensity());
-            if (vaccines > 0) {
-                VaccineData vc = VaccineData(grid.getCoordinatesByID(field->getFieldID()), vaccines);
-                districtsToHeal.push_back(vc);
+        if (numberOfVaccinesToDistribute - AI::districtScores[maxScoredDistrict].getVaccinesNeededForHealing() >= 0) {
+            //get the fields of the district
+            for (auto field:grid.getDistrictByID(maxScoredDistrict).getAssignedFields()) {
+                int vaccines = std::ceil(
+                        (field->getCurrentInfectionRate() - field->getVaccinationRate()) /
+                        field->getPopulationDensity());
+                if (vaccines > 0) {
+                    VaccineData vc = VaccineData(grid.getCoordinatesByID(field->getFieldID()), vaccines);
+                    districtsToHeal.push_back(vc);
+                }
             }
+            numberOfVaccinesToDistribute -= AI::districtScores[maxScoredDistrict].getVaccinesNeededForHealing();
         }
-        numberOfVaccinesToDistribute -= AI::districtScores[maxScoredDistrict].getVaccinesNeededForHealing();
-        auto it=districtScores.find(maxScoredDistrict);
+        if(numberOfVaccinesToDistribute==0) break;
+        auto it = districtScores.find(maxScoredDistrict);
         districtScores.erase(it);
     }
     //TODO: might need to districtsToHeal.pop_back(), if yes, don't forget to put the if loop after the profitability check
