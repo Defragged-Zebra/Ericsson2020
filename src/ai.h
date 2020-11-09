@@ -18,8 +18,6 @@ class AI : Logic {
     //it is important to COPY the grid
     static void calculateDistrictScoresForNextRound(size_t countryID);
 
-    static void reset();
-
     static const double parameter1;
     static const double parameter2;
 
@@ -38,6 +36,12 @@ public:
     static std::vector<VaccineData> &
     calculatePutVaccines(std::vector<VaccineData> &put, size_t tickID, int numberOfVaccinesToDistribute,
                          size_t countryID);
+
+    static void
+    calculateChangeByHealingField(const Field *fieldPointer, int &changeInProducedVaccines,
+                                  int &changeInDefenseVaccines);
+
+    static size_t findBestDistrict();
 };
 
 
