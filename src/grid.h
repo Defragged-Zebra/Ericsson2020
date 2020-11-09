@@ -25,9 +25,35 @@ class Grid {
 public:
     Grid() = delete;
 
-    Grid(const Grid &) = delete;
+    Grid(const Grid &g) = delete;
 
-    Grid &operator=(const Grid &) = delete;
+    Grid &operator=(const Grid *g) {
+        if (this != g) {
+            width = g->width;
+            height = g->height;
+            currentTick = g->currentTick;
+            random = g->random;
+            for (const auto & country: g->countries) {
+                countries.push_back(country);
+            }
+            for (const auto & district : g->districts) {
+                districts.push_back(district);
+            }
+            for (const auto & field : g->fields) {
+                fields.push_back(field);
+            }
+            for (size_t i = 0; i < height; ++i) {
+                std::vector<size_t> sor = std::vector<size_t>(width);
+                grid.push_back(sor);
+            }
+            for (int y = 0; y < height; ++y) {
+                for (int x = 0; x < width; ++x) {
+                    grid[y][x] = g->grid[y][x];
+                }
+            }
+        }
+        return *this;
+    }
 
     Utils::Random random;
 
@@ -47,7 +73,7 @@ public:
     }
 
     //soronként töltjük fel a gridet(sorfolytonosan)
-    std::vector<size_t> operator[](size_t i) { return grid[i]; };
+    std::vector<size_t> operator[](size_t i) { return grid[i]; }
 
     [[nodiscard]] size_t getWidth() const { return width; } //grid[0].size();}
     [[nodiscard]] size_t getHeight() const { return height; } //grid.size();}
@@ -99,6 +125,10 @@ public:
     }
 
     void IncreaseCurrentTick() { currentTick++; }
+
+    size_t numberOfDistricts() { return districts.size(); }
+
+    Point getCoordinatesByID(size_t ID);
 };
 
 

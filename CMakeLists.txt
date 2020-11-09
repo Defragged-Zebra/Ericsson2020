@@ -11,7 +11,7 @@ find_package(SDL2 REQUIRED)
 find_package(SDL2_ttf REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 
-add_executable(virus src/main.cpp src/antiVirus.cpp src/antiVirus.h src/grid.cpp src/grid.h src/field.cpp src/field.h src/country.cpp src/country.h src/district.cpp src/district.h src/iface.h src/logic.cpp src/logic.h src/graphics.cpp src/graphics.h src/protocol.cpp src/protocol.h testfiles/round1/ex3.h src/debug.h src/iface.cpp src/utils.cpp src/utils.h src/visualization.cpp src/visualization.h src/window.cpp src/window.h)
+add_executable(virus src/main.cpp src/antiVirus.cpp src/antiVirus.h src/grid.cpp src/grid.h src/field.cpp src/field.h src/country.cpp src/country.h src/district.cpp src/district.h src/iface.h src/logic.cpp src/logic.h src/graphics.cpp src/graphics.h src/protocol.cpp src/protocol.h testfiles/round1/ex3.h src/debug.h src/iface.cpp src/utils.cpp src/utils.h src/visualization.cpp src/visualization.h src/window.cpp src/window.h src/ai.cpp src/ai.h)
 target_link_libraries(virus ${SDL2_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} SDL2::TTF)
 

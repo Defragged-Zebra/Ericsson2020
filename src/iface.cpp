@@ -65,13 +65,12 @@ void Iface::createGrid() {
         grid->addDistrict(District(i, std::vector<Field *>(), false));
     }
     //TODO ez itt mi a fasz?
-    //district update
+    //district update -- ugye hogy tobbet kene kommentelni? xD
     for (size_t y = 0; y < grid->getHeight(); ++y) {
         for (size_t x = 0; x < grid->getWidth(); ++x) {
 //            ers << "Field - y: " << y << "\tx: " << x << "\tAssigned district: "
 //                      << grid->getDistrictByPoint(Point(y, x)) << std::endl;
-//            grid->getDistrictByPoint(Point(y, x)).addAssignedField(&grid->getFieldByPoint(Point(y, x)));
-
+            grid->getDistrictByPoint(Point(y, x)).addAssignedField(&grid->getFieldByPoint(Point(y, x)));
         }
     }
     setGrid(grid);
@@ -127,6 +126,7 @@ void Iface::round(std::string &line) {
     tmp = "";
     while (std::getline(is, tmp)) {
         Iface::sendDebugMsg("[NOTIFY] " + tmp);
+        //TODO: parse game-data here
         if (tmp.find("WARN") != std::string::npos) {
             Iface::sendDebugMsg(line);
             throw std::runtime_error("We've fucked it up!!444!!!");
@@ -136,15 +136,19 @@ void Iface::round(std::string &line) {
     }
     Logic::simulateTO(_gameID, tickID, countryID);
 
+    //TODO: calculate this .. also it's buggy af, and have some serious logic errors
+    //TODO: ez szar, fix it
+    int numberOfVaccinesToDistribute = grid->getCountryByID(countryID).getTotalProductionCapacity();
+    AI::copyGrid(grid);
     //Send result back
     os << "RES " << _gameID << " " << tickID << " " << countryID << std::endl;
-    std::vector<VaccineData> back;// Ha hozzá nyúlsz letöröm a kezed!!!!
-    back = Logic::calculateBackVaccines(back, tickID);
+    std::vector<VaccineData> back; // don't change this
+    back = AI::calculateBackVaccines(back, tickID, numberOfVaccinesToDistribute, countryID);
     for (auto &i : back) {
         os << "BACK " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
     }
-    std::vector<VaccineData> put;// Ha hozzá nyúlsz letöröm a kezed!!!!
-    put = Logic::calculatePutVaccines(put, tickID);
+    std::vector<VaccineData> put; // don't change this
+    put = AI::calculatePutVaccines(put, tickID, numberOfVaccinesToDistribute, countryID);
     for (auto &i : back) {
         os << "PUT " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
     }

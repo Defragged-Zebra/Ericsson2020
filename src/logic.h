@@ -22,7 +22,6 @@ class Logic {
 
     static int distance(const Point &p1, const Point &p2);
 
-
     static int calculateCrossInfectionLEGACY(const Point &center, uint64_t factor3);
 
     static double calculateCrossInfection(const Point &center, uint64_t factor3);
@@ -31,13 +30,14 @@ public:
 
     Logic() = default;
 
-    void static setGrid(Grid *newGrid) {
-        Logic::grid = newGrid;
-    }
+    void static setGrid(Grid *newGrid) { Logic::grid = newGrid; }
 
-    void static simulateTO(int gameID, int tickID, int countryID);
+    static Grid *getGrid() { return grid; }
+
+    static void simulateTO(int gameID, size_t tickID, size_t countryID);
 
     static int calculateSpontaneousHealing(const Point &p, int healStartTick, int vaccinated);
+
     static int calculateSpontaneousHealingLEGACY(const Point &p, int healStartTick);
 
     static int calculateSpontaneousInfection(const Point &p);
@@ -47,11 +47,6 @@ public:
     static int calculateVaccination(const Point &p, int &spontaneousHealAmount);
 
     static void shiftFactor2to4();
-
-    static std::vector<VaccineData> &calculateBackVaccines(std::vector<VaccineData> &back, size_t tickID);
-
-    static std::vector<VaccineData> &calculatePutVaccines(std::vector<VaccineData> &put, size_t tickID);
-
 };
 
 

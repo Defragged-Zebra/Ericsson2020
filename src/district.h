@@ -13,10 +13,21 @@ class District {
     size_t districtID{};
     //size_t assignedCountryID;
     //"cannot store reference in std::vector, it is simply not allowed" - stackoverflow
+    //TODO: tárolni a szomszédos kerületeket
     std::vector<Field*> assignedFields;
     bool clear{};
 public:
     District() = default;
+
+    District& operator= (const District &d){
+        if (this != &d) {
+            districtID=d.districtID;
+            for (auto assignedField : d.assignedFields) {
+                assignedFields.push_back(assignedField);
+            }
+        }
+        return *this;
+    }
 
     District(size_t sectorID, const std::vector<Field*> &assignedFields, bool clear = false) {
         this->districtID = sectorID;

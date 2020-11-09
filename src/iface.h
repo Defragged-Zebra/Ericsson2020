@@ -8,6 +8,7 @@
 #include "grid.h"
 #include "iface.h"
 #include "logic.h"
+#include "ai.h"
 
 class Iface {
 protected:
