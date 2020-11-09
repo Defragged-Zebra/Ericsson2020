@@ -137,7 +137,7 @@ void Iface::round(std::string &line) {
     Logic::simulateTO(_gameID, tickID, countryID);
 
     //TODO: calculate this .. also it's buggy af, and have some serious logic errors
-    int numberOfVaccinesToDistribute = 10;
+    int numberOfVaccinesToDistribute = grid->getCountryByID(countryID).getTotalProductionCapacity();
     AI::copyGrid(grid);
     //Send result back
     os << "RES " << _gameID << " " << tickID << " " << countryID << std::endl;

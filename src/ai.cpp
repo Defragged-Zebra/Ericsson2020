@@ -59,14 +59,14 @@ void AI::calculateChangeByHealingField(const Field *fieldPointer, int &changeInP
         }
         if (grid.getDistrictByPoint(selected) == grid.getDistrictByPoint(center)) continue;
         //todo: calculation assumes only 1 district healed/tick, this is wrong
-        int plusMinus = 0;
+        int plusMinus;
         if (grid.getDistrictByPoint(selected).isClear()) plusMinus = -1; else plusMinus = 1;
         changeInDefenseVaccines += (int) (plusMinus * (ceil(
                 (6 - grid.getFieldByPoint(selected).getPopulationDensity()) / (double) 3)));
     }
 }
 
-std::vector<VaccineData> AI::chooseDistrictsToHeal(Grid &grid, int numberOfVaccinesToDistribute, size_t countryID) {
+std::vector<VaccineData> AI::chooseDistrictsToHeal(int numberOfVaccinesToDistribute, size_t countryID) {
     AI::districtScores.clear();
     AI::calculateDistrictScoresForNextRound(countryID);
     std::vector<VaccineData> districtsToHeal = std::vector<VaccineData>();
@@ -132,6 +132,6 @@ std::vector<VaccineData> &
 AI::calculatePutVaccines(std::vector<VaccineData> &put, size_t tickID, int numberOfVaccinesToDistribute,
                          size_t countryID) {
     //overwrite, bc you need to return the last values (thx Ericsson)
-    put = chooseDistrictsToHeal(grid, numberOfVaccinesToDistribute, countryID);
+    put = chooseDistrictsToHeal(numberOfVaccinesToDistribute, countryID);
     return put;
 }

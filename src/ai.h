@@ -22,7 +22,7 @@ class AI : Logic {
     static const double parameter2;
 
     static std::vector<VaccineData>
-    chooseDistrictsToHeal(Grid &grid, int numberOfVaccinesToDistribute, size_t countryID);
+    chooseDistrictsToHeal(int numberOfVaccinesToDistribute, size_t countryID);
 
 public:
     static void copyGrid(Grid *g) {
