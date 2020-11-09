@@ -29,9 +29,8 @@ public:
 
         [[nodiscard]] uint64_t getFactor(int index) const;
     };
-
-    class Point {
-        size_t y, x;
+    class Point{
+        size_t y{},x{};
     public:
         Point() = default;
 

@@ -120,6 +120,10 @@ public:
         return currentTick;
     }
 
+    [[nodiscard]] size_t getNumberOfDistricts() const {
+        return districts.size();
+    }
+
     void IncreaseCurrentTick() { currentTick++; }
 
     size_t numberOfDistricts() { return districts.size(); }

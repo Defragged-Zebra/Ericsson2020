@@ -39,7 +39,7 @@ public:
         if (grid == nullptr)throw std::runtime_error("Iface: grid pointer is null");
     }
 
-    void setGrid(Grid *g) {
+    virtual void setGrid(Grid *g) {
         grid = g;
         Logic::setGrid(g);
     }
