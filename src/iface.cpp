@@ -135,24 +135,27 @@ void Iface::round(std::string &line) {
         else break;
     }
     Logic::simulateTO(_gameID, tickID, countryID);
-
-    //TODO: calculate this .. also it's buggy af, and have some serious logic errors
-    //TODO: ez szar, fix it
-    int numberOfVaccinesToDistribute = grid->getCountryByID(countryID).getTotalProductionCapacity();
-    AI::copyGrid(grid);
-    //Send result back
-    os << "RES " << _gameID << " " << tickID << " " << countryID << std::endl;
-    std::vector<VaccineData> back; // don't change this
-    back = AI::calculateBackVaccines(back, tickID, numberOfVaccinesToDistribute, countryID);
-    for (auto &i : back) {
-        os << "BACK " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
+    if(tickID>99){
+        //TODO: calculate this .. also it's buggy af, and have some serious logic errors
+        //TODO: ez szar, fix it
+        //int numberOfVaccinesToDistribute = grid->getCountryByID(countryID).getTotalProductionCapacity();
+        int numberOfVaccinesToDistribute = 0;
+        AI::copyGrid(grid);
+        //Send result back
+        os << "RES " << _gameID << " " << tickID << " " << countryID << std::endl;
+        std::vector<VaccineData> back; // don't change this
+        back = AI::calculateBackVaccines(back, tickID, numberOfVaccinesToDistribute, countryID);
+        for (auto &i : back) {
+            os << "BACK " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
+        }
+        std::vector<VaccineData> put; // don't change this
+        put = AI::calculatePutVaccines(put, tickID, numberOfVaccinesToDistribute, countryID);
+        for (auto &i : back) {
+            os << "PUT " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
+        }
+        Logic::simulateVaccination(back,put);
+        this->displayCurrentRound(_gameID, tickID, countryID);
     }
-    std::vector<VaccineData> put; // don't change this
-    put = AI::calculatePutVaccines(put, tickID, numberOfVaccinesToDistribute, countryID);
-    for (auto &i : back) {
-        os << "PUT " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
-    }
 
-    this->displayCurrentRound(_gameID, tickID, countryID);
 
 }

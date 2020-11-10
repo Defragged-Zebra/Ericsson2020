@@ -19,7 +19,7 @@ class Window {
     SDL_Surface* screen;
     SDL_Renderer* renderer;
     TTF_Font* font;
-    size_t districtCount;
+    size_t districtCount{};
     Grid* grid= nullptr;
     SDL_Color red={255,0,0};
     SDL_Color black={0,0,0 };

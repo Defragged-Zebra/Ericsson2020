@@ -79,7 +79,7 @@ std::vector<VaccineData> AI::chooseDistrictsToHeal(int numberOfVaccinesToDistrib
                         (field->getCurrentInfectionRate() - field->getVaccinationRate()) /
                         field->getPopulationDensity());
                 if (vaccines > 0) {
-                    VaccineData vc = VaccineData(grid.getCoordinatesByID(field->getFieldID()), vaccines);
+                    VaccineData vc = VaccineData(grid.getCoordinatesByID(field->getFieldID()), vaccines, countryID);
                     //TODO: a-star algo modifies here too
                     districtsToHeal.push_back(vc);
                 }
@@ -115,13 +115,13 @@ AI::calculateBackVaccines(std::vector<VaccineData> &back, size_t tickID, int &nu
                           size_t countryID) {
     for (int y = 0; y < grid.getHeight(); ++y) {
         for (int x = 0; x < grid.getWidth(); ++x) {
-            std::map<size_t, int> &allStoredVaccines = grid.getFieldByPoint(Point(y, x)).getStoredVaccines();
+            std::map<size_t, int> allStoredVaccines = grid.getFieldByPoint(Point(y, x)).getStoredVaccines();
             int countryStoredVaccines;
             try { countryStoredVaccines = allStoredVaccines.at(countryID); }
             catch (std::out_of_range &exc) { countryStoredVaccines = 0; }
             //Egy területről az összes tartalék vakcinát nem lehet visszavenni, legalább 1 egységnyit ott kell hagyni.
             if (countryStoredVaccines > 1) {
-                back.emplace_back(Point(y, x), countryStoredVaccines - 1);
+                back.emplace_back(Point(y, x), countryStoredVaccines - 1,countryID);
                 numberOfVaccinesToDistribute += countryStoredVaccines - 1;
             }
         }

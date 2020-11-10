@@ -17,6 +17,8 @@ void Window::update(){
                     running = false;
                     break;
                 }
+            }else if(event.type==SDL_QUIT){
+                exit(0);
             }
         }
         SDL_UpdateWindowSurface(window);

@@ -36,8 +36,8 @@ public:
         this->storedVaccines = std::map<size_t, int>();
         this->lastInfectionRates = std::deque<int>();
         this->lastInfectionValues = std::deque<int>();
-        lastInfectionRates.push_back(currentInfectionValue);
-        lastInfectionValues.push_back(currentInfectionValue > 0 ? 1 : 0);
+        this->lastInfectionRates.push_back(currentInfectionValue);
+        this->lastInfectionValues.push_back(currentInfectionValue > 0 ? 1 : 0);
         this->lastInfRateLen = numberOfStoredPastValues;
     }
 
@@ -82,9 +82,11 @@ public:
 
     [[nodiscard]] bool isClear() const { return infectionRate == 0; }
 
-    std::map<size_t,int>& getStoredVaccines(){return storedVaccines;}
+    [[nodiscard]] std::map<size_t,int> getStoredVaccines()const{return storedVaccines;}
 
     void updateRemainingVaccines(int vaccinated);
+    void callBackVaccines(int vaccines, size_t countryID);
+    void pushVaccines(int vaccines, size_t countryID);
 
 };
 

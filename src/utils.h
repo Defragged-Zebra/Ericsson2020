@@ -29,8 +29,9 @@ public:
 
         [[nodiscard]] uint64_t getFactor(int index) const;
     };
-    class Point{
-        size_t y{},x{};
+
+    class Point {
+        size_t y{}, x{};
     public:
         Point() = default;
 
@@ -67,23 +68,27 @@ public:
     class VaccineData {
         Point gridCell{};
         int vaccines{};
+        size_t countryID{};
     public:
         VaccineData() = default;
 
-        VaccineData(const Point &gc, int vaccines) {
+        VaccineData(const Point &gc, int vaccines, size_t countryID) {
             this->gridCell = gc;
             this->vaccines = vaccines;
+            this->countryID = countryID;
         }
 
-        VaccineData(size_t y, size_t x, int vaccines) {
+        VaccineData(size_t y, size_t x, int vaccines, size_t countryID) {
             this->gridCell = Point(y, x);
             this->vaccines = vaccines;
+            this->countryID = countryID;
         }
 
         VaccineData &operator=(const VaccineData &bd) {
             if (this != &bd) {
                 this->gridCell = bd.gridCell;
                 this->vaccines = bd.vaccines;
+                this->countryID = bd.countryID;
             }
             return *this;
         }
@@ -99,20 +104,22 @@ public:
         [[nodiscard]] size_t getX() const { return this->gridCell.getX(); }
 
         [[nodiscard]] size_t getY() const { return this->gridCell.getY(); }
+
+        [[nodiscard]] size_t getCountyID() const { return this->countryID; }
     };
 
     class ScoreHolder {
-        int changeInVaccines=INT_MIN;
+        int changeInVaccines = INT_MIN;
         double profitabilityIndex;
         int vaccinesNeededForTotalHealing = INT_MAX;
     public:
         ScoreHolder() {
-            profitabilityIndex = changeInVaccines/(double)vaccinesNeededForTotalHealing;
+            profitabilityIndex = changeInVaccines / (double) vaccinesNeededForTotalHealing;
         }
 
         ScoreHolder(int changeInVaccines, int vaccinesNeededForTotalHealing) {
             this->changeInVaccines = changeInVaccines;
-            profitabilityIndex = changeInVaccines/(double)vaccinesNeededForTotalHealing;
+            profitabilityIndex = changeInVaccines / (double) vaccinesNeededForTotalHealing;
             this->vaccinesNeededForTotalHealing = vaccinesNeededForTotalHealing;
         }
 

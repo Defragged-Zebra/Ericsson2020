@@ -19,6 +19,8 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
         for (int x = 0; x < grid->getWidth(); ++x) {
             for (int y = 0; y < grid->getHeight(); ++y) {
                 const Point &p = Point(y, x);
+                if(tickID>101&&x>4&&y==0)
+                    std::cout <<"fasz"<<std::endl;
                 vaccination = Logic::calculateVaccination(p, heal);
                 heal = Logic::calculateSpontaneousHealing(p, healStartTick, vaccination);
                 grid->getFieldByPoint(p).updateVaccination(heal + vaccination);
@@ -233,7 +235,9 @@ int Logic::calculateVaccination(const Point &p, int &spontaneousHealAmount) {
         std::map<size_t, int> vaccinesMap = grid->getFieldByPoint(p).getStoredVaccines();
         //reserve vaccines
         int n = 0;
-        for (auto tmp:vaccinesMap) {
+        for (const auto& tmp:vaccinesMap) {
+            if(tmp.second<0)
+                std::cout <<"alma";
             n += tmp.second;
         }
         //X: vaccination rate
@@ -262,5 +266,14 @@ int Logic::calculateSpontaneousHealing(const Point &p, int healStartTick, int va
         //A h = healing() vissztérési értéke ettől fogva csak floor(h * (IR - X) / IR) -nyit gyógyít.
         return std::floor(h * (grid->getFieldByPoint(p).getCurrentInfectionRate() - vaccinated) /
                           grid->getFieldByPoint(p).getCurrentInfectionRate());
+    }
+}
+
+void Logic::simulateVaccination(const std::vector<VaccineData> &back, const std::vector<VaccineData> &put) {
+    for (const auto& b:back){
+        grid->getFieldByPoint(b.getPoint()).callBackVaccines(b.getVaccines(),b.getCountyID());
+    }
+    for (const auto& p:put){
+        grid->getFieldByPoint(p.getPoint()).pushVaccines(p.getVaccines(),p.getCountyID());
     }
 }
