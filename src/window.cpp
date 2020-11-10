@@ -38,6 +38,7 @@ void Window::setColors() {
 }
 
 
+
 void Window::createText(const Point& p, size_t w, size_t h,size_t sep, const std::string& text){
     SDL_Color color=this->colors[this->grid->getFieldByPoint(p).getAssignedDistrictID()];
     SDL_Color col={static_cast<Uint8>((Uint8)255-color.r),static_cast<Uint8>((Uint8)255-color.g), static_cast<Uint8>((Uint8)255-color.b) };
