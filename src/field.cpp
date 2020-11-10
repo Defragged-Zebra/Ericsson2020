@@ -35,10 +35,11 @@ void Field::updateRemainingVaccines(int vaccinated) {
     for (auto tmp:storedVaccines) {
         n += tmp.second;
     }
+    if (n == 0) return;
     for (auto tmp:storedVaccines) {
         /*Országokra levetítve n1 n2 két ország vakcinaszáma n1 = floor(n1 * (n - m) / n)
         * és n2 = floor(n2 * (n - m) / n) lesz. */
-        if(n==0) throw std::runtime_error("Mé vagy buzi?");
+        //if (n == 0) throw std::runtime_error("Mé vagy buzi?"); // #rememberthenegativehealing
         int usedVaccinesByIndividualCountry = floor((tmp.second) * (n - m) / (double) n);
         storedVaccines[tmp.first] = usedVaccinesByIndividualCountry;
     }
@@ -48,12 +49,12 @@ void Field::callBackVaccines(int vaccines, size_t countryID) {
     int &storedVacs = this->storedVaccines[countryID];
     if ((storedVacs - vaccines) < 0)
         throw std::runtime_error("Ez fos: storedVacs-vaccines<0, majd ha összeáll, akkor már szar lesz");
-    storedVacs-=vaccines;
-    if(storedVacs<0)throw std::runtime_error("Ez fos: storedVacs-vaccines<0, majd ha összeáll, akkor már szar lesz");
+    storedVacs -= vaccines;
+    if (storedVacs < 0)throw std::runtime_error("Ez fos: storedVacs-vaccines<0, majd ha összeáll, akkor már szar lesz");
 }
 
 void Field::pushVaccines(int vaccines, size_t countryID) {
-    if(vaccines<0) throw std::runtime_error("miafasz");
-    this->storedVaccines[countryID]+=vaccines;
+    if (vaccines < 0) throw std::runtime_error("miafasz");
+    this->storedVaccines[countryID] += vaccines;
 }
 
