@@ -6,24 +6,24 @@
 
 //std::priority_queue<Utils::ScoreHolder> AI::districtScores = std::priority_queue<Utils::ScoreHolder>();
 uint64_t fuckCpp[4] = {0};
-Grid AI::grid = Grid(0, 0, fuckCpp);
+Grid AI::grid2 = Grid(0, 0, fuckCpp);
 
 void AI::calculateDistrictScoresForNextRound(size_t countryID, std::priority_queue<Utils::ScoreHolder> &districtScores) {
     // heavily unoptimised code for readability
-    Grid *logicGrid = Logic::getGrid();
-    Logic::setGrid(&AI::grid);
-    AI::simulateTO(0, grid.getCurrentTick() + 1, countryID);
-    Logic::setGrid(logicGrid);
-    for (size_t i = 0; i < grid.numberOfDistricts(); ++i) {
-        District &district = grid.getDistrictByID(i);
+    Grid *originalGrid = Logic::getGrid();
+    Logic::setGrid(&AI::grid2);
+    Logic::simulateTO(0, grid2.getCurrentTick() + 1, countryID);
+    Logic::setGrid(originalGrid);
+    for (size_t i = 0; i < grid2.numberOfDistricts(); ++i) {
+        District &district = grid2.getDistrictByID(i);
         auto score = Utils::ScoreHolder(district.getDistrictID());
         if (!district.isClear()) {
             int vaccinesNeededForTotalHealing = 0;
             for (Field *fieldPointer:district.getAssignedFields()) {
                 //assuming grid is 1 tick in the future, and no unhealed district in the country
-                vaccinesNeededForTotalHealing += std::ceil(
+                vaccinesNeededForTotalHealing += std::max((int)std::ceil(
                         (fieldPointer->getCurrentInfectionRate() - fieldPointer->getVaccinationRate()) /
-                        fieldPointer->getPopulationDensity());
+                        fieldPointer->getPopulationDensity()),6-fieldPointer->getPopulationDensity());
             }
             int changeInProducedVaccines = 0;
             int changeInDefenseVaccines = 0;
@@ -41,7 +41,7 @@ void AI::calculateDistrictScoresForNextRound(size_t countryID, std::priority_que
 void AI::calculateChangeByHealingField(const Field *fieldPointer, int &changeInProducedVaccines,
                                        int &changeInDefenseVaccines) {
     changeInProducedVaccines += 2;
-    Point center = grid.getCoordinatesByID(fieldPointer->getFieldID());
+    Point center = grid2.getCoordinatesByID(fieldPointer->getFieldID());
     size_t centerY = center.getY();
     size_t centerX = center.getX();
     Point coordinates[4] = {{centerY,     centerX - 1},
@@ -53,20 +53,20 @@ void AI::calculateChangeByHealingField(const Field *fieldPointer, int &changeInP
          * nem tiszta kerülethez tartozó területek 6 - start_info[coord].population különbségösszege,
          * osztva 3-mal, ennek a felső egészrésze.
          */
-        if (selected.getX() < 0 || selected.getY() < 0 || selected.getX() > grid.getWidth() - 1 ||
-            selected.getY() > grid.getHeight() - 1) {
+        if (selected.getX() < 0 || selected.getY() < 0 || selected.getX() > grid2.getWidth() - 1 ||
+            selected.getY() > grid2.getHeight() - 1) {
             continue;
         }
-        if (grid.getDistrictByPoint(selected) == grid.getDistrictByPoint(center)) continue;
+        if (grid2.getDistrictByPoint(selected) == grid2.getDistrictByPoint(center)) continue;
         //todo: calculation assumes only 1 district healed/tick, this is wrong
         int plusMinus;
-        if (grid.getDistrictByPoint(selected).isClear()) plusMinus = -1; else plusMinus = 1;
+        if (grid2.getDistrictByPoint(selected).isClear()) plusMinus = -1; else plusMinus = 1;
         changeInDefenseVaccines += (int) (plusMinus * (ceil(
-                (6 - grid.getFieldByPoint(selected).getPopulationDensity()) / (double) 3)));
+                (6 - grid2.getFieldByPoint(selected).getPopulationDensity()) / (double) 3)));
     }
 }
 
-std::vector<VaccineData> AI::chooseDistrictsToHeal(int numberOfVaccinesToDistribute, size_t countryID) {
+std::vector<VaccineData> AI::chooseDistrictsToVaccinate(int numberOfVaccinesToDistribute, size_t countryID) {
     std::priority_queue<Utils::ScoreHolder> districtScores=std::priority_queue<Utils::ScoreHolder>();
     AI::calculateDistrictScoresForNextRound(countryID, districtScores);
     std::vector<VaccineData> districtsToHeal = std::vector<VaccineData>();
@@ -76,12 +76,12 @@ std::vector<VaccineData> AI::chooseDistrictsToHeal(int numberOfVaccinesToDistrib
         if (maxScoredDistrict.getProfitabilityIndex() < 1) break;
         if (numberOfVaccinesToDistribute >= maxScoredDistrict.getVaccinesNeededForHealing()) {
             //get the fields of the district
-            for (auto field:grid.getDistrictByID(maxScoredDistrict.getDistrictID()).getAssignedFields()) {
-                int vaccines = std::ceil(
+            for (auto field:grid2.getDistrictByID(maxScoredDistrict.getDistrictID()).getAssignedFields()) {
+                int vaccines = std::max((int)std::ceil(
                         (field->getCurrentInfectionRate() - field->getVaccinationRate()) /
-                        field->getPopulationDensity());
+                        field->getPopulationDensity()),6-field->getPopulationDensity());
                 if (vaccines > 0) {
-                    VaccineData vc = VaccineData(grid.getCoordinatesByID(field->getFieldID()), vaccines, countryID);
+                    VaccineData vc = VaccineData(grid2.getCoordinatesByID(field->getFieldID()), vaccines, countryID);
                     //TODO: a-star algo modifies here too
                     districtsToHeal.push_back(vc);
                 }
@@ -100,9 +100,9 @@ std::vector<VaccineData> AI::chooseDistrictsToHeal(int numberOfVaccinesToDistrib
 
 std::vector<VaccineData> &
 AI::calculateBackVaccines(std::vector<VaccineData> &back, int &numberOfVaccinesToDistribute, size_t countryID) {
-    for (int y = 0; y < grid.getHeight(); ++y) {
-        for (int x = 0; x < grid.getWidth(); ++x) {
-            std::map<size_t, int> allStoredVaccines = grid.getFieldByPoint(Point(y, x)).getStoredVaccines();
+    for (int y = 0; y < grid2.getHeight(); ++y) {
+        for (int x = 0; x < grid2.getWidth(); ++x) {
+            std::map<size_t, int> allStoredVaccines = grid2.getFieldByPoint(Point(y, x)).getStoredVaccines();
             int countryStoredVaccines;
             try { countryStoredVaccines = allStoredVaccines.at(countryID); }
             catch (std::out_of_range &exc) { countryStoredVaccines = 0; }
@@ -118,6 +118,6 @@ AI::calculateBackVaccines(std::vector<VaccineData> &back, int &numberOfVaccinesT
 
 std::vector<VaccineData> &
 AI::calculatePutVaccines(std::vector<VaccineData> &put, int numberOfVaccinesToDistribute, size_t countryID) {
-    put = chooseDistrictsToHeal(numberOfVaccinesToDistribute, countryID);
+    put = chooseDistrictsToVaccinate(numberOfVaccinesToDistribute, countryID);
     return put;
 }

@@ -21,10 +21,8 @@ public:
 
     District& operator= (const District &d){
         if (this != &d) {
-            districtID=d.districtID;
-            for (auto assignedField : d.assignedFields) {
-                assignedFields.push_back(assignedField);
-            }
+            this->districtID=d.districtID;
+            this->assignedFields=d.assignedFields;
         }
         return *this;
     }
@@ -42,10 +40,10 @@ public:
     [[nodiscard]] bool isClear() const { return clear; }
 
     void setClear(bool value) { this->clear = value; }
-    bool operator==(const District&d){
+    bool operator==(const District&d) const{
         return this->districtID==d.districtID;
     }
-    bool operator!=(const District&d){
+    bool operator!=(const District&d) const{
         return this->districtID!=d.districtID;
     }
 

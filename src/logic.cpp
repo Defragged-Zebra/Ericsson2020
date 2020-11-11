@@ -16,14 +16,14 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
         int heal = 0;
         int vaccination = 0;
         size_t healStartTick = grid->getWidth() + grid->getHeight();
-        for (int x = 0; x < grid->getWidth(); ++x) {
+         for (int x = 0; x < grid->getWidth(); ++x) {
             for (int y = 0; y < grid->getHeight(); ++y) {
                 const Point &p = Point(y, x);
                 vaccination = Logic::calculateVaccination(p, heal);
                 heal = Logic::calculateSpontaneousHealing(p, healStartTick, vaccination);
                 grid->getFieldByPoint(p).updateVaccination(heal + vaccination);
                 grid->getFieldByPoint(p).updateRemainingVaccines(vaccination);
-                if (heal + vaccination > 0) grid->getDistrictByPoint(p).updateIsClear();
+                 if (heal + vaccination > 0) grid->getDistrictByPoint(p).updateIsClear();
             }
         }
 

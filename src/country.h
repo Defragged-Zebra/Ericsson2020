@@ -37,6 +37,7 @@ public:
 
     Country &operator=(const Country &c) {
         if (this != &c) {
+            this->assignedDistrictIDs.clear();
             countryID = c.countryID;
             totalProductionCapacity = c.totalProductionCapacity;
             reservedVaccines = c.reservedVaccines;

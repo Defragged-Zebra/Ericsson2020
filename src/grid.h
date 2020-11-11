@@ -29,28 +29,14 @@ public:
 
     Grid &operator=(const Grid *g) {
         if (this != g) {
-            width = g->width;
-            height = g->height;
-            currentTick = g->currentTick;
-            random = g->random;
-            for (const auto & country: g->countries) {
-                countries.push_back(country);
-            }
-            for (const auto & district : g->districts) {
-                districts.push_back(district);
-            }
-            for (const auto & field : g->fields) {
-                fields.push_back(field);
-            }
-            for (size_t i = 0; i < height; ++i) {
-                std::vector<size_t> sor = std::vector<size_t>(width);
-                grid.push_back(sor);
-            }
-            for (int y = 0; y < height; ++y) {
-                for (int x = 0; x < width; ++x) {
-                    grid[y][x] = g->grid[y][x];
-                }
-            }
+            this->width = g->width;
+            this->height = g->height;
+            this->currentTick = g->currentTick;
+            this->random = g->random;
+            this->grid = g->grid;
+            this->fields = g->fields;
+            this->districts = g->districts;
+            this->countries = g->countries;
         }
         return *this;
     }

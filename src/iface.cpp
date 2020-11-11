@@ -146,7 +146,7 @@ void Iface::round(std::string &line) {
     //int numberOfVaccinesToDistribute = 0;
     AI::copyGrid(grid);
     std::vector<VaccineData> back; // don't change this
-    back = AI::calculateBackVaccines(back,numberOfVaccinesToDistribute, countryID);
+    back = AI::calculateBackVaccines(back, numberOfVaccinesToDistribute, countryID);
 
     std::vector<VaccineData> put; // don't change this
     put = AI::calculatePutVaccines(put, numberOfVaccinesToDistribute, countryID);

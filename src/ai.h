@@ -10,19 +10,19 @@
 #define VIRUS_AI_H
 
 
-class AI : Logic {
+class AI {
     //this is a copy, NOT a reference/pointer
-    static Grid grid;
+    static Grid grid2;
 
     //it is important to COPY the grid
     static void calculateDistrictScoresForNextRound(size_t countryID, std::priority_queue<Utils::ScoreHolder> &districtScores);
 
     static std::vector<VaccineData>
-    chooseDistrictsToHeal(int numberOfVaccinesToDistribute, size_t countryID);
+    chooseDistrictsToVaccinate(int numberOfVaccinesToDistribute, size_t countryID);
 
 public:
-    static void copyGrid(Grid *g) {
-        AI::grid = g;
+    static void copyGrid(Grid *originalGrid) {
+        AI::grid2 = originalGrid;
     }
 
     static std::vector<VaccineData> &
