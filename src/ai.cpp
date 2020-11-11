@@ -4,11 +4,11 @@
 
 #include "ai.h"
 
-std::priority_queue<Utils::ScoreHolder> AI::districtScores = std::priority_queue<Utils::ScoreHolder>();
+//std::priority_queue<Utils::ScoreHolder> AI::districtScores = std::priority_queue<Utils::ScoreHolder>();
 uint64_t fuckCpp[4] = {0};
 Grid AI::grid = Grid(0, 0, fuckCpp);
 
-void AI::calculateDistrictScoresForNextRound(size_t countryID) {
+void AI::calculateDistrictScoresForNextRound(size_t countryID, std::priority_queue<Utils::ScoreHolder> &districtScores) {
     // heavily unoptimised code for readability
     Grid *logicGrid = Logic::getGrid();
     Logic::setGrid(&AI::grid);
@@ -67,10 +67,10 @@ void AI::calculateChangeByHealingField(const Field *fieldPointer, int &changeInP
 }
 
 std::vector<VaccineData> AI::chooseDistrictsToHeal(int numberOfVaccinesToDistribute, size_t countryID) {
-    AI::districtScores=std::priority_queue<Utils::ScoreHolder>();
-    AI::calculateDistrictScoresForNextRound(countryID);
+    std::priority_queue<Utils::ScoreHolder> districtScores=std::priority_queue<Utils::ScoreHolder>();
+    AI::calculateDistrictScoresForNextRound(countryID, districtScores);
     std::vector<VaccineData> districtsToHeal = std::vector<VaccineData>();
-    while (!AI::districtScores.empty()) {
+    while (!districtScores.empty()) {
         Utils::ScoreHolder maxScoredDistrict = districtScores.top();
         //check proposed by woranhun WARNING in extreme cases it can make problem
         if (maxScoredDistrict.getProfitabilityIndex() < 1) break;
@@ -86,7 +86,7 @@ std::vector<VaccineData> AI::chooseDistrictsToHeal(int numberOfVaccinesToDistrib
                     districtsToHeal.push_back(vc);
                 }
             }
-            numberOfVaccinesToDistribute -= AI::districtScores.top().getVaccinesNeededForHealing();
+            numberOfVaccinesToDistribute -= districtScores.top().getVaccinesNeededForHealing();
         }
         if (numberOfVaccinesToDistribute == 0) break;
         districtScores.pop();
