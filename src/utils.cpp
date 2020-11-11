@@ -28,3 +28,8 @@ uint64_t Utils::Random::next(int index) {
 uint64_t Utils::Random::getFactor(int index) const {
     return factor[index-1];
 }
+
+Utils::ScoreHolder& Utils::ScoreHolder::operator<(Utils::ScoreHolder sc) {
+    this->profitabilityIndex<sc.profitabilityIndex?this:sc;
+
+}

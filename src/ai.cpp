@@ -4,7 +4,7 @@
 
 #include "ai.h"
 
-std::map<size_t, Utils::ScoreHolder> AI::districtScores = std::map<size_t, Utils::ScoreHolder>();
+std::priority_queue<Utils::ScoreHolder> AI::districtScores = std::priority_queue<Utils::ScoreHolder>();
 uint64_t fuckCpp[4] = {0};
 Grid AI::grid = Grid(0, 0, fuckCpp);
 
@@ -16,7 +16,7 @@ void AI::calculateDistrictScoresForNextRound(size_t countryID) {
     Logic::setGrid(logicGrid);
     for (size_t i = 0; i < grid.numberOfDistricts(); ++i) {
         District &district = grid.getDistrictByID(i);
-        Utils::ScoreHolder score = Utils::ScoreHolder();
+        auto score = Utils::ScoreHolder(district.getDistrictID());
         if (!district.isClear()) {
             int vaccinesNeededForTotalHealing = 0;
             for (Field *fieldPointer:district.getAssignedFields()) {
@@ -32,9 +32,9 @@ void AI::calculateDistrictScoresForNextRound(size_t countryID) {
             }
             int changeInVaccines = changeInProducedVaccines - changeInDefenseVaccines;//todo: +aStarPathVaccineCost;
             //todo: store path to district (prob in scoreHolder as well?)
-            score = Utils::ScoreHolder(changeInVaccines, vaccinesNeededForTotalHealing);
+            score = Utils::ScoreHolder(changeInVaccines, vaccinesNeededForTotalHealing, district.getDistrictID());
         }
-        districtScores[district.getDistrictID()] = score;
+        districtScores.push(score);
     }
 }
 
@@ -101,7 +101,6 @@ size_t AI::findBestDistrict() {
     size_t maxScoredDistrict = AI::districtScores.begin()->first;
     for (auto scores:districtScores) {
         //check proposed by woranhun WARNING in extreme cases it can make problem
-        //TODO: priority queue-t ide
         if (scores.second.getProfitabilityIndex() < 1) break;
         if (scores.second.getProfitabilityIndex() > districtScores[maxScoredDistrict].getProfitabilityIndex()) {
             maxScoredDistrict = scores.first;
