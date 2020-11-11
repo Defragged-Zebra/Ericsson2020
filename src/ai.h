@@ -13,13 +13,9 @@
 class AI : Logic {
     //this is a copy, NOT a reference/pointer
     static Grid grid;
-    static std::priority_queue<Utils::ScoreHolder> districtScores;
 
     //it is important to COPY the grid
-    static void calculateDistrictScoresForNextRound(size_t countryID);
-
-    static const double parameter1;
-    static const double parameter2;
+    static void calculateDistrictScoresForNextRound(size_t countryID, std::priority_queue<Utils::ScoreHolder> &districtScores);
 
     static std::vector<VaccineData>
     chooseDistrictsToHeal(int numberOfVaccinesToDistribute, size_t countryID);
