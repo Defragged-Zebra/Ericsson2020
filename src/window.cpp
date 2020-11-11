@@ -7,7 +7,7 @@
 void Window::update(){
     SDL_FillRect(screen, nullptr, SDL_MapRGB (screen->format, 0, 0, 0));
     SDL_Event event;
-    createGrid(Point(grid->getHeight(),grid->getWidth()),0);
+    createGrid(Point(grid->getHeight(),grid->getWidth()),1);
     SDL_UpdateWindowSurface(window);
     bool running=true;
     while(running){
@@ -109,6 +109,9 @@ void Window::createRect(const Point& p,size_t w, size_t h, size_t sep){
 }
 
 void Window::createCell(const Point &p, size_t w, size_t h, size_t sep) {
+    //scale down to fix screen
+    w=w/1.5;
+    h=h/1.5;
     Field& f = grid->getFieldByPoint(p);
     Window::createRect(p, w, h,sep);
     Window::createText(Point(p.getY(),p.getX()), w, h,sep, f.getCurrentInfectionRate());

@@ -22,7 +22,7 @@ public:
 
 
     void displayCurrentRound(int gameID, int tickID, int countryID)override{
-        this->displayResult(gameID,tickID,countryID);
+        //this->displayResult(gameID,tickID,countryID);
     }
     void displayResult(int gameID, int tickID, int countryID);
 

@@ -5,6 +5,6 @@
 #include "country.h"
 
 std::ostream &operator<<(std::ostream &os, const Country &c) {
-    os<<c.countryID;
+    os<<c.countryID<<" " << c.getTotalProductionCapacity() <<" " << c.getReserveVaccines();
     return os;
 }

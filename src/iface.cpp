@@ -5,7 +5,7 @@
 #include "iface.h"
 
 void Iface::initAntiVirus() {
-    login();
+    login(1);
 
     std::string line;
     std::getline(is, line);
@@ -93,13 +93,13 @@ void Iface::start() {
             break;
         } else if (line.find("WARN") != std::string::npos) {
             Iface::sendDebugMsg(line);
-            throw std::runtime_error("Beszoptuk a faszt!!444!!!");
+            //throw std::runtime_error("Beszoptuk a faszt!!444!!!");
         } else if (line.find("REQ") != std::string::npos) {
             Iface::round(line);
         } else {
             Iface::sendDebugMsg("Miafasz történt?");
             Iface::sendDebugMsg("[DEBUG] Hibát okozta\"" + line + "\" [DEBUG VEGE]");
-            throw std::runtime_error("Miafasz történt?");
+            //throw std::runtime_error("Miafasz történt?");
         }
     }
 }
@@ -125,37 +125,43 @@ void Iface::round(std::string &line) {
     //Process input values
     tmp = "";
     while (std::getline(is, tmp)) {
-        Iface::sendDebugMsg("[NOTIFY] " + tmp);
+        //Iface::sendDebugMsg("[NOTIFY] " + tmp);
+        ss.clear();
+        int _countryID, TPC, RV;
+        ss << tmp;
+        ss >> _countryID >> TPC >> RV;
+        grid->addCountry(Country(_countryID,TPC,RV));
         //TODO: parse game-data here
         if (tmp.find("WARN") != std::string::npos) {
             Iface::sendDebugMsg(line);
-            throw std::runtime_error("We've fucked it up!!444!!!");
+            //throw std::runtime_error("We've fucked it up!!444!!!");
         }
         if (tmp != ".\r" and tmp!=".")continue;
         else break;
     }
     Logic::simulateTO(_gameID, tickID, countryID);
-    if(tickID>99){
-        //TODO: calculate this .. also it's buggy af, and have some serious logic errors
-        //TODO: ez szar, fix it
-        //int numberOfVaccinesToDistribute = grid->getCountryByID(countryID).getTotalProductionCapacity();
-        int numberOfVaccinesToDistribute = 0;
-        AI::copyGrid(grid);
-        //Send result back
-        os << "RES " << _gameID << " " << tickID << " " << countryID << std::endl;
-        std::vector<VaccineData> back; // don't change this
-        back = AI::calculateBackVaccines(back, tickID, numberOfVaccinesToDistribute, countryID);
-        for (auto &i : back) {
-            os << "BACK " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
-        }
-        std::vector<VaccineData> put; // don't change this
-        put = AI::calculatePutVaccines(put, tickID, numberOfVaccinesToDistribute, countryID);
-        for (auto &i : back) {
-            os << "PUT " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
-        }
-        Logic::simulateVaccination(back,put);
-        this->displayCurrentRound(_gameID, tickID, countryID);
-    }
 
+    //TODO: calculate this .. also it's buggy af, and have some serious logic errors
+    //TODO: ez szar, fix it
+    int numberOfVaccinesToDistribute = grid->getCountryByID(countryID).getReserveVaccines();
+    //int numberOfVaccinesToDistribute = 0;
+    AI::copyGrid(grid);
+    std::vector<VaccineData> back; // don't change this
+    back = AI::calculateBackVaccines(back, tickID, numberOfVaccinesToDistribute, countryID);
+
+    std::vector<VaccineData> put; // don't change this
+    put = AI::calculatePutVaccines(put, tickID, numberOfVaccinesToDistribute, countryID);
+    Logic::simulateVaccination(back,put);
+
+    //Send result back
+    os << "RES " << _gameID << " " << tickID << " " << countryID << std::endl;
+    for (auto &i : put) {
+        os << "PUT " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
+    }
+    for (auto &i : back) {
+        os << "BACK " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
+    }
+    os << "."<<std::endl;
+    this->displayCurrentRound(_gameID, tickID, countryID);
 
 }

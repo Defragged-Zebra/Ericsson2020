@@ -19,6 +19,12 @@ public:
     Country() {
         assignedDistrictIDs = std::vector<size_t>();
     }
+    Country(size_t ID, size_t TPC, size_t RV){
+        this->countryID = ID;
+        this->totalProductionCapacity = TPC;
+        this->reservedVaccines =RV;
+        this->assignedDistrictIDs = std::vector<size_t>();
+    }
 
     Country(size_t ID, const std::vector<size_t> &districts) {
         countryID = ID;
