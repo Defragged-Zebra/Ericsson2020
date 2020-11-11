@@ -7,7 +7,7 @@
 void Window::update(){
     SDL_FillRect(screen, nullptr, SDL_MapRGB (screen->format, 0, 0, 0));
     SDL_Event event;
-    createGrid(Point(grid->getHeight(),grid->getWidth()),1);
+    createGrid(Point(grid->getHeight(),grid->getWidth()),0);
     SDL_UpdateWindowSurface(window);
     bool running=true;
     while(running){
@@ -17,8 +17,6 @@ void Window::update(){
                     running = false;
                     break;
                 }
-            }else if(event.type==SDL_QUIT){
-                exit(0);
             }
         }
         SDL_UpdateWindowSurface(window);
@@ -49,7 +47,6 @@ void Window::createText(const Point& p, size_t w, size_t h,size_t sep, const std
     SDL_RenderCopy(renderer, felirat_t, nullptr, &hova);
     SDL_FreeSurface(felirat);
     SDL_DestroyTexture(felirat_t);
-    //SDL_RenderPresent(renderer);
 }
 void Window::createText(const Point &p, size_t w, size_t h,size_t sep, int val) {
     std::string text;
@@ -66,7 +63,6 @@ void Window::createText(const Point &p, size_t w, size_t h,size_t sep, int val) 
     SDL_RenderCopy(renderer, felirat_t, nullptr, &hova);
     SDL_FreeSurface(felirat);
     SDL_DestroyTexture(felirat_t);
-    //SDL_RenderPresent(renderer);
 }
 void Window::createText(const Point &p, size_t w, size_t h,size_t sep, double val) {
     std::string text;
@@ -83,7 +79,6 @@ void Window::createText(const Point &p, size_t w, size_t h,size_t sep, double va
     SDL_RenderCopy(renderer, felirat_t, nullptr, &hova);
     SDL_FreeSurface(felirat);
     SDL_DestroyTexture(felirat_t);
-    //SDL_RenderPresent(renderer);
 }
 
 
@@ -91,8 +86,8 @@ void Window::createText(const Point &p, size_t w, size_t h,size_t sep, double va
 void Window::createGrid(const Point& p, size_t sep, size_t sidelen){
     for (size_t y = 0; y < p.getY(); ++y) {
         for (size_t x = 0; x < p.getX(); ++x) {
-            createCell(Point(y,x), sidelen, sidelen,sep);
-            //createRect(Point(y * (sep + sidelen), x*(sep + sidelen)), sidelen, sidelen, red);
+            //createCell(Point(y,x), sidelen, sidelen,sep);
+            createInfectionHeatMap(Point(y,x), sidelen, sidelen, sep);
         }
     }
 }
@@ -108,11 +103,37 @@ void Window::createRect(const Point& p,size_t w, size_t h, size_t sep){
 }
 
 void Window::createCell(const Point &p, size_t w, size_t h, size_t sep) {
-    //scale down to fix screen
-    w=w/1.5;
-    h=h/1.5;
     Field& f = grid->getFieldByPoint(p);
     Window::createRect(p, w, h,sep);
     Window::createText(Point(p.getY(),p.getX()), w, h,sep, f.getCurrentInfectionRate());
 }
 
+
+void Window::createInfectionHeatMap(const Point& p, size_t w, size_t h, size_t sep){
+    //színes négyzet létrehozása
+    uint32_t tempcolorval=this->grid->getFieldByPoint(p).getCurrentInfectionRate();
+    uint8_t r=255;
+    uint8_t g=255-floor(tempcolorval*2.5);
+    uint8_t b=255-floor(tempcolorval*2.5);
+    SDL_Color color={r, g, b};
+    SDL_Rect block;
+    block.x=p.getX()*(w+sep)+sep;
+    block.y=p.getY()*(h+sep)+sep;
+    block.w=w;
+    block.h=h;
+    SDL_FillRect(screen, &block, SDL_MapRGB (screen->format, color.r, color.g, color.b));
+    //szám létrehozása
+    std::string text;
+    std::stringstream ss;
+    ss<<grid->getFieldByPoint(p).getCurrentInfectionRate();
+    ss>>text;
+    SDL_Color col={0,static_cast<Uint8>((Uint8)255-color.g), static_cast<Uint8>((Uint8)255-color.b) };
+    SDL_Surface *felirat;
+    SDL_Texture *felirat_t;
+    SDL_Rect hova = { (int)(p.getX()*(w+sep)+sep), (int)(p.getY()*(h+sep)+sep), static_cast<int>(w-3), static_cast<int>(h-3) };
+    felirat = TTF_RenderUTF8_Blended(font, text.c_str(), col);
+    felirat_t = SDL_CreateTextureFromSurface(renderer, felirat);
+    SDL_RenderCopy(renderer, felirat_t, nullptr, &hova);
+    SDL_FreeSurface(felirat);
+    SDL_DestroyTexture(felirat_t);
+}
