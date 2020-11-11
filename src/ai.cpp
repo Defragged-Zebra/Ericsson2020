@@ -67,14 +67,16 @@ void AI::calculateChangeByHealingField(const Field *fieldPointer, int &changeInP
 }
 
 std::vector<VaccineData> AI::chooseDistrictsToHeal(int numberOfVaccinesToDistribute, size_t countryID) {
-    AI::districtScores.clear();
+    AI::districtScores=std::priority_queue<Utils::ScoreHolder>();
     AI::calculateDistrictScoresForNextRound(countryID);
     std::vector<VaccineData> districtsToHeal = std::vector<VaccineData>();
     while (!AI::districtScores.empty()) {
-        size_t maxScoredDistrict = findBestDistrict();
-        if (numberOfVaccinesToDistribute >= AI::districtScores[maxScoredDistrict].getVaccinesNeededForHealing()) {
+        Utils::ScoreHolder maxScoredDistrict = districtScores.top();
+        //check proposed by woranhun WARNING in extreme cases it can make problem
+        if (maxScoredDistrict.getProfitabilityIndex() < 1) break;
+        if (numberOfVaccinesToDistribute >= maxScoredDistrict.getVaccinesNeededForHealing()) {
             //get the fields of the district
-            for (auto field:grid.getDistrictByID(maxScoredDistrict).getAssignedFields()) {
+            for (auto field:grid.getDistrictByID(maxScoredDistrict.getDistrictID()).getAssignedFields()) {
                 int vaccines = std::ceil(
                         (field->getCurrentInfectionRate() - field->getVaccinationRate()) /
                         field->getPopulationDensity());
@@ -87,26 +89,13 @@ std::vector<VaccineData> AI::chooseDistrictsToHeal(int numberOfVaccinesToDistrib
             numberOfVaccinesToDistribute -= AI::districtScores[maxScoredDistrict].getVaccinesNeededForHealing();
         }
         if (numberOfVaccinesToDistribute == 0) break;
-        auto it = districtScores.find(maxScoredDistrict);
-        districtScores.erase(it);
+        districtScores.pop();
     }
     //TODO: might need to districtsToHeal.pop_back(), if yes, don't forget to put the if loop after the profitability check
     //TODO: look after I have internet access, if it's passed on reference will it be fucked-up?
     if (!districtsToHeal.empty()) return districtsToHeal;
     //TODO: mode B - get a district and try to heal it
     return districtsToHeal;
-}
-
-size_t AI::findBestDistrict() {
-    size_t maxScoredDistrict = AI::districtScores.begin()->first;
-    for (auto scores:districtScores) {
-        //check proposed by woranhun WARNING in extreme cases it can make problem
-        if (scores.second.getProfitabilityIndex() < 1) break;
-        if (scores.second.getProfitabilityIndex() > districtScores[maxScoredDistrict].getProfitabilityIndex()) {
-            maxScoredDistrict = scores.first;
-        }
-    }
-    return maxScoredDistrict;
 }
 
 std::vector<VaccineData> &

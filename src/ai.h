@@ -38,8 +38,6 @@ public:
     static void
     calculateChangeByHealingField(const Field *fieldPointer, int &changeInProducedVaccines,
                                   int &changeInDefenseVaccines);
-
-    static size_t findBestDistrict();
 };
 
 

@@ -132,7 +132,9 @@ public:
 
         [[nodiscard]] double getProfitabilityIndex() const { return profitabilityIndex; }
 
-        ScoreHolder operator<(ScoreHolder sc);
+        [[nodiscard]] size_t getDistrictID() const {return districtID;}
+
+        bool operator<(ScoreHolder& sc) const;
     };
 };
 
