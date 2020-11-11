@@ -2,6 +2,8 @@
 #include <fstream>
 #include "antiVirus.h"
 
+//comment this line to exclude graphics
+#define production
 
 int main() {
 //    debug3();

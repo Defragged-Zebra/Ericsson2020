@@ -13,7 +13,9 @@
 #include "logic.h"
 #include "graphics.h"
 #include "protocol.h"
-#include "visualization.h"
+#ifndef production
+    #include "visualization.h"
+#endif
 
 class AntiVirus {
     Grid *grid = nullptr; //(*av.grid)[y][x] is the way to access this
