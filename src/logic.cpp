@@ -19,8 +19,6 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
         for (int x = 0; x < grid->getWidth(); ++x) {
             for (int y = 0; y < grid->getHeight(); ++y) {
                 const Point &p = Point(y, x);
-                if(tickID>101&&x>4&&y==0)
-                    std::cout <<"fasz"<<std::endl;
                 vaccination = Logic::calculateVaccination(p, heal);
                 heal = Logic::calculateSpontaneousHealing(p, healStartTick, vaccination);
                 grid->getFieldByPoint(p).updateVaccination(heal + vaccination);
@@ -225,19 +223,18 @@ double Logic::calculateCrossInfection(const Point &center, uint64_t factor3) {
 }
 
 int Logic::calculateVaccination(const Point &p, int &spontaneousHealAmount) {
+    Field& f =grid->getFieldByPoint(p);
     // IR: last infection rate
-    int IR = grid->getFieldByPoint(p).getCurrentInfectionRate();
+    int IR = f.getCurrentInfectionRate();
     //P: population density
-    int P = grid->getFieldByPoint(p).getPopulationDensity();
+    int P = f.getPopulationDensity();
     //Ha egy adott területen az IR > 0
-    if (IR > 0) {
+    if (IR > 0 && !f.isClear()) {
         //van n db tartalék vakcina az összes országnak együttvéve
-        std::map<size_t, int> vaccinesMap = grid->getFieldByPoint(p).getStoredVaccines();
+        std::map<size_t, int> vaccinesMap = f.getStoredVaccines();
         //reserve vaccines
         int n = 0;
         for (const auto& tmp:vaccinesMap) {
-            if(tmp.second<0)
-                std::cout <<"alma";
             n += tmp.second;
         }
         //X: vaccination rate
