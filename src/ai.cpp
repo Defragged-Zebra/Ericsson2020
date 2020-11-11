@@ -31,7 +31,7 @@ void AI::calculateDistrictScoresForNextRound(size_t countryID) {
                 calculateChangeByHealingField(fieldPointer, changeInProducedVaccines, changeInDefenseVaccines);
             }
             int changeInVaccines = changeInProducedVaccines - changeInDefenseVaccines;//todo: +aStarPathVaccineCost;
-            //todo: store path to district (prob in scoreholder as well?)
+            //todo: store path to district (prob in scoreHolder as well?)
             score = Utils::ScoreHolder(changeInVaccines, vaccinesNeededForTotalHealing);
         }
         districtScores[district.getDistrictID()] = score;
@@ -111,8 +111,7 @@ size_t AI::findBestDistrict() {
 }
 
 std::vector<VaccineData> &
-AI::calculateBackVaccines(std::vector<VaccineData> &back, size_t tickID, int &numberOfVaccinesToDistribute,
-                          size_t countryID) {
+AI::calculateBackVaccines(std::vector<VaccineData> &back, int &numberOfVaccinesToDistribute, size_t countryID) {
     for (int y = 0; y < grid.getHeight(); ++y) {
         for (int x = 0; x < grid.getWidth(); ++x) {
             std::map<size_t, int> allStoredVaccines = grid.getFieldByPoint(Point(y, x)).getStoredVaccines();
@@ -130,9 +129,7 @@ AI::calculateBackVaccines(std::vector<VaccineData> &back, size_t tickID, int &nu
 }
 
 std::vector<VaccineData> &
-AI::calculatePutVaccines(std::vector<VaccineData> &put, size_t tickID, int numberOfVaccinesToDistribute,
-                         size_t countryID) {
-    //overwrite, bc you need to return the last values (thx Ericsson)
+AI::calculatePutVaccines(std::vector<VaccineData> &put, int numberOfVaccinesToDistribute, size_t countryID) {
     put = chooseDistrictsToHeal(numberOfVaccinesToDistribute, countryID);
     return put;
 }

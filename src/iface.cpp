@@ -144,12 +144,12 @@ void Iface::round(std::string &line) {
         //Send result back
         os << "RES " << _gameID << " " << tickID << " " << countryID << std::endl;
         std::vector<VaccineData> back; // don't change this
-        back = AI::calculateBackVaccines(back, tickID, numberOfVaccinesToDistribute, countryID);
+        back = AI::calculateBackVaccines(back, numberOfVaccinesToDistribute, countryID);
         for (auto &i : back) {
             os << "BACK " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
         }
         std::vector<VaccineData> put; // don't change this
-        put = AI::calculatePutVaccines(put, tickID, numberOfVaccinesToDistribute, countryID);
+        put = AI::calculatePutVaccines(put, numberOfVaccinesToDistribute, countryID);
         for (auto &i : back) {
             os << "PUT " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
         }

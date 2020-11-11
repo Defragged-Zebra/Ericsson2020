@@ -30,12 +30,10 @@ public:
     }
 
     static std::vector<VaccineData> &
-    calculateBackVaccines(std::vector<VaccineData> &back, size_t tickID, int &numberOfVaccinesToDistribute,
-                          size_t countryID);
+    calculateBackVaccines(std::vector<VaccineData> &back, int &numberOfVaccinesToDistribute, size_t countryID);
 
     static std::vector<VaccineData> &
-    calculatePutVaccines(std::vector<VaccineData> &put, size_t tickID, int numberOfVaccinesToDistribute,
-                         size_t countryID);
+    calculatePutVaccines(std::vector<VaccineData> &put, int numberOfVaccinesToDistribute, size_t countryID);
 
     static void
     calculateChangeByHealingField(const Field *fieldPointer, int &changeInProducedVaccines,
