@@ -9,6 +9,8 @@
 #include "visualization.h"
 #endif
 
+//comment this line to exclude graphics
+#define production
 
 int main() {
 //    debug3();

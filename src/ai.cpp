@@ -4,7 +4,7 @@
 
 #include "ai.h"
 
-std::map<size_t, Utils::ScoreHolder> AI::districtScores = std::map<size_t, Utils::ScoreHolder>();
+std::priority_queue<Utils::ScoreHolder> AI::districtScores = std::priority_queue<Utils::ScoreHolder>();
 uint64_t fuckCpp[4] = {0};
 Grid AI::grid = Grid(0, 0, fuckCpp);
 
@@ -16,7 +16,7 @@ void AI::calculateDistrictScoresForNextRound(size_t countryID) {
     Logic::setGrid(logicGrid);
     for (size_t i = 0; i < grid.numberOfDistricts(); ++i) {
         District &district = grid.getDistrictByID(i);
-        Utils::ScoreHolder score = Utils::ScoreHolder();
+        auto score = Utils::ScoreHolder(district.getDistrictID());
         if (!district.isClear()) {
             int vaccinesNeededForTotalHealing = 0;
             for (Field *fieldPointer:district.getAssignedFields()) {
@@ -31,10 +31,10 @@ void AI::calculateDistrictScoresForNextRound(size_t countryID) {
                 calculateChangeByHealingField(fieldPointer, changeInProducedVaccines, changeInDefenseVaccines);
             }
             int changeInVaccines = changeInProducedVaccines - changeInDefenseVaccines;//todo: +aStarPathVaccineCost;
-            //todo: store path to district (prob in scoreholder as well?)
-            score = Utils::ScoreHolder(changeInVaccines, vaccinesNeededForTotalHealing);
+            //todo: store path to district (prob in scoreHolder as well?)
+            score = Utils::ScoreHolder(changeInVaccines, vaccinesNeededForTotalHealing, district.getDistrictID());
         }
-        districtScores[district.getDistrictID()] = score;
+        districtScores.push(score);
     }
 }
 
@@ -67,14 +67,16 @@ void AI::calculateChangeByHealingField(const Field *fieldPointer, int &changeInP
 }
 
 std::vector<VaccineData> AI::chooseDistrictsToHeal(int numberOfVaccinesToDistribute, size_t countryID) {
-    AI::districtScores.clear();
+    AI::districtScores=std::priority_queue<Utils::ScoreHolder>();
     AI::calculateDistrictScoresForNextRound(countryID);
     std::vector<VaccineData> districtsToHeal = std::vector<VaccineData>();
     while (!AI::districtScores.empty()) {
-        size_t maxScoredDistrict = findBestDistrict();
-        if (numberOfVaccinesToDistribute >= AI::districtScores[maxScoredDistrict].getVaccinesNeededForHealing()) {
+        Utils::ScoreHolder maxScoredDistrict = districtScores.top();
+        //check proposed by woranhun WARNING in extreme cases it can make problem
+        if (maxScoredDistrict.getProfitabilityIndex() < 1) break;
+        if (numberOfVaccinesToDistribute >= maxScoredDistrict.getVaccinesNeededForHealing()) {
             //get the fields of the district
-            for (auto field:grid.getDistrictByID(maxScoredDistrict).getAssignedFields()) {
+            for (auto field:grid.getDistrictByID(maxScoredDistrict.getDistrictID()).getAssignedFields()) {
                 int vaccines = std::ceil(
                         (field->getCurrentInfectionRate() - field->getVaccinationRate()) /
                         field->getPopulationDensity());
@@ -84,11 +86,10 @@ std::vector<VaccineData> AI::chooseDistrictsToHeal(int numberOfVaccinesToDistrib
                     districtsToHeal.push_back(vc);
                 }
             }
-            numberOfVaccinesToDistribute -= AI::districtScores[maxScoredDistrict].getVaccinesNeededForHealing();
+            numberOfVaccinesToDistribute -= AI::districtScores.top().getVaccinesNeededForHealing();
         }
         if (numberOfVaccinesToDistribute == 0) break;
-        auto it = districtScores.find(maxScoredDistrict);
-        districtScores.erase(it);
+        districtScores.pop();
     }
     //TODO: might need to districtsToHeal.pop_back(), if yes, don't forget to put the if loop after the profitability check
     //TODO: look after I have internet access, if it's passed on reference will it be fucked-up?
@@ -97,22 +98,8 @@ std::vector<VaccineData> AI::chooseDistrictsToHeal(int numberOfVaccinesToDistrib
     return districtsToHeal;
 }
 
-size_t AI::findBestDistrict() {
-    size_t maxScoredDistrict = AI::districtScores.begin()->first;
-    for (auto scores:districtScores) {
-        //check proposed by woranhun WARNING in extreme cases it can make problem
-        //TODO: priority queue-t ide
-        if (scores.second.getProfitabilityIndex() < 1) break;
-        if (scores.second.getProfitabilityIndex() > districtScores[maxScoredDistrict].getProfitabilityIndex()) {
-            maxScoredDistrict = scores.first;
-        }
-    }
-    return maxScoredDistrict;
-}
-
 std::vector<VaccineData> &
-AI::calculateBackVaccines(std::vector<VaccineData> &back, size_t tickID, int &numberOfVaccinesToDistribute,
-                          size_t countryID) {
+AI::calculateBackVaccines(std::vector<VaccineData> &back, int &numberOfVaccinesToDistribute, size_t countryID) {
     for (int y = 0; y < grid.getHeight(); ++y) {
         for (int x = 0; x < grid.getWidth(); ++x) {
             std::map<size_t, int> allStoredVaccines = grid.getFieldByPoint(Point(y, x)).getStoredVaccines();
@@ -130,9 +117,7 @@ AI::calculateBackVaccines(std::vector<VaccineData> &back, size_t tickID, int &nu
 }
 
 std::vector<VaccineData> &
-AI::calculatePutVaccines(std::vector<VaccineData> &put, size_t tickID, int numberOfVaccinesToDistribute,
-                         size_t countryID) {
-    //overwrite, bc you need to return the last values (thx Ericsson)
+AI::calculatePutVaccines(std::vector<VaccineData> &put, int numberOfVaccinesToDistribute, size_t countryID) {
     put = chooseDistrictsToHeal(numberOfVaccinesToDistribute, countryID);
     return put;
 }

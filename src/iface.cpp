@@ -140,17 +140,16 @@ void Iface::round(std::string &line) {
         else break;
     }
     Logic::simulateTO(_gameID, tickID, countryID);
-
     //TODO: calculate this .. also it's buggy af, and have some serious logic errors
     //TODO: ez szar, fix it
     int numberOfVaccinesToDistribute = grid->getCountryByID(countryID).getReserveVaccines();
     //int numberOfVaccinesToDistribute = 0;
     AI::copyGrid(grid);
     std::vector<VaccineData> back; // don't change this
-    back = AI::calculateBackVaccines(back, tickID, numberOfVaccinesToDistribute, countryID);
+    back = AI::calculateBackVaccines(back,numberOfVaccinesToDistribute, countryID);
 
     std::vector<VaccineData> put; // don't change this
-    put = AI::calculatePutVaccines(put, tickID, numberOfVaccinesToDistribute, countryID);
+    put = AI::calculatePutVaccines(put, numberOfVaccinesToDistribute, countryID);
     Logic::simulateVaccination(back,put);
 
     //Send result back
