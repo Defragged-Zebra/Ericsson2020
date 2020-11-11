@@ -29,6 +29,3 @@ uint64_t Utils::Random::getFactor(int index) const {
     return factor[index - 1];
 }
 
-bool Utils::ScoreHolder::operator<(Utils::ScoreHolder &sc) const {
-    return this->profitabilityIndex < sc.profitabilityIndex;
-}

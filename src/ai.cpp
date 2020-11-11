@@ -86,7 +86,7 @@ std::vector<VaccineData> AI::chooseDistrictsToHeal(int numberOfVaccinesToDistrib
                     districtsToHeal.push_back(vc);
                 }
             }
-            numberOfVaccinesToDistribute -= AI::districtScores[maxScoredDistrict].getVaccinesNeededForHealing();
+            numberOfVaccinesToDistribute -= AI::districtScores.top().getVaccinesNeededForHealing();
         }
         if (numberOfVaccinesToDistribute == 0) break;
         districtScores.pop();
