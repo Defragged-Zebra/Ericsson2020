@@ -109,18 +109,21 @@ public:
     };
 
     class ScoreHolder {
+        size_t districtID;
         int changeInVaccines = INT_MIN;
         double profitabilityIndex;
         int vaccinesNeededForTotalHealing = INT_MAX;
     public:
-        ScoreHolder() {
+        explicit ScoreHolder(size_t districtID) {
             profitabilityIndex = changeInVaccines / (double) vaccinesNeededForTotalHealing;
+            this->districtID = districtID;
         }
 
-        ScoreHolder(int changeInVaccines, int vaccinesNeededForTotalHealing) {
+        ScoreHolder(int changeInVaccines, int vaccinesNeededForTotalHealing, size_t districtID) {
             this->changeInVaccines = changeInVaccines;
             profitabilityIndex = changeInVaccines / (double) vaccinesNeededForTotalHealing;
             this->vaccinesNeededForTotalHealing = vaccinesNeededForTotalHealing;
+            this->districtID = districtID;
         }
 
         [[nodiscard]] int getVaccinesNeededForHealing() const { return vaccinesNeededForTotalHealing; }
@@ -128,6 +131,10 @@ public:
         [[nodiscard]] int ChangeInVaccines() const { return changeInVaccines; };
 
         [[nodiscard]] double getProfitabilityIndex() const { return profitabilityIndex; }
+
+        [[nodiscard]] size_t getDistrictID() const { return districtID; }
+
+        bool operator<(const ScoreHolder &sc) const { return this->profitabilityIndex < sc.profitabilityIndex; }
     };
 };
 
