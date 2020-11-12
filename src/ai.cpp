@@ -4,7 +4,6 @@
 
 #include "ai.h"
 
-//std::priority_queue<Utils::ScoreHolder> AI::districtScores = std::priority_queue<Utils::ScoreHolder>();
 uint64_t fuckCpp[4] = {0};
 Grid AI::grid2 = Grid(0, 0, fuckCpp);
 
