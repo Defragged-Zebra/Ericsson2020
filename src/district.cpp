@@ -33,7 +33,7 @@ void District::simplifyNeighbourDistrictVector() {
 
 bool District::isFieldInDistrict(size_t fieldID) {
     //another lambda here
-    throw std::runtime_error("district.cpp szejjeltesztelni ezt a kecibe");
+    //TODO: throw std::runtime_error("district.cpp szejjeltesztelni ezt a kecibe");
     return std::any_of(assignedFields.begin(), assignedFields.end(),
                 [fieldID](auto currentField) { return currentField->getFieldID() == fieldID; });
     /*

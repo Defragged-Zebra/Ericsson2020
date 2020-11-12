@@ -69,6 +69,7 @@ public:
 
     void setAssignedCountryID(size_t countryID) { assignedCountryID = countryID; }
     bool isFieldInDistrict(size_t fieldID);
+    [[nodiscard]] size_t getDistrictID(){return districtID;}
 };
 
 

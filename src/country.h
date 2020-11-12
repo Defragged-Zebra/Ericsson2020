@@ -26,7 +26,7 @@ public:
         this->countryID = ID;
         this->totalProductionCapacity = TPC;
         this->reservedVaccines =RV;
-        this->assignedDistrictPointers = std::vector<size_t>();
+        this->assignedDistrictPointers = std::vector<District*>();
     }
 
     Country(size_t ID, const std::vector<District*> &districts) {

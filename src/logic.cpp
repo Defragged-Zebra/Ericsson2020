@@ -28,22 +28,21 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
                         //todo: in round3 change this
                         District &district = grid->getDistrictByPoint(p);
                         district.setAssignedCountryID(countryID);
-                        grid->getCountryByID(countryID).addAssignedDistrictID(district.getDistrictID());
+                        grid->getCountryByID(countryID).addAssignedDistrictID(&district);
                     }
                 }
             }
         }
-    }
 
-    int inf = 0;
-    for (int x = 0; x < grid->getWidth(); ++x) {
-        for (int y = 0; y < grid->getHeight(); ++y) {
-            inf = Logic::calculateSpontaneousInfection(Point(y, x));
-            grid->getFieldByPoint(Point(y, x)).updateInfection(inf);
+        int inf = 0;
+        for (int x = 0; x < grid->getWidth(); ++x) {
+            for (int y = 0; y < grid->getHeight(); ++y) {
+                inf = Logic::calculateSpontaneousInfection(Point(y, x));
+                grid->getFieldByPoint(Point(y, x)).updateInfection(inf);
+            }
         }
+        grid->IncreaseCurrentTick();
     }
-    grid->IncreaseCurrentTick();
-}
 
 }
 
@@ -271,9 +270,9 @@ int Logic::calculateSpontaneousHealing(const Point &p, int healStartTick, int va
 
 void Logic::simulateVaccination(const std::vector<VaccineData> &back, const std::vector<VaccineData> &put) {
     for (const auto &b:back) {
-        grid->getFieldByPoint(b.getPoint()).callBackVaccines(b.getVaccines(), b.getCountyID());
+        grid->getFieldByPoint(b.getPoint()).callBackVaccines(b.getVaccines(), b.getCounrtyID());
     }
     for (const auto &p:put) {
-        grid->getFieldByPoint(p.getPoint()).pushVaccines(p.getVaccines(), p.getCountyID());
+        grid->getFieldByPoint(p.getPoint()).pushVaccines(p.getVaccines(), p.getCounrtyID());
     }
 }
