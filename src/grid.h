@@ -101,11 +101,11 @@ public:
     }
 
     void addCountry(const Country &newCountry) {
-        auto it = std::find_if(countries.begin(), countries.end(), [newCountry](Country const& obj){
+        auto it = std::find_if(countries.begin(), countries.end(), [newCountry](Country const &obj) {
             return obj.getCountryID() == newCountry.getCountryID();
-        } );
-        if(it==countries.end()) countries.push_back(newCountry);
-        else countries[newCountry.getCountryID()]=newCountry;
+        });
+        if (it == countries.end()) countries.push_back(newCountry);
+        else countries[newCountry.getCountryID()] = newCountry;
     }
 
     [[nodiscard]] size_t getCurrentTick() const {
@@ -120,7 +120,10 @@ public:
 
     size_t numberOfDistricts() { return districts.size(); }
 
-    Point getCoordinatesByID(size_t ID) const;
+    [[nodiscard]] Point getCoordinatesByID(size_t ID) const;
+
+    int calculateChangeInProducedVaccinesByHealingDistrict(size_t countryID, const District& district);
+
 };
 
 

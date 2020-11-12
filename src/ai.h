@@ -36,7 +36,7 @@ public:
     calculateChangeByHealingField(const Field *fieldPointer, int &changeInProducedVaccines,
                                   int &changeInDefenseVaccines);
 
-    static void calculateScore(std::vector<ScoreHolder> &districtScores, const District &district);
+    static void calculateScore(std::vector<ScoreHolder> &districtScores, const District &district, size_t countryID);
     static Point calculateStartPoint(std::vector<VaccineData>& fieldsToHeal, size_t countryID);
 };
 
