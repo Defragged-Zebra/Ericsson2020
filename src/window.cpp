@@ -7,7 +7,7 @@
 void Window::update(){
     SDL_FillRect(screen, nullptr, SDL_MapRGB (screen->format, 0, 0, 0));
     SDL_Event event;
-    createGrid(Point(grid->getHeight(),grid->getWidth()),0);
+    createGrid(Point(0,0),Point(grid->getHeight(),grid->getWidth()),0,20);
     SDL_UpdateWindowSurface(window);
     bool running=true;
     while(running){
@@ -17,6 +17,8 @@ void Window::update(){
                     running = false;
                     break;
                 }
+            }else if(event.type==SDL_QUIT){
+                exit(0);
             }
         }
         SDL_UpdateWindowSurface(window);
@@ -83,11 +85,12 @@ void Window::createText(const Point &p, size_t w, size_t h,size_t sep, double va
 
 
 //hány sor, hány oszlop, köztük hely, négyzet mérete
-void Window::createGrid(const Point& p, size_t sep, size_t sidelen){
-    for (size_t y = 0; y < p.getY(); ++y) {
-        for (size_t x = 0; x < p.getX(); ++x) {
-            //createCell(Point(y,x), sidelen, sidelen,sep);
-            createInfectionHeatMap(Point(y,x), sidelen, sidelen, sep);
+void Window::createGrid(const Point& windowLoc,const Point& gridSize, size_t sep, size_t sidelen){
+    for (size_t y = 0; y < gridSize.getY(); ++y) {
+        for (size_t x = 0; x < gridSize.getX(); ++x) {
+            createDistrictCell(Point(y, x), Point(y, x), sidelen, sidelen, sep+1);
+            createInfectionHeatMap(Point(y,x+gridSize.getX()*(sep+1+sidelen)+20*sep+10), Point(y,x), sidelen, sidelen, sep);
+            createVaccinationMap(Point(y,(x+gridSize.getX()*(sep+sidelen)+20*sep)*2+100), Point(y,x), sidelen, sidelen, sep);
         }
     }
 }
@@ -102,38 +105,78 @@ void Window::createRect(const Point& p,size_t w, size_t h, size_t sep){
     SDL_FillRect(screen, &block, SDL_MapRGB (screen->format, color.r, color.g, color.b));
 }
 
-void Window::createCell(const Point &p, size_t w, size_t h, size_t sep) {
-    Field& f = grid->getFieldByPoint(p);
-    Window::createRect(p, w, h,sep);
-    Window::createText(Point(p.getY(),p.getX()), w, h,sep, f.getCurrentInfectionRate());
+void Window::createDistrictCell(const Point& windowLoc, const Point& gridElement, size_t w, size_t h, size_t sep) {
+    Field& f = grid->getFieldByPoint(gridElement);
+    Window::createRect(windowLoc, w, h,sep);
+    Window::createText(Point(windowLoc.getY(),windowLoc.getX()), w, h,sep, f.getCurrentInfectionRate());
 }
 
 
-void Window::createInfectionHeatMap(const Point& p, size_t w, size_t h, size_t sep){
+void Window::createInfectionHeatMap(const Point& windowLoc, const Point& gridElement, size_t w, size_t h, size_t sep){
     //színes négyzet létrehozása
-    uint32_t tempcolorval=this->grid->getFieldByPoint(p).getCurrentInfectionRate();
+    uint32_t tempcolorval=this->grid->getFieldByPoint(gridElement).getCurrentInfectionRate();
     uint8_t r=255;
-    uint8_t g=255-floor(tempcolorval*2.5);
-    uint8_t b=255-floor(tempcolorval*2.5);
+    uint8_t g=255;
+    uint8_t b=255;
+    if(tempcolorval!=0){
+        r=255;
+        b=200-floor(tempcolorval*2);
+        g=200-floor(tempcolorval*2);
+    }
     SDL_Color color={r, g, b};
     SDL_Rect block;
-    block.x=p.getX()*(w+sep)+sep;
-    block.y=p.getY()*(h+sep)+sep;
+    block.x=windowLoc.getX()+gridElement.getX()*(w+sep)+sep;
+    block.y=windowLoc.getY()+gridElement.getY()*(h+sep)+sep;
     block.w=w;
     block.h=h;
     SDL_FillRect(screen, &block, SDL_MapRGB (screen->format, color.r, color.g, color.b));
     //szám létrehozása
     std::string text;
     std::stringstream ss;
-    ss<<grid->getFieldByPoint(p).getCurrentInfectionRate();
+    ss<<grid->getFieldByPoint(gridElement).getCurrentInfectionRate();
     ss>>text;
     SDL_Color col={0,static_cast<Uint8>((Uint8)255-color.g), static_cast<Uint8>((Uint8)255-color.b) };
     SDL_Surface *felirat;
     SDL_Texture *felirat_t;
-    SDL_Rect hova = { (int)(p.getX()*(w+sep)+sep), (int)(p.getY()*(h+sep)+sep), static_cast<int>(w-3), static_cast<int>(h-3) };
+    SDL_Rect hova = { (int)(windowLoc.getX()+gridElement.getX()*(w+sep)+sep), (int)(windowLoc.getY()+gridElement.getY()*(h+sep)+sep), static_cast<int>(w-3), static_cast<int>(h-3) };
     felirat = TTF_RenderUTF8_Blended(font, text.c_str(), col);
     felirat_t = SDL_CreateTextureFromSurface(renderer, felirat);
     SDL_RenderCopy(renderer, felirat_t, nullptr, &hova);
     SDL_FreeSurface(felirat);
     SDL_DestroyTexture(felirat_t);
 }
+
+void Window::createVaccinationMap(const Point &windowLoc, const Point &gridElement, size_t w, size_t h, size_t sep) {
+    //színes négyzet létrehozása
+    uint32_t tempcolorval=this->grid->getFieldByPoint(gridElement).getStoredVaccines()[0];
+    uint8_t r=255;
+    uint8_t g=255;
+    uint8_t b=255;
+    if(tempcolorval!=0){
+        r=200-floor(tempcolorval*2);
+        g=200-floor(tempcolorval*2);
+        b=255;
+    }
+    SDL_Color color={r, g, b};
+    SDL_Rect block;
+    block.x=windowLoc.getX()+gridElement.getX()*(w+sep)+sep;
+    block.y=windowLoc.getY()+gridElement.getY()*(h+sep)+sep;
+    block.w=w;
+    block.h=h;
+    SDL_FillRect(screen, &block, SDL_MapRGB (screen->format, color.r, color.g, color.b));
+    //szám létrehozása
+    std::string text;
+    std::stringstream ss;
+    ss<<grid->getFieldByPoint(gridElement).getStoredVaccines()[0];
+    ss>>text;
+    SDL_Color col={0,static_cast<Uint8>((Uint8)255-color.g), static_cast<Uint8>((Uint8)255-color.b) };
+    SDL_Surface *felirat;
+    SDL_Texture *felirat_t;
+    SDL_Rect hova = { (int)(windowLoc.getX()+gridElement.getX()*(w+sep)+sep), (int)(windowLoc.getY()+gridElement.getY()*(h+sep)+sep), static_cast<int>(w-3), static_cast<int>(h-3) };
+    felirat = TTF_RenderUTF8_Blended(font, text.c_str(), col);
+    felirat_t = SDL_CreateTextureFromSurface(renderer, felirat);
+    SDL_RenderCopy(renderer, felirat_t, nullptr, &hova);
+    SDL_FreeSurface(felirat);
+    SDL_DestroyTexture(felirat_t);
+}
+

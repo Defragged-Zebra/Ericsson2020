@@ -8,33 +8,57 @@
 uint64_t fuckCpp[4] = {0};
 Grid AI::grid2 = Grid(0, 0, fuckCpp);
 
-void AI::calculateDistrictScoresForNextRound(size_t countryID, std::priority_queue<Utils::ScoreHolder> &districtScores) {
+
+
+void
+AI::calculateDistrictScoresForNextRound(size_t countryID, std::vector<ScoreHolder> &districtScores) {
     // heavily unoptimised code for readability
     Grid *originalGrid = Logic::getGrid();
     Logic::setGrid(&AI::grid2);
     Logic::simulateTO(0, grid2.getCurrentTick() + 1, countryID);
     Logic::setGrid(originalGrid);
-    for (size_t i = 0; i < grid2.numberOfDistricts(); ++i) {
-        District &district = grid2.getDistrictByID(i);
-        auto score = Utils::ScoreHolder(district.getDistrictID());
-        if (!district.isClear()) {
-            int vaccinesNeededForTotalHealing = 0;
-            for (Field *fieldPointer:district.getAssignedFields()) {
-                //assuming grid is 1 tick in the future, and no unhealed district in the country
-                vaccinesNeededForTotalHealing += std::max((int)std::ceil(
-                        (fieldPointer->getCurrentInfectionRate() - fieldPointer->getVaccinationRate()) /
-                        fieldPointer->getPopulationDensity()),6-fieldPointer->getPopulationDensity());
-            }
-            int changeInProducedVaccines = 0;
-            int changeInDefenseVaccines = 0;
-            for (Field *fieldPointer:district.getAssignedFields()) {
-                calculateChangeByHealingField(fieldPointer, changeInProducedVaccines, changeInDefenseVaccines);
-            }
-            int changeInVaccines = changeInProducedVaccines - changeInDefenseVaccines;//todo: +aStarPathVaccineCost;
-            //todo: store path to district (prob in scoreHolder as well?)
-            score = Utils::ScoreHolder(changeInVaccines, vaccinesNeededForTotalHealing, district.getDistrictID());
+    if(originalGrid->getCurrentTick()==0){
+        for (size_t x = 1; x < originalGrid->getWidth()-1; ++x) {
+            District& district = grid2.getDistrictByPoint(Point(0,x));
+            CalculateScore(districtScores, district);
+
+            District& district2 = grid2.getDistrictByPoint(Point(originalGrid->getHeight()-1,x));
+            CalculateScore(districtScores, district2);
         }
-        districtScores.push(score);
+        for (size_t y = 0; y < originalGrid->getHeight(); ++y) {
+            District& district = grid2.getDistrictByPoint(Point(y, 0));
+            CalculateScore(districtScores, district);
+
+            District& district2 = grid2.getDistrictByPoint(Point(y, originalGrid->getWidth()-1));
+            CalculateScore(districtScores, district2);
+        }
+    }else{
+        for (size_t i = 0; i < grid2.numberOfDistricts(); ++i) {
+            District &district = grid2.getDistrictByID(i);
+            CalculateScore(districtScores, district);
+        }
+    }
+}
+
+void AI::CalculateScore(std::vector<ScoreHolder> &districtScores, const District &district) {
+    if (!district.isClear()) {
+        auto score = Utils::ScoreHolder(district.getDistrictID());
+        int vaccinesNeededForTotalHealing = 0;
+        for (Field *fieldPointer:district.getAssignedFields()) {
+            //assuming grid is 1 tick in the future, and no unhealed district in the country
+            vaccinesNeededForTotalHealing += std::max((int) std::ceil(
+                    (fieldPointer->getCurrentInfectionRate() - fieldPointer->getVaccinationRate()) /
+                    fieldPointer->getPopulationDensity()), 6 - fieldPointer->getPopulationDensity());
+        }
+        int changeInProducedVaccines = 0;
+        int changeInDefenseVaccines = 0;
+        for (Field *fieldPointer:district.getAssignedFields()) {
+            calculateChangeByHealingField(fieldPointer, changeInProducedVaccines, changeInDefenseVaccines);
+        }
+        int changeInVaccines = changeInProducedVaccines - changeInDefenseVaccines;//todo: +aStarPathVaccineCost;
+        //todo: store path to district (prob in scoreHolder as well?)
+        score = Utils::ScoreHolder(changeInVaccines, vaccinesNeededForTotalHealing, district.getDistrictID());
+        districtScores.push_back(score);
     }
 }
 
@@ -67,8 +91,9 @@ void AI::calculateChangeByHealingField(const Field *fieldPointer, int &changeInP
 }
 
 std::vector<VaccineData> AI::chooseDistrictsToVaccinate(int numberOfVaccinesToDistribute, size_t countryID) {
-    std::priority_queue<Utils::ScoreHolder> districtScores=std::priority_queue<Utils::ScoreHolder>();
-    AI::calculateDistrictScoresForNextRound(countryID, districtScores);
+    std::vector<ScoreHolder> data;
+    AI::calculateDistrictScoresForNextRound(countryID, data);
+    std::priority_queue<ScoreHolder, std::vector<ScoreHolder>, Compare::ProfIndex>districtScores(data.begin(),data.end());
     std::vector<VaccineData> districtsToHeal = std::vector<VaccineData>();
     while (!districtScores.empty()) {
         Utils::ScoreHolder maxScoredDistrict = districtScores.top();
@@ -77,9 +102,9 @@ std::vector<VaccineData> AI::chooseDistrictsToVaccinate(int numberOfVaccinesToDi
         if (numberOfVaccinesToDistribute >= maxScoredDistrict.getVaccinesNeededForHealing()) {
             //get the fields of the district
             for (auto field:grid2.getDistrictByID(maxScoredDistrict.getDistrictID()).getAssignedFields()) {
-                int vaccines = std::max((int)std::ceil(
+                int vaccines = std::max((int) std::ceil(
                         (field->getCurrentInfectionRate() - field->getVaccinationRate()) /
-                        field->getPopulationDensity()),6-field->getPopulationDensity());
+                        field->getPopulationDensity()), 6 - field->getPopulationDensity());
                 if (vaccines > 0) {
                     VaccineData vc = VaccineData(grid2.getCoordinatesByID(field->getFieldID()), vaccines, countryID);
                     //TODO: a-star algo modifies here too
@@ -95,6 +120,19 @@ std::vector<VaccineData> AI::chooseDistrictsToVaccinate(int numberOfVaccinesToDi
     //TODO: look after I have internet access, if it's passed on reference will it be fucked-up?
     if (!districtsToHeal.empty()) return districtsToHeal;
     //TODO: mode B - get a district and try to heal it
+    std::priority_queue<ScoreHolder, std::vector<ScoreHolder>, Compare::TotalHealing> districtScores2(data.begin(),data.end());
+    Utils::ScoreHolder maxScoredDistrict=districtScores2.top();
+    for (auto field:grid2.getDistrictByID(maxScoredDistrict.getDistrictID()).getAssignedFields()) {
+        int vaccines = std::max((int) std::ceil(
+                (field->getCurrentInfectionRate() - field->getVaccinationRate()) /
+                field->getPopulationDensity()), 6 - field->getPopulationDensity());
+        if (vaccines > 0) {
+            VaccineData vc = VaccineData(grid2.getCoordinatesByID(field->getFieldID()), vaccines, countryID);
+            //TODO: a-star algo modifies here too
+            districtsToHeal.push_back(vc);
+        }
+    }
+
     return districtsToHeal;
 }
 
@@ -108,7 +146,7 @@ AI::calculateBackVaccines(std::vector<VaccineData> &back, int &numberOfVaccinesT
             catch (std::out_of_range &exc) { countryStoredVaccines = 0; }
             //Egy területről az összes tartalék vakcinát nem lehet visszavenni, legalább 1 egységnyit ott kell hagyni.
             if (countryStoredVaccines > 1) {
-                back.emplace_back(Point(y, x), countryStoredVaccines - 1,countryID);
+                back.emplace_back(Point(y, x), countryStoredVaccines - 1, countryID);
                 numberOfVaccinesToDistribute += countryStoredVaccines - 1;
             }
         }

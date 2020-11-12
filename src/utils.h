@@ -134,11 +134,34 @@ public:
 
         [[nodiscard]] size_t getDistrictID() const { return districtID; }
 
-        bool operator<(const ScoreHolder &sc) const { return this->profitabilityIndex < sc.profitabilityIndex; }
+        //bool operator<(const ScoreHolder &sc) const { return this->profitabilityIndex < sc.profitabilityIndex; }
+
+        [[nodiscard]] bool profIndex(const ScoreHolder &sc)const{return this->profitabilityIndex < sc.profitabilityIndex;}
+        [[nodiscard]] bool totalHealing(const ScoreHolder &sc)const{return this->vaccinesNeededForTotalHealing < sc.vaccinesNeededForTotalHealing;}
+
     };
+    class Compare{
+    public:
+        class ProfIndex{
+        public:
+            bool operator()(const ScoreHolder &sc1,const ScoreHolder &sc2)const{
+                return sc1.getProfitabilityIndex() < sc2.getProfitabilityIndex();
+            }
+        };
+        class TotalHealing{
+        public:
+            bool operator()(const ScoreHolder &sc1,const ScoreHolder &sc2)const{
+                return sc1.getVaccinesNeededForHealing() > sc2.getVaccinesNeededForHealing();
+            }
+
+        };
+    };
+
 };
 
 typedef Utils::Point Point;
 typedef Utils::VaccineData VaccineData;
+typedef Utils::Compare Compare;
+typedef Utils::ScoreHolder ScoreHolder;
 
 #endif //VIRUS_UTILS_H

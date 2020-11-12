@@ -154,11 +154,11 @@ void Iface::round(std::string &line) {
 
     //Send result back
     os << "RES " << _gameID << " " << tickID << " " << countryID << std::endl;
-    for (auto &i : put) {
-        os << "PUT " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
-    }
     for (auto &i : back) {
         os << "BACK " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
+    }
+    for (auto &i : put) {
+        os << "PUT " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
     }
     os << "."<<std::endl;
     this->displayCurrentRound(_gameID, tickID, countryID);

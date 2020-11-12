@@ -15,7 +15,7 @@ class AI {
     static Grid grid2;
 
     //it is important to COPY the grid
-    static void calculateDistrictScoresForNextRound(size_t countryID, std::priority_queue<Utils::ScoreHolder> &districtScores);
+    static void calculateDistrictScoresForNextRound(size_t countryID, std::vector<ScoreHolder> &districtScores);
 
     static std::vector<VaccineData>
     chooseDistrictsToVaccinate(int numberOfVaccinesToDistribute, size_t countryID);
@@ -34,6 +34,8 @@ public:
     static void
     calculateChangeByHealingField(const Field *fieldPointer, int &changeInProducedVaccines,
                                   int &changeInDefenseVaccines);
+
+    static void CalculateScore(std::vector<ScoreHolder> &districtScores, const District &district);
 };
 
 

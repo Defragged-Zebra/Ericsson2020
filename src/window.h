@@ -30,7 +30,7 @@ class Window {
 public:
     Window& operator=(const Window&)=delete;
     Window(const Window&)=delete;
-    explicit Window(size_t w=1000, size_t h=1000){
+    explicit Window(size_t w=1800, size_t h=1000){
         //itt van-e a cucli
         if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
             throw std::runtime_error( "Failed to initialize the SDL2 library");
@@ -84,11 +84,14 @@ public:
     void createText(const Point &p, size_t w, size_t h,size_t sep, double val);
 
     //hány sor, hány oszlop, köztük hely, négyzet mérete
-    void createGrid(const Point& p,size_t sep=10,size_t sidelen=30);
+    void createGrid(const Point& windowLoc, const Point& gridSize, size_t sep=10,size_t sidelen=30);
 
     void createRect(const Point& p,size_t w, size_t h, size_t sep);
 
-    void createCell(const Point &p, size_t w, size_t h, size_t sep);
+    void createDistrictCell(const Point& windowLoc, const Point& gridElement, size_t w, size_t h, size_t sep);
+    void createInfectionHeatMap(const Point& windowLoc, const Point& gridElement, size_t w, size_t h, size_t sep);
+
+    void createVaccinationMap(const Point& windowLoc, const Point& gridElement, size_t w, size_t h, size_t sep);
 
     ~Window(){
         TTF_CloseFont(font);
