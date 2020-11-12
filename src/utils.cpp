@@ -4,6 +4,8 @@
 
 #include "utils.h"
 
+size_t Point::gridHeight=0;
+size_t Point::gridWidth=0;
 Utils::Random::Random(const uint64_t seeds[4]) {
     for (int i = 0; i < 4; ++i) {
         factor[i] = seeds[i];

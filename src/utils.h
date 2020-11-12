@@ -32,6 +32,7 @@ public:
 
     class Point {
         size_t y{}, x{};
+        static size_t gridHeight,gridWidth;
     public:
         Point() = default;
 
@@ -55,14 +56,29 @@ public:
         bool operator==(const Point &p) const {
             return this->y == p.y && this->x == p.x;
         }
+        bool operator<(const Point& p)const{
+            if(this->getY()==p.getY())
+                return this->getX() < p.getX();
+            else
+                return this->getY() < p.getY();
+        }
 
-        [[nodiscard]] bool withinBounds(const Point& grid)const{
-            return !(this->getX()<0 || this->getY()<0 || this->getX()>grid.getX()-1 || this->getY()>grid.getY()-1);
+        [[nodiscard]] bool withinBounds()const{
+            return !(
+                    this->getX()<0
+                || this->getY()<0
+                || this->getX() > gridWidth - 1
+                || this->getY() > gridHeight - 1);
         }
 
         [[nodiscard]] size_t getY() const { return y; }
 
         [[nodiscard]] size_t getX() const { return x; }
+
+        [[nodiscard]] static size_t getGridWidth(){return gridWidth;}
+        [[nodiscard]] static size_t getGridHeight(){return gridHeight;}
+        static void setGridWidth(size_t w){gridWidth=w;}
+        static void setGridHeight(size_t h){gridHeight=h;}
 
         void setX(const size_t _x) { this->x = _x; }
 

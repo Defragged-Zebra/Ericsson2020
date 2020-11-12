@@ -14,27 +14,29 @@ AI::calculateDistrictScoresForNextRound(size_t countryID, std::vector<ScoreHolde
     if (grid2.getCurrentTick() == 1) {
         for (size_t x = 1; x < grid2.getWidth() - 1; ++x) {
             District &district = grid2.getDistrictByPoint(Point(0, x));
-            CalculateScore(districtScores, district);
+            calculateScore(districtScores, district);
 
             District &district2 = grid2.getDistrictByPoint(Point(grid2.getHeight() - 1, x));
-            CalculateScore(districtScores, district2);
+            calculateScore(districtScores, district2);
         }
         for (size_t y = 0; y < grid2.getHeight(); ++y) {
             District &district = grid2.getDistrictByPoint(Point(y, 0));
-            CalculateScore(districtScores, district);
+            calculateScore(districtScores, district);
 
             District &district2 = grid2.getDistrictByPoint(Point(y, grid2.getWidth() - 1));
-            CalculateScore(districtScores, district2);
+            calculateScore(districtScores, district2);
         }
     } else {
-        for (size_t i = 0; i < grid2.numberOfDistricts(); ++i) {
-            District &district = grid2.getDistrictByID(i);
-            CalculateScore(districtScores, district);
+        std::set<District *> districts=grid2.getCountryByID(countryID).getAssignedDistrictIDs();
+        for (auto& d:districts){
+            for (auto& neighbourD:d->getNeighbourDistricts()){
+                calculateScore(districtScores,grid2.getDistrictByID(neighbourD));
+            }
         }
     }
 }
 
-void AI::CalculateScore(std::vector<ScoreHolder> &districtScores, const District &district) {
+void AI::calculateScore(std::vector<ScoreHolder> &districtScores, const District &district) {
     if (!district.isClear()) {
         auto score = Utils::ScoreHolder(district.getDistrictID());
         int vaccinesNeededForTotalHealing = 0;
@@ -71,7 +73,7 @@ void AI::calculateChangeByHealingField(const Field *fieldPointer, int &changeInP
          * nem tiszta kerülethez tartozó területek 6 - start_info[coord].population különbségösszege,
          * osztva 3-mal, ennek a felső egészrésze.
          */
-        if (!selected.withinBounds(Point(grid2.getHeight(), grid2.getWidth()))) continue;
+        if (!selected.withinBounds()) continue;
         if (grid2.getDistrictByPoint(selected) == grid2.getDistrictByPoint(center)) continue;
         //todo: calculation assumes only 1 district healed/tick, this is wrong
         int plusMinus;
@@ -79,6 +81,27 @@ void AI::calculateChangeByHealingField(const Field *fieldPointer, int &changeInP
         changeInDefenseVaccines += (int) (plusMinus * (ceil(
                 (6 - grid2.getFieldByPoint(selected).getPopulationDensity()) / (double) 3)));
     }
+}
+
+std::vector<VaccineData> &
+AI::calculateBackVaccines(std::vector<VaccineData> &back, int &numberOfVaccinesToDistribute, size_t countryID) {
+    //TODO: ezt az egeszet itt refactorolni kell majd
+    //ToDo We should take back vaccines only if the district is healed.
+    //ToDO We should check only the cells where we put vaccines in the past.
+    for (int y = 0; y < grid2.getHeight(); ++y) {
+        for (int x = 0; x < grid2.getWidth(); ++x) {
+            std::map<size_t, int> allStoredVaccines = grid2.getFieldByPoint(Point(y, x)).getStoredVaccines();
+            int countryStoredVaccines;
+            try { countryStoredVaccines = allStoredVaccines.at(countryID); }
+            catch (std::out_of_range &exc) { countryStoredVaccines = 0; }
+            //Egy területről az összes tartalék vakcinát nem lehet visszavenni, legalább 1 egységnyit ott kell hagyni.
+            if (countryStoredVaccines > 1) {
+                back.emplace_back(Point(y, x), countryStoredVaccines - 1, countryID);
+                numberOfVaccinesToDistribute += countryStoredVaccines - 1;
+            }
+        }
+    }
+    return back;
 }
 
 std::vector<VaccineData> AI::chooseFieldsToVaccinate(int numberOfVaccinesToDistribute, size_t countryID) {
@@ -134,72 +157,36 @@ std::vector<VaccineData> AI::chooseFieldsToVaccinate(int numberOfVaccinesToDistr
         District& district=originalGrid->getDistrictByPoint(fieldsToHeal.begin()->getPoint());
         originalGrid->getCountryByID(countryID).addAssignedDistrictID(&district);
     }
+
+    Point fromWhere = AI::calculateStartPoint(fieldsToHeal,countryID);
     std::vector<VaccineData> fieldsToHealOrdered;
-    //ToDo test this
-    bool error = true;
-    Point fromWhere(28, 22);
-    for (const auto &vaccineData:fieldsToHeal) {
-        const Point &p = vaccineData.getPoint();
-        bool found;
-        size_t fieldID;
-        size_t centerY = p.getY();
-        size_t centerX = p.getX();
-        Point coordinates[4] = {{centerY,     centerX - 1},
-                                {centerY - 1, centerX},
-                                {centerY + 1, centerX},
-                                {centerY,     centerX + 1}};
-        for (const auto &selected : coordinates) {
-            if (!selected.withinBounds(Point(originalGrid->getHeight(), originalGrid->getWidth()))) continue;
-            fieldID = originalGrid->getFieldByPoint(selected).getFieldID();
-            found = originalGrid->getCountryByID(countryID).isFieldInCountry(fieldID);
-            if (found) {
-                fromWhere = vaccineData.getPoint();
-                error = false;
-                //no other option, this is not java
-                goto endloop;
-            }
-
-        }
-    }
-    endloop:
-    if (error) throw std::runtime_error("ai.cpp: Ezt istenesen elbasztuk, valami atomszar");
-
     floodDistrict(fromWhere, fieldsToHeal, fieldsToHealOrdered);
     //ToDo check if fieldsToHeal is not empty --> nem volt folytonos a terület
     return fieldsToHealOrdered;
 }
-
-std::vector<VaccineData> &
-AI::calculateBackVaccines(std::vector<VaccineData> &back, int &numberOfVaccinesToDistribute, size_t countryID) {
-    //TODO: ezt az egeszet itt refactorolni kell majd
-    //ToDo We should take back vaccines only if the district is healed.
-    //ToDO We should check only the cells where we put vaccines in the past.
-    for (int y = 0; y < grid2.getHeight(); ++y) {
-        for (int x = 0; x < grid2.getWidth(); ++x) {
-            std::map<size_t, int> allStoredVaccines = grid2.getFieldByPoint(Point(y, x)).getStoredVaccines();
-            int countryStoredVaccines;
-            try { countryStoredVaccines = allStoredVaccines.at(countryID); }
-            catch (std::out_of_range &exc) { countryStoredVaccines = 0; }
-            //Egy területről az összes tartalék vakcinát nem lehet visszavenni, legalább 1 egységnyit ott kell hagyni.
-            if (countryStoredVaccines > 1) {
-                back.emplace_back(Point(y, x), countryStoredVaccines - 1, countryID);
-                numberOfVaccinesToDistribute += countryStoredVaccines - 1;
-            }
-        }
+Point AI::calculateStartPoint(std::vector<VaccineData>& fieldsToHeal, size_t countryID) {
+    Grid* g = Logic::getGrid();
+    for (const auto &vaccineData:fieldsToHeal) {
+        const Point &p = vaccineData.getPoint();
+        if(g->getCountryByID(countryID).isNeighbourVaccinatedFields(p)) return p;
     }
-    return back;
+    throw std::runtime_error("calculateStartPointFailed");
 }
+
+
 
 std::vector<VaccineData> &
 AI::calculatePutVaccines(std::vector<VaccineData> &put, int numberOfVaccinesToDistribute, size_t countryID) {
     put = chooseFieldsToVaccinate(numberOfVaccinesToDistribute, countryID);
+    Country& c = Logic::getGrid()->getCountryByID(countryID);
+    for(const auto& vd:put)  c.addToVaccinatedFields(vd.getPoint());
     return put;
 }
 
 //floood kap egy Field tömböt + egy pontot, ezt olyan sorrandbe rendezni, hogy lerakható legyen.
 void
 AI::floodDistrict(const Point &p, std::vector<VaccineData> &notVisitedFields, std::vector<VaccineData> &orderedFields) {
-    if (!p.withinBounds(Point(grid2.getHeight(), grid2.getWidth())))return;
+    if (!p.withinBounds())return;
     //Ez itt egy lamda függvény :(
     auto centerIter = std::find_if(notVisitedFields.begin(), notVisitedFields.end(), [p](VaccineData const &obj) {
         return obj.getPoint() == p;
@@ -220,3 +207,4 @@ AI::floodDistrict(const Point &p, std::vector<VaccineData> &notVisitedFields, st
     if (grid2.getDistrictByPoint(p) == grid2.getDistrictByPoint(Point(p.getY(), p.getX() - 1)))
         floodDistrict(Point(p.getY(), p.getX() - 1), notVisitedFields, orderedFields);
 }
+

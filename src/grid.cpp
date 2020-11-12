@@ -25,25 +25,25 @@ std::ostream &operator<<(std::ostream &os, const Grid &g) {
     }
     os << "section2: fields assigned to a district" << std::endl;
     os << std::endl;
-    for (size_t i = 0; i < g.districts.size(); ++i) {
-        os << g.districts[i] << ": ";
-        for (size_t j = 0; j < g.districts[i].getAssignedFields().size(); ++j) {
-            os << g.districts[i].getAssignedFields()[j] << ", ";
+    for (const auto & district : g.districts) {
+        os << district << ": ";
+        for (auto it : district.getAssignedFields()) {
+            os << *it << ", ";
         }
         os << std::endl;
     }
     os << "section3: districts assigned to a country" << std::endl;
-    for (size_t i = 0; i < g.countries.size(); ++i) {
-        os << g.countries[i] << ", ";
-        for (size_t j = 0; j < g.countries[i].getAssignedDistrictIDs().size(); ++j) {
-            os << g.countries[j].getAssignedDistrictIDs()[j] << ", ";
+    for (const auto & countries : g.countries) {
+        os << countries << ", ";
+        for(auto it : countries.getAssignedDistrictIDs()){
+            os << *it << ", ";
         }
         os << std::endl;
     }
     return os;
 }
 
-Point Grid::getCoordinatesByID(size_t ID) {
+Point Grid::getCoordinatesByID(size_t ID) const {
     size_t y=ID/width; //integer division is a design choice
     size_t x=ID-(width*y);
     return Point(y,x);

@@ -23,14 +23,6 @@ bool District::updateIsClear() {
     return clear;
 }
 
-
-//TODO: test this
-void District::simplifyNeighbourDistrictVector() {
-    // sort followed by unique, to remove all duplicates
-    std::sort(neighbourDistricts.begin(), neighbourDistricts.end());
-    std::unique(neighbourDistricts.begin(), neighbourDistricts.end());
-}
-
 bool District::isFieldInDistrict(size_t fieldID) {
     //another lambda here
     //TODO: throw std::runtime_error("district.cpp szejjeltesztelni ezt a kecibe");

@@ -29,6 +29,7 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
                         District &district = grid->getDistrictByPoint(p);
                         district.setAssignedCountryID(countryID);
                         grid->getCountryByID(countryID).addAssignedDistrictID(&district);
+                        grid->getCountryByID(countryID).setTotalProductionCapacity()
                     }
                 }
             }
@@ -163,7 +164,7 @@ int Logic::calculateCrossInfectionLEGACY(const Point &center, uint64_t factor3) 
                             {centerY,     centerX + 1}};
 
     for (const auto &selected : coordinates) {
-        if (!selected.withinBounds(Point(grid->getHeight(), grid->getWidth()))) continue;
+        if (!selected.withinBounds()) continue;
         int dist = distance(center, selected);
         Field &selectedField = grid->getFieldByPoint(selected);
         std::deque<int> &lastInfectionRate = selectedField.getLastInfectionRates();
@@ -199,7 +200,7 @@ double Logic::calculateCrossInfection(const Point &center, uint64_t factor3) {
                             {centerY,     centerX + 1}};
 
     for (const auto &selected : coordinates) {
-        if (!selected.withinBounds(Point(grid->getHeight(), grid->getWidth()))) {
+        if (!selected.withinBounds()) {
             elementsToAverage--;
             continue;
         }

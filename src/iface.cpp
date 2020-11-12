@@ -63,7 +63,7 @@ void Iface::createGrid() {
     //create the districts
     //numberOfDistricts+1 because numberOfDistricts stores the max district ID
     for (size_t i = 0; i < numberOfDistricts + 1; ++i) {
-        grid->addDistrict(District(i, std::vector<Field *>(), std::vector<size_t>(), false));
+        grid->addDistrict(District(i, std::set<Field *>(), std::set<size_t>(), false));
     }
     //district update
     for (size_t y = 0; y < grid->getHeight(); ++y) {
@@ -77,11 +77,8 @@ void Iface::createGrid() {
                                     {centerY,     centerX + 1}};
             District centerDistrict = grid->getDistrictByPoint(center);
             for (const auto &selected:coordinates) {
-                if (selected.getX() < 0 || selected.getY() < 0 || selected.getX() > grid->getWidth() - 1 ||
-                    selected.getY() > grid->getHeight() - 1) {
-                    continue;
-                }
-                District selectedDistrict = grid->getDistrictByPoint(selected);
+                if (!selected.withinBounds())continue;
+                District& selectedDistrict = grid->getDistrictByPoint(selected);
                 if (centerDistrict != selectedDistrict) {
                     centerDistrict.addNeighbourDistrict(selectedDistrict.getDistrictID());
                     selectedDistrict.addNeighbourDistrict(centerDistrict.getDistrictID());
@@ -90,11 +87,6 @@ void Iface::createGrid() {
             grid->getDistrictByPoint(Point(y, x)).addAssignedField(&grid->getFieldByPoint(Point(y, x)));
         }
     }
-    //moved out for optimization
-    //numberOfDistricts+1 because numberOfDistricts stores the max district ID
-    for (size_t i = 0; i < numberOfDistricts + 1; ++i) {
-        grid->getDistrictByID(i).simplifyNeighbourDistrictVector();
-    }
     setGrid(grid);
 
 }
@@ -102,7 +94,7 @@ void Iface::createGrid() {
 void Iface::start() {
     std::string line;
     while (std::getline(is, line)) {
-        if (line == ".\r" or line == "\r" or line == ".") { // Lécci hadd működjön linuxon is :(
+        if (line == ".\r" or line == "\r" or line == ".") {
             continue;
         } else if (line == "SUCCESS") {
             Iface::sendDebugMsg("SUCCESS");

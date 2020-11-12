@@ -56,6 +56,8 @@ public:
         this->countries = std::vector<Country>();
         this->districts = std::vector<District>();
         currentTick = 0;
+        Point::setGridHeight(this->height);
+        Point::setGridWidth(this->width);
     }
 
     //soronként töltjük fel a gridet(sorfolytonosan)
@@ -118,7 +120,7 @@ public:
 
     size_t numberOfDistricts() { return districts.size(); }
 
-    Point getCoordinatesByID(size_t ID);
+    Point getCoordinatesByID(size_t ID) const;
 };
 
 

@@ -8,6 +8,7 @@
 
 #include <vector>
 #include <iostream>
+#include <set>
 #include "utils.h"
 #include "district.h"
 
@@ -17,19 +18,18 @@ class Country {
     int totalProductionCapacity{};
     int reservedVaccines{};
     //similar to field
-    std::vector<District*> assignedDistrictPointers;
+    std::set<District*> assignedDistrictPointers;
+    std::set<Point> vaccinatedFields;
 public:
-    Country() {
-        assignedDistrictPointers = std::vector<District*>();
-    }
+    Country() =default;
     Country(size_t ID, size_t TPC, size_t RV){
         this->countryID = ID;
         this->totalProductionCapacity = TPC;
         this->reservedVaccines =RV;
-        this->assignedDistrictPointers = std::vector<District*>();
+        this->assignedDistrictPointers = std::set<District*>();
     }
 
-    Country(size_t ID, const std::vector<District*> &districts) {
+    Country(size_t ID, const std::set<District*> &districts) {
         countryID = ID;
         assignedDistrictPointers = districts;
     }
@@ -44,12 +44,13 @@ public:
             this->totalProductionCapacity = c.totalProductionCapacity;
             this->reservedVaccines = c.reservedVaccines;
             this->assignedDistrictPointers = c.assignedDistrictPointers;
+            this->vaccinatedFields = c.vaccinatedFields;
         }
         return *this;
     }
 
-    [[nodiscard]] std::vector<District*> getAssignedDistrictIDs() const { return assignedDistrictPointers; }
-    void addAssignedDistrictID(District* districtPointer){assignedDistrictPointers.push_back(districtPointer);}
+    [[nodiscard]] std::set<District*> getAssignedDistrictIDs() const { return assignedDistrictPointers; }
+    void addAssignedDistrictID(District* districtPointer){assignedDistrictPointers.insert(districtPointer);}
 
     friend std::ostream &operator<<(std::ostream &os, const Country &c);
 
@@ -61,6 +62,31 @@ public:
     [[nodiscard]] size_t getCountryID() const {return countryID;}
     void setReserveVaccines(int rv) { reservedVaccines = rv; }
     bool isFieldInCountry(size_t ID);
+    void addToVaccinatedFields(const Point& p){
+        vaccinatedFields.insert(p);
+    }
+    [[nodiscard]] bool isNeighbourVaccinatedFields(const Point& p)const{
+        if(vaccinatedFields.empty()){
+            return p.getY()==0 or p.getX()==0 or p.getY()==Point::getGridHeight()-1 or p.getX()==
+                                                                                               Point::getGridWidth() - 1;
+        }else{
+            size_t centerY = p.getY();
+            size_t centerX = p.getX();
+            Point coordinates[4] = {{centerY,     centerX - 1},
+                                    {centerY - 1, centerX},
+                                    {centerY + 1, centerX},
+                                    {centerY,     centerX + 1}};
+
+            for (const auto &selected : coordinates) {
+                if(!selected.withinBounds())continue;
+                 auto it = vaccinatedFields.find(selected);
+                 if(it!=vaccinatedFields.end()) return true;
+
+            }
+
+        }
+        return false;
+    }
 };
 
 
