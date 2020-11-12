@@ -62,7 +62,7 @@ void Iface::createGrid() {
     }
     //create the districts
     for (size_t i = 0; i < numberOfDistricts + 1; ++i) {
-        grid->addDistrict(District(i, std::vector<Field *>(), false));
+        grid->addDistrict(District(i, std::vector<Field *>(),std::vector<size_t>(),false));
     }
     //TODO ez itt mi a fasz?
     //district update -- ugye hogy tobbet kene kommentelni? xD
@@ -70,6 +70,9 @@ void Iface::createGrid() {
         for (size_t x = 0; x < grid->getWidth(); ++x) {
 //            ers << "Field - y: " << y << "\tx: " << x << "\tAssigned district: "
 //                      << grid->getDistrictByPoint(Point(y, x)) << std::endl;
+//TODO: // sort followed by unique, to remove all duplicates
+//    std::sort(v.begin(), v.end()); // {1 1 2 3 4 4 5}
+//    last = std::unique(v.begin(), v.end());
             grid->getDistrictByPoint(Point(y, x)).addAssignedField(&grid->getFieldByPoint(Point(y, x)));
         }
     }

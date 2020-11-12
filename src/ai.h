@@ -19,6 +19,7 @@ class AI {
 
     static std::vector<VaccineData>
     chooseDistrictsToVaccinate(int numberOfVaccinesToDistribute, size_t countryID);
+    void floodDistrict(const Field &startField, std::vector<size_t> &ordered);
 
 public:
     static void copyGrid(Grid *originalGrid) {

@@ -9,7 +9,6 @@ uint64_t fuckCpp[4] = {0};
 Grid AI::grid2 = Grid(0, 0, fuckCpp);
 
 
-
 void
 AI::calculateDistrictScoresForNextRound(size_t countryID, std::vector<ScoreHolder> &districtScores) {
     // heavily unoptimised code for readability
@@ -17,22 +16,22 @@ AI::calculateDistrictScoresForNextRound(size_t countryID, std::vector<ScoreHolde
     Logic::setGrid(&AI::grid2);
     Logic::simulateTO(0, grid2.getCurrentTick() + 1, countryID);
     Logic::setGrid(originalGrid);
-    if(originalGrid->getCurrentTick()==0){
-        for (size_t x = 1; x < originalGrid->getWidth()-1; ++x) {
-            District& district = grid2.getDistrictByPoint(Point(0,x));
+    if (originalGrid->getCurrentTick() == 0) {
+        for (size_t x = 1; x < originalGrid->getWidth() - 1; ++x) {
+            District &district = grid2.getDistrictByPoint(Point(0, x));
             CalculateScore(districtScores, district);
 
-            District& district2 = grid2.getDistrictByPoint(Point(originalGrid->getHeight()-1,x));
+            District &district2 = grid2.getDistrictByPoint(Point(originalGrid->getHeight() - 1, x));
             CalculateScore(districtScores, district2);
         }
         for (size_t y = 0; y < originalGrid->getHeight(); ++y) {
-            District& district = grid2.getDistrictByPoint(Point(y, 0));
+            District &district = grid2.getDistrictByPoint(Point(y, 0));
             CalculateScore(districtScores, district);
 
-            District& district2 = grid2.getDistrictByPoint(Point(y, originalGrid->getWidth()-1));
+            District &district2 = grid2.getDistrictByPoint(Point(y, originalGrid->getWidth() - 1));
             CalculateScore(districtScores, district2);
         }
-    }else{
+    } else {
         for (size_t i = 0; i < grid2.numberOfDistricts(); ++i) {
             District &district = grid2.getDistrictByID(i);
             CalculateScore(districtScores, district);
@@ -93,7 +92,8 @@ void AI::calculateChangeByHealingField(const Field *fieldPointer, int &changeInP
 std::vector<VaccineData> AI::chooseDistrictsToVaccinate(int numberOfVaccinesToDistribute, size_t countryID) {
     std::vector<ScoreHolder> data;
     AI::calculateDistrictScoresForNextRound(countryID, data);
-    std::priority_queue<ScoreHolder, std::vector<ScoreHolder>, Compare::ProfIndex>districtScores(data.begin(),data.end());
+    std::priority_queue<ScoreHolder, std::vector<ScoreHolder>, Compare::ProfIndex> districtScores(data.begin(),
+                                                                                                  data.end());
     std::vector<VaccineData> districtsToHeal = std::vector<VaccineData>();
     while (!districtScores.empty()) {
         Utils::ScoreHolder maxScoredDistrict = districtScores.top();
@@ -120,8 +120,9 @@ std::vector<VaccineData> AI::chooseDistrictsToVaccinate(int numberOfVaccinesToDi
     //TODO: look after I have internet access, if it's passed on reference will it be fucked-up?
     if (!districtsToHeal.empty()) return districtsToHeal;
     //TODO: mode B - get a district and try to heal it
-    std::priority_queue<ScoreHolder, std::vector<ScoreHolder>, Compare::TotalHealing> districtScores2(data.begin(),data.end());
-    Utils::ScoreHolder maxScoredDistrict=districtScores2.top();
+    std::priority_queue<ScoreHolder, std::vector<ScoreHolder>, Compare::TotalHealing> districtScores2(data.begin(),
+                                                                                                      data.end());
+    Utils::ScoreHolder maxScoredDistrict = districtScores2.top();
     for (auto field:grid2.getDistrictByID(maxScoredDistrict.getDistrictID()).getAssignedFields()) {
         int vaccines = std::max((int) std::ceil(
                 (field->getCurrentInfectionRate() - field->getVaccinationRate()) /
@@ -158,4 +159,23 @@ std::vector<VaccineData> &
 AI::calculatePutVaccines(std::vector<VaccineData> &put, int numberOfVaccinesToDistribute, size_t countryID) {
     put = chooseDistrictsToVaccinate(numberOfVaccinesToDistribute, countryID);
     return put;
+}
+
+void AI::floodDistrict(const Field &startField, std::vector<size_t> &ordered) {
+    //TODO: untested function
+    size_t startFieldID = startField.getFieldID();
+    if (std::find(ordered.begin(), ordered.end(), startFieldID) != ordered.end())
+        ordered.push_back(startFieldID);
+    Point center = grid2.getCoordinatesByID(startFieldID);
+    size_t centerY = center.getY();
+    size_t centerX = center.getX();
+    Point coordinates[4] = {{centerY,     centerX - 1},
+                            {centerY - 1, centerX},
+                            {centerY + 1, centerX},
+                            {centerY,     centerX + 1}};
+    for (const auto& selected:coordinates) {
+        Field &selectedField = grid2.getFieldByPoint(selected);
+        if (selectedField.getAssignedDistrictID() == startField.getAssignedDistrictID())
+            floodDistrict(selectedField, ordered);
+    }
 }

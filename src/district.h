@@ -13,8 +13,8 @@ class District {
     size_t districtID{};
     //size_t assignedCountryID;
     //"cannot store reference in std::vector, it is simply not allowed" - stackoverflow
-    //TODO: tárolni a szomszédos kerületeket
     std::vector<Field*> assignedFields;
+    std::vector<size_t> neighbourDistricts;
     bool clear{};
 public:
     District() = default;
@@ -27,10 +27,12 @@ public:
         return *this;
     }
 
-    District(size_t sectorID, const std::vector<Field*> &assignedFields, bool clear = false) {
+    District(size_t sectorID, const std::vector<Field *> &assignedFields, const std::vector<size_t>& neighbourDistricts,
+             bool clear = false) {
         this->districtID = sectorID;
         this->assignedFields = assignedFields;
         this->clear = clear;
+        this->neighbourDistricts= neighbourDistricts;
     }
 
     [[nodiscard]] std::vector<Field*> getAssignedFields() const { return assignedFields; }
@@ -50,6 +52,7 @@ public:
     friend std::ostream &operator<<(std::ostream &os, const District &d);
     void addAssignedField(Field* assignedField){assignedFields.push_back(assignedField);}
     void updateIsClear();
+    std::vector<size_t>& getNeighbourDistricts(){return neighbourDistricts;}
 };
 
 

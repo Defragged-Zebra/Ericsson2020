@@ -153,7 +153,6 @@ public:
             bool operator()(const ScoreHolder &sc1,const ScoreHolder &sc2)const{
                 return sc1.getVaccinesNeededForHealing() > sc2.getVaccinesNeededForHealing();
             }
-
         };
     };
 
