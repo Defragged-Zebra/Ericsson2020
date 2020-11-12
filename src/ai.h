@@ -18,8 +18,8 @@ class AI {
     static void calculateDistrictScoresForNextRound(size_t countryID, std::vector<ScoreHolder> &districtScores);
 
     static std::vector<VaccineData>
-    chooseDistrictsToVaccinate(int numberOfVaccinesToDistribute, size_t countryID);
-    void floodDistrict(const Field &startField, std::vector<size_t> &ordered);
+    chooseFieldsToVaccinate(int numberOfVaccinesToDistribute, size_t countryID);
+    static void floodDistrict(const Point& p, std::vector<VaccineData> &notVisitedFields, std::vector<VaccineData>& orderedFields);
 
 public:
     static void copyGrid(Grid *originalGrid) {

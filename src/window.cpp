@@ -17,7 +17,8 @@ void Window::update(){
                     running = false;
                     break;
                 }
-            }else if(event.type==SDL_QUIT){
+            }
+            if(event.type==SDL_QUIT){
                 exit(0);
             }
         }

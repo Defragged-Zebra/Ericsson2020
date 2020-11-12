@@ -24,6 +24,7 @@ public:
         if (this != &d) {
             this->districtID=d.districtID;
             this->assignedFields=d.assignedFields;
+            this->neighbourDistricts=d.neighbourDistricts;
         }
         return *this;
     }
@@ -53,7 +54,7 @@ public:
     friend std::ostream &operator<<(std::ostream &os, const District &d);
     void addAssignedField(Field* assignedField){assignedFields.push_back(assignedField);}
     void updateIsClear();
-    std::vector<size_t>& getNeighbourDistricts(){return neighbourDistricts;}
+    [[nodiscard]] const std::vector<size_t>& getNeighbourDistricts()const{return neighbourDistricts;}
     void addNeighbourDistrict(size_t neighbour){neighbourDistricts.push_back(neighbour);}
     void simplifyNeighbourDistrictVector ();
 };

@@ -37,11 +37,10 @@ public:
 
     Country &operator=(const Country &c) {
         if (this != &c) {
-            this->assignedDistrictIDs.clear();
-            countryID = c.countryID;
-            totalProductionCapacity = c.totalProductionCapacity;
-            reservedVaccines = c.reservedVaccines;
-            assignedDistrictIDs = c.assignedDistrictIDs;
+            this->countryID = c.countryID;
+            this->totalProductionCapacity = c.totalProductionCapacity;
+            this->reservedVaccines = c.reservedVaccines;
+            this->assignedDistrictIDs = c.assignedDistrictIDs;
         }
         return *this;
     }
@@ -55,6 +54,7 @@ public:
     void setTotalProductionCapacity(int tpc) { totalProductionCapacity = tpc; }
 
     [[nodiscard]] int getReserveVaccines() const { return reservedVaccines; }
+    [[nodiscard]] size_t getCountryID() const {return countryID;}
 
     void setReserveVaccines(int rv) { reservedVaccines = rv; }
 };

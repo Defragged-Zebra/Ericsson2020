@@ -156,10 +156,7 @@ int Logic::calculateCrossInfectionLEGACY(const Point &center, uint64_t factor3) 
                             {centerY,     centerX + 1}};
 
     for (const auto &selected : coordinates) {
-        if (selected.getX() < 0 || selected.getY() < 0 || selected.getX() > grid->getWidth() - 1 ||
-            selected.getY() > grid->getHeight() - 1) {
-            continue;
-        }
+        if(!selected.withinBounds(Point(grid->getHeight(),grid->getWidth()))) continue;
         int dist = distance(center, selected);
         Field &selectedField = grid->getFieldByPoint(selected);
         std::deque<int> &lastInfectionRate = selectedField.getLastInfectionRates();
@@ -196,8 +193,7 @@ double Logic::calculateCrossInfection(const Point &center, uint64_t factor3) {
                             {centerY,     centerX + 1}};
 
     for (const auto &selected : coordinates) {
-        if (selected.getX() < 0 || selected.getY() < 0 || selected.getX() > grid->getWidth() - 1 ||
-            selected.getY() > grid->getHeight() - 1) {
+        if(!selected.withinBounds(Point(grid->getHeight(),grid->getWidth()))) {
             elementsToAverage--;
             continue;
         }

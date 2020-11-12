@@ -99,7 +99,11 @@ public:
     }
 
     void addCountry(const Country &newCountry) {
-        countries.push_back(newCountry);
+        auto it = std::find_if(countries.begin(), countries.end(), [newCountry](Country const& obj){
+            return obj.getCountryID() == newCountry.getCountryID();
+        } );
+        if(it==countries.end()) countries.push_back(newCountry);
+        else countries[newCountry.getCountryID()]=newCountry;
     }
 
     [[nodiscard]] size_t getCurrentTick() const {

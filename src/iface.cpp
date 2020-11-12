@@ -77,6 +77,10 @@ void Iface::createGrid() {
                                     {centerY,     centerX + 1}};
             District centerDistrict = grid->getDistrictByPoint(center);
             for (const auto &selected:coordinates) {
+                if (selected.getX() < 0 || selected.getY() < 0 || selected.getX() > grid->getWidth() - 1 ||
+                    selected.getY() > grid->getHeight() - 1) {
+                    continue;
+                }
                 District selectedDistrict = grid->getDistrictByPoint(selected);
                 if (centerDistrict != selectedDistrict) {
                     centerDistrict.addNeighbourDistrict(selectedDistrict.getDistrictID());
@@ -89,7 +93,7 @@ void Iface::createGrid() {
     //moved out for optimization
     //numberOfDistricts+1 because numberOfDistricts stores the max district ID
     for (size_t i = 0; i < numberOfDistricts + 1; ++i) {
-        grid->getDistrictByID(i).update()
+        grid->getDistrictByID(i).simplifyNeighbourDistrictVector();
     }
     setGrid(grid);
 
@@ -143,6 +147,7 @@ void Iface::round(std::string &line) {
     //Process input values
     tmp = "";
     while (std::getline(is, tmp)) {
+        if (tmp == ".\r" or tmp == ".")break;
         //Iface::sendDebugMsg("[NOTIFY] " + tmp);
         ss.clear();
         int _countryID, TPC, RV;

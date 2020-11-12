@@ -56,6 +56,10 @@ public:
             return this->y == p.y && this->x == p.x;
         }
 
+        [[nodiscard]] bool withinBounds(const Point& grid)const{
+            return !(this->getX()<0 || this->getY()<0 || this->getX()>grid.getX()-1 || this->getY()>grid.getY()-1);
+        }
+
         [[nodiscard]] size_t getY() const { return y; }
 
         [[nodiscard]] size_t getX() const { return x; }
