@@ -109,7 +109,8 @@ public:
 
         [[nodiscard]] size_t getY() const { return this->gridCell.getY(); }
 
-        [[nodiscard]] size_t getCountyID() const { return this->countryID; }
+        //TODO: tanuljunk mar meg irni bazmeg: getCountyID
+        [[nodiscard]] size_t getCounrtyID() const { return this->countryID; }
     };
 
     class ScoreHolder {

@@ -16,14 +16,21 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
         int heal = 0;
         int vaccination = 0;
         size_t healStartTick = grid->getWidth() + grid->getHeight();
-         for (int x = 0; x < grid->getWidth(); ++x) {
+        for (int x = 0; x < grid->getWidth(); ++x) {
             for (int y = 0; y < grid->getHeight(); ++y) {
                 const Point &p = Point(y, x);
                 vaccination = Logic::calculateVaccination(p, heal);
                 heal = Logic::calculateSpontaneousHealing(p, healStartTick, vaccination);
                 grid->getFieldByPoint(p).updateVaccination(heal + vaccination);
                 grid->getFieldByPoint(p).updateRemainingVaccines(vaccination);
-                 if (heal + vaccination > 0) grid->getDistrictByPoint(p).updateIsClear();
+                if (heal + vaccination > 0) {
+                    if (grid->getDistrictByPoint(p).updateIsClear()) {
+                        //todo: in round3 change this
+                        District &district = grid->getDistrictByPoint(p);
+                        district.setAssignedCountryID(countryID);
+                        grid->getCountryByID(countryID).addAssignedDistrictID(&district);
+                    }
+                }
             }
         }
 
@@ -36,8 +43,8 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
         }
         grid->IncreaseCurrentTick();
     }
-}
 
+}
 
 
 int Logic::calculateSpontaneousHealingLEGACY(const Point &p, int healStartTick) {
@@ -156,7 +163,7 @@ int Logic::calculateCrossInfectionLEGACY(const Point &center, uint64_t factor3) 
                             {centerY,     centerX + 1}};
 
     for (const auto &selected : coordinates) {
-        if(!selected.withinBounds(Point(grid->getHeight(),grid->getWidth()))) continue;
+        if (!selected.withinBounds(Point(grid->getHeight(), grid->getWidth()))) continue;
         int dist = distance(center, selected);
         Field &selectedField = grid->getFieldByPoint(selected);
         std::deque<int> &lastInfectionRate = selectedField.getLastInfectionRates();
@@ -178,7 +185,6 @@ int Logic::calculateCrossInfectionLEGACY(const Point &center, uint64_t factor3) 
 }
 
 
-
 double Logic::calculateCrossInfection(const Point &center, uint64_t factor3) {
     Field &field = grid->getFieldByPoint(center);
     double sum = 0;
@@ -193,7 +199,7 @@ double Logic::calculateCrossInfection(const Point &center, uint64_t factor3) {
                             {centerY,     centerX + 1}};
 
     for (const auto &selected : coordinates) {
-        if(!selected.withinBounds(Point(grid->getHeight(),grid->getWidth()))) {
+        if (!selected.withinBounds(Point(grid->getHeight(), grid->getWidth()))) {
             elementsToAverage--;
             continue;
         }
@@ -219,7 +225,7 @@ double Logic::calculateCrossInfection(const Point &center, uint64_t factor3) {
 }
 
 int Logic::calculateVaccination(const Point &p, int &spontaneousHealAmount) {
-    Field& f =grid->getFieldByPoint(p);
+    Field &f = grid->getFieldByPoint(p);
     // IR: last infection rate
     int IR = f.getCurrentInfectionRate();
     //P: population density
@@ -230,7 +236,7 @@ int Logic::calculateVaccination(const Point &p, int &spontaneousHealAmount) {
         std::map<size_t, int> vaccinesMap = f.getStoredVaccines();
         //reserve vaccines
         int n = 0;
-        for (const auto& tmp:vaccinesMap) {
+        for (const auto &tmp:vaccinesMap) {
             n += tmp.second;
         }
         //X: vaccination rate
@@ -263,10 +269,10 @@ int Logic::calculateSpontaneousHealing(const Point &p, int healStartTick, int va
 }
 
 void Logic::simulateVaccination(const std::vector<VaccineData> &back, const std::vector<VaccineData> &put) {
-    for (const auto& b:back){
-        grid->getFieldByPoint(b.getPoint()).callBackVaccines(b.getVaccines(),b.getCountyID());
+    for (const auto &b:back) {
+        grid->getFieldByPoint(b.getPoint()).callBackVaccines(b.getVaccines(), b.getCounrtyID());
     }
-    for (const auto& p:put){
-        grid->getFieldByPoint(p.getPoint()).pushVaccines(p.getVaccines(),p.getCountyID());
+    for (const auto &p:put) {
+        grid->getFieldByPoint(p.getPoint()).pushVaccines(p.getVaccines(), p.getCounrtyID());
     }
 }
