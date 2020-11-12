@@ -7,6 +7,7 @@
 
 #include <vector>
 #include "field.h"
+#include <algorithm>
 
 
 class District {
@@ -53,6 +54,8 @@ public:
     void addAssignedField(Field* assignedField){assignedFields.push_back(assignedField);}
     void updateIsClear();
     std::vector<size_t>& getNeighbourDistricts(){return neighbourDistricts;}
+    void addNeighbourDistrict(size_t neighbour){neighbourDistricts.push_back(neighbour);}
+    void simplifyNeighbourDistrictVector ();
 };
 
 

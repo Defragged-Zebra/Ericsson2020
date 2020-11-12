@@ -61,20 +61,35 @@ void Iface::createGrid() {
         }
     }
     //create the districts
+    //numberOfDistricts+1 because numberOfDistricts stores the max district ID
     for (size_t i = 0; i < numberOfDistricts + 1; ++i) {
-        grid->addDistrict(District(i, std::vector<Field *>(),std::vector<size_t>(),false));
+        grid->addDistrict(District(i, std::vector<Field *>(), std::vector<size_t>(), false));
     }
-    //TODO ez itt mi a fasz?
-    //district update -- ugye hogy tobbet kene kommentelni? xD
+    //district update
     for (size_t y = 0; y < grid->getHeight(); ++y) {
         for (size_t x = 0; x < grid->getWidth(); ++x) {
-//            ers << "Field - y: " << y << "\tx: " << x << "\tAssigned district: "
-//                      << grid->getDistrictByPoint(Point(y, x)) << std::endl;
-//TODO: // sort followed by unique, to remove all duplicates
-//    std::sort(v.begin(), v.end()); // {1 1 2 3 4 4 5}
-//    last = std::unique(v.begin(), v.end());
+            Point center(y, x);
+            size_t centerY = center.getY();
+            size_t centerX = center.getX();
+            Point coordinates[4] = {{centerY,     centerX - 1},
+                                    {centerY - 1, centerX},
+                                    {centerY + 1, centerX},
+                                    {centerY,     centerX + 1}};
+            District centerDistrict = grid->getDistrictByPoint(center);
+            for (const auto &selected:coordinates) {
+                District selectedDistrict = grid->getDistrictByPoint(selected);
+                if (centerDistrict != selectedDistrict) {
+                    centerDistrict.addNeighbourDistrict(selectedDistrict.getDistrictID());
+                    selectedDistrict.addNeighbourDistrict(centerDistrict.getDistrictID());
+                }
+            }
             grid->getDistrictByPoint(Point(y, x)).addAssignedField(&grid->getFieldByPoint(Point(y, x)));
         }
+    }
+    //moved out for optimization
+    //numberOfDistricts+1 because numberOfDistricts stores the max district ID
+    for (size_t i = 0; i < numberOfDistricts + 1; ++i) {
+        grid->getDistrictByID(i).update()
     }
     setGrid(grid);
 
@@ -83,7 +98,7 @@ void Iface::createGrid() {
 void Iface::start() {
     std::string line;
     while (std::getline(is, line)) {
-        if (line == ".\r" or line == "\r" or line ==".") { // Lécci hadd működjön linuxon is :(
+        if (line == ".\r" or line == "\r" or line == ".") { // Lécci hadd működjön linuxon is :(
             continue;
         } else if (line == "SUCCESS") {
             Iface::sendDebugMsg("SUCCESS");
@@ -133,13 +148,13 @@ void Iface::round(std::string &line) {
         int _countryID, TPC, RV;
         ss << tmp;
         ss >> _countryID >> TPC >> RV;
-        grid->addCountry(Country(_countryID,TPC,RV));
+        grid->addCountry(Country(_countryID, TPC, RV));
         //TODO: parse game-data here
         if (tmp.find("WARN") != std::string::npos) {
             Iface::sendDebugMsg(line);
             //throw std::runtime_error("We've fucked it up!!444!!!");
         }
-        if (tmp != ".\r" and tmp!=".")continue;
+        if (tmp != ".\r" and tmp != ".")continue;
         else break;
     }
     Logic::simulateTO(_gameID, tickID, countryID);
@@ -153,7 +168,7 @@ void Iface::round(std::string &line) {
 
     std::vector<VaccineData> put; // don't change this
     put = AI::calculatePutVaccines(put, numberOfVaccinesToDistribute, countryID);
-    Logic::simulateVaccination(back,put);
+    Logic::simulateVaccination(back, put);
 
     //Send result back
     os << "RES " << _gameID << " " << tickID << " " << countryID << std::endl;
@@ -163,7 +178,7 @@ void Iface::round(std::string &line) {
     for (auto &i : put) {
         os << "PUT " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
     }
-    os << "."<<std::endl;
+    os << "." << std::endl;
     this->displayCurrentRound(_gameID, tickID, countryID);
 
 }
