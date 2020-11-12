@@ -8,27 +8,30 @@
 
 #include <vector>
 #include <iostream>
+#include "utils.h"
+#include "district.h"
 
 //TODO refactor
 class Country {
     size_t countryID{};
     int totalProductionCapacity{};
     int reservedVaccines{};
-    std::vector<size_t> assignedDistrictIDs;
+    //similar to field
+    std::vector<District*> assignedDistrictPointers;
 public:
     Country() {
-        assignedDistrictIDs = std::vector<size_t>();
+        assignedDistrictPointers = std::vector<District*>();
     }
     Country(size_t ID, size_t TPC, size_t RV){
         this->countryID = ID;
         this->totalProductionCapacity = TPC;
         this->reservedVaccines =RV;
-        this->assignedDistrictIDs = std::vector<size_t>();
+        this->assignedDistrictPointers = std::vector<size_t>();
     }
 
-    Country(size_t ID, const std::vector<size_t> &districts) {
+    Country(size_t ID, const std::vector<District*> &districts) {
         countryID = ID;
-        assignedDistrictIDs = districts;
+        assignedDistrictPointers = districts;
     }
 
     Country(const Country &c) {
@@ -40,12 +43,13 @@ public:
             this->countryID = c.countryID;
             this->totalProductionCapacity = c.totalProductionCapacity;
             this->reservedVaccines = c.reservedVaccines;
-            this->assignedDistrictIDs = c.assignedDistrictIDs;
+            this->assignedDistrictPointers = c.assignedDistrictPointers;
         }
         return *this;
     }
 
-    [[nodiscard]] std::vector<size_t> getAssignedDistrictIDs() const { return assignedDistrictIDs; }
+    [[nodiscard]] std::vector<District*> getAssignedDistrictIDs() const { return assignedDistrictPointers; }
+    void addAssignedDistrictID(District* districtPointer){assignedDistrictPointers.push_back(districtPointer);}
 
     friend std::ostream &operator<<(std::ostream &os, const Country &c);
 
@@ -55,8 +59,8 @@ public:
 
     [[nodiscard]] int getReserveVaccines() const { return reservedVaccines; }
     [[nodiscard]] size_t getCountryID() const {return countryID;}
-
     void setReserveVaccines(int rv) { reservedVaccines = rv; }
+    bool isFieldInCountry(size_t ID);
 };
 
 

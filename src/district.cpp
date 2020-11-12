@@ -10,7 +10,8 @@ std::ostream &operator<<(std::ostream &os, const District &d) {
     return os;
 }
 
-void District::updateIsClear() {
+//returns which country cleared it
+bool District::updateIsClear() {
     if (clear)
         throw std::runtime_error(
                 "district.cpp - You tried to update the clean-ness of a clean field. This shouldn't happen, pls notify Spark");
@@ -19,12 +20,27 @@ void District::updateIsClear() {
         tmp &= (*assignedField).isClear();
     }
     clear = tmp;
+    return clear;
 }
+
 
 //TODO: test this
 void District::simplifyNeighbourDistrictVector() {
     // sort followed by unique, to remove all duplicates
     std::sort(neighbourDistricts.begin(), neighbourDistricts.end());
     std::unique(neighbourDistricts.begin(), neighbourDistricts.end());
+}
+
+bool District::isFieldInDistrict(size_t fieldID) {
+    //another lambda here
+    throw std::runtime_error("district.cpp szejjeltesztelni ezt a kecibe");
+    return std::any_of(assignedFields.begin(), assignedFields.end(),
+                [fieldID](auto currentField) { return currentField->getFieldID() == fieldID; });
+    /*
+    for (auto field:assignedFields) {
+        if (field->getFieldID() == fieldID) return true;
+    }
+    return false;
+     */
 }
 

@@ -5,6 +5,13 @@
 #include "country.h"
 
 std::ostream &operator<<(std::ostream &os, const Country &c) {
-    os<<c.countryID<<" " << c.getTotalProductionCapacity() <<" " << c.getReserveVaccines();
+    os << c.countryID << " " << c.getTotalProductionCapacity() << " " << c.getReserveVaccines();
     return os;
+}
+
+bool Country::isFieldInCountry(size_t ID) {
+    for (auto district:assignedDistrictPointers) {
+        if (district->isFieldInDistrict(ID)) return true;
+    }
+    return false;
 }
