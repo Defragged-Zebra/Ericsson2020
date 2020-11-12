@@ -25,7 +25,7 @@ std::ostream &operator<<(std::ostream &os, const Grid &g) {
     }
     os << "section2: fields assigned to a district" << std::endl;
     os << std::endl;
-    for (const auto & district : g.districts) {
+    for (const auto &district : g.districts) {
         os << district << ": ";
         for (auto it : district.getAssignedFields()) {
             os << *it << ", ";
@@ -33,9 +33,9 @@ std::ostream &operator<<(std::ostream &os, const Grid &g) {
         os << std::endl;
     }
     os << "section3: districts assigned to a country" << std::endl;
-    for (const auto & countries : g.countries) {
+    for (const auto &countries : g.countries) {
         os << countries << ", ";
-        for(auto it : countries.getAssignedDistrictIDs()){
+        for (auto it : countries.getAssignedDistrictIDs()) {
             os << *it << ", ";
         }
         os << std::endl;
@@ -44,7 +44,34 @@ std::ostream &operator<<(std::ostream &os, const Grid &g) {
 }
 
 Point Grid::getCoordinatesByID(size_t ID) const {
-    size_t y=ID/width; //integer division is a design choice
-    size_t x=ID-(width*y);
-    return Point(y,x);
+    size_t y = ID / width; //integer division is a design choice
+    size_t x = ID - (width * y);
+    return Point(y, x);
+}
+
+int Grid::calculateChangeInProducedVaccinesByHealingDistrict(size_t countryID, const District &district) {
+    int changeInVaccines = 0;
+    for (Field *fieldPointer:district.getAssignedFields()) {
+        changeInVaccines += 2;
+        Point center = this->getCoordinatesByID(fieldPointer->getFieldID());
+        size_t centerY = center.getY();
+        size_t centerX = center.getX();
+        Point coordinates[4] = {{centerY,     centerX - 1},
+                                {centerY - 1, centerX},
+                                {centerY + 1, centerX},
+                                {centerY,     centerX + 1}};
+        for (const auto &selected : coordinates) {
+            /* Egy megtisztított kerület védekezési vakcina száma a kerület területeinek élszomszédos,
+             * nem tiszta kerülethez tartozó területek 6 - start_info[coord].population különbségösszege,
+             * osztva 3-mal, ennek a felső egészrésze.
+             */
+            if (!selected.withinBounds()) continue;
+            if (this->getDistrictByPoint(selected) == this->getDistrictByPoint(center)) continue;
+            int plusMinus;
+            this->getDistrictByPoint(selected).isClear() ? plusMinus = +1 : plusMinus = -1;
+            changeInVaccines += (int) (plusMinus * (ceil(
+                    (6 - this->getFieldByPoint(selected).getPopulationDensity()) / (double) 3)));
+        }
+    }
+    return changeInVaccines;
 }
