@@ -21,6 +21,7 @@ class AI {
     chooseFieldsToVaccinate(int numberOfVaccinesToDistribute, size_t countryID);
     static void floodDistrict(const Point& p, std::set<Field*> &notVisitedFields, std::vector<Field*>& orderedFields);
 
+
 public:
     static void copyGrid(Grid *originalGrid) {
         AI::grid2 = originalGrid;
@@ -34,6 +35,16 @@ public:
 
     static void calculateScore(std::vector<ScoreHolder> &districtScores, const District &district, size_t countryID);
     static Point calculateStartPoint(const std::set<Field *>& fieldsToCalc, size_t countryID);
+
+    static void startFromGridBorder(size_t countryID, std::vector<ScoreHolder> &districtScores);
+
+    static void startFromExistingDistricts(size_t countryID, std::vector<ScoreHolder> &districtScores);
+
+    static void modeB(int numberOfVaccinesToDistribute, size_t countryID, std::vector<ScoreHolder> &data,
+                      std::vector<VaccineData> &fieldsToHealSendBack);
+
+    static int modeA(int numberOfVaccinesToDistribute, size_t countryID, std::vector<ScoreHolder> &data,
+                     std::vector<VaccineData> &fieldsToHealSendBack);
 };
 
 

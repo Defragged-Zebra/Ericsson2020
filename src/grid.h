@@ -16,11 +16,12 @@
 class Grid {
     std::vector<std::vector<size_t>> grid;
     std::vector<Country> countries;
-    std::vector<District*> districts;
-    std::vector<Field*> fields;
+    std::vector<District *> districts;
+    std::vector<Field *> fields;
     size_t width;
     size_t height;
     size_t currentTick = 0;
+    bool clear = false;
 
 public:
     Grid() = delete;
@@ -54,7 +55,7 @@ public:
             grid.push_back(sor);
         }
         this->countries = std::vector<Country>();
-        this->districts = std::vector<District*>();
+        this->districts = std::vector<District *>();
         currentTick = 0;
         Point::setGridHeight(this->height);
         Point::setGridWidth(this->width);
@@ -92,11 +93,11 @@ public:
     }
 
     //WARNING: this might generate some problems if grid is not newly created
-    void addField(Field* newField) {
+    void addField(Field *newField) {
         fields.push_back(newField);
     }
 
-    void addDistrict(District* newDistrict) {
+    void addDistrict(District *newDistrict) {
         districts.push_back(newDistrict);
     }
 
@@ -122,12 +123,23 @@ public:
 
     [[nodiscard]] Point getCoordinatesByID(size_t ID) const;
 
-    int calculateChangeInProducedVaccinesByHealingDistrict(size_t countryID, const District& district);
-    ~Grid(){
-        for(const auto field:fields){
+    int calculateChangeInProducedVaccinesByHealingDistrict(size_t countryID, const District &district);
+
+    void updateClearByFieldCheck() {
+        bool allClear = true;
+        for (auto field:fields) {
+            allClear &= field->isClear();
+        }
+        clear = allClear;
+    }
+
+    bool isClear() { return clear; }
+
+    ~Grid() {
+        for (const auto field:fields) {
             delete field;
         }
-        for(const auto district:districts){
+        for (const auto district:districts) {
             delete district;
         }
     }
