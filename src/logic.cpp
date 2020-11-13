@@ -29,9 +29,11 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
                         District &district = grid->getDistrictByPoint(p);
                         district.setAssignedCountryID(countryID);
                         grid->getCountryByID(countryID).addAssignedDistrictID(&district);
-                        int change=grid->calculateChangeInProducedVaccinesByHealingDistrict(countryID,grid->getDistrictByPoint(p));
-                        int existing=grid->getCountryByID(countryID).getTotalProductionCapacity();
-                        grid->getCountryByID(countryID).setTotalProductionCapacity(existing+ change);
+                        int change = grid->calculateChangeInProducedVaccinesByHealingDistrict(countryID,
+                                                                                              grid->getDistrictByPoint(
+                                                                                                      p));
+                        int existing = grid->getCountryByID(countryID).getTotalProductionCapacity();
+                        grid->getCountryByID(countryID).setTotalProductionCapacity(existing + change);
                     }
                 }
             }
@@ -159,12 +161,8 @@ int Logic::calculateCrossInfectionLEGACY(const Point &center, uint64_t factor3) 
     int t = int(factor3 % 7) + 3;
     size_t centerY = center.getY();
     size_t centerX = center.getX();
-    Point coordinates[5] = {{centerY,     centerX},
-                            {centerY,     centerX - 1},
-                            {centerY - 1, centerX},
-                            {centerY + 1, centerX},
-                            {centerY,     centerX + 1}};
-
+    std::vector<Point> coordinates = center.getNeighbours();
+    coordinates.push_back(center);
     for (const auto &selected : coordinates) {
         if (!selected.withinBounds()) continue;
         int dist = distance(center, selected);

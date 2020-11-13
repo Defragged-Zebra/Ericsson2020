@@ -165,7 +165,11 @@ AI::floodDistrict(const Point &p, std::vector<VaccineData> &notVisitedFields, st
     if (centerIter == notVisitedFields.end()) return;
     orderedFields.emplace_back(*centerIter);
     notVisitedFields.erase(centerIter);
-    //Up
+    for (const auto &selected:p.getNeighbours()) {
+        if (grid2.getDistrictByPoint(p) == grid2.getDistrictByPoint(selected))
+            floodDistrict(selected, notVisitedFields, orderedFields);
+    }
+    /*//Up
     if (grid2.getDistrictByPoint(p) == grid2.getDistrictByPoint(Point(p.getY() + 1, p.getX())))
         floodDistrict(Point(p.getY() + 1, p.getX()), notVisitedFields, orderedFields);
     //Right
@@ -177,5 +181,6 @@ AI::floodDistrict(const Point &p, std::vector<VaccineData> &notVisitedFields, st
     //Left
     if (grid2.getDistrictByPoint(p) == grid2.getDistrictByPoint(Point(p.getY(), p.getX() - 1)))
         floodDistrict(Point(p.getY(), p.getX() - 1), notVisitedFields, orderedFields);
+        */
 }
 
