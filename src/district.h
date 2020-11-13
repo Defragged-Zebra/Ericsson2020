@@ -9,6 +9,7 @@
 #include "field.h"
 #include <algorithm>
 #include <set>
+#include <functional>
 
 
 class District {
@@ -16,7 +17,7 @@ class District {
     //TODO: ennel valami jobbat (am meg atnezni hogy tuti kell-e ez ide)
     size_t assignedCountryID= -1;
     //"cannot store reference in std::vector, it is simply not allowed" - stackoverflow
-    std::set<Field *> assignedFields;
+    std::set<Field*> assignedFields;
     std::set<size_t> neighbourDistricts;
     bool clear{};
 public:
@@ -32,7 +33,7 @@ public:
         return *this;
     }
 
-    District(size_t sectorID, const std::set<Field *> &assignedFields, const std::set<size_t> &neighbourDistricts,
+    District(size_t sectorID, const std::set<Field *>& assignedFields, const std::set<size_t> &neighbourDistricts,
              bool clear = false) {
         this->districtID = sectorID;
         this->assignedFields = assignedFields;
@@ -40,7 +41,7 @@ public:
         this->neighbourDistricts = neighbourDistricts;
     }
 
-    [[nodiscard]] std::set<Field *> getAssignedFields() const { return assignedFields; }
+    [[nodiscard]] std::set<Field*> getAssignedFields() const { return assignedFields; }
 
     [[nodiscard]] size_t getDistrictID() const { return districtID; }
 
@@ -55,13 +56,13 @@ public:
     bool operator!=(const District &d) const {
         return this->districtID != d.districtID;
     }
-    bool operator<(const District &d) const{
-        return this->districtID<d.districtID;
+    friend bool operator<(const std::reference_wrapper<District> d1,const std::reference_wrapper<District> d2){
+        return d1.get().getDistrictID()<d2.get().getDistrictID();
     }
 
     friend std::ostream &operator<<(std::ostream &os, const District &d);
 
-    void addAssignedField(Field *assignedField) { assignedFields.insert(assignedField); }
+    void addAssignedField(Field* assignedField) { assignedFields.insert(assignedField); }
 
     bool updateIsClear();
 

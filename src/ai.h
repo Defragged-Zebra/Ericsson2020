@@ -19,7 +19,7 @@ class AI {
 
     static std::vector<VaccineData>
     chooseFieldsToVaccinate(int numberOfVaccinesToDistribute, size_t countryID);
-    static void floodDistrict(const Point& p, std::vector<VaccineData> &notVisitedFields, std::vector<VaccineData>& orderedFields);
+    static void floodDistrict(const Point& p, std::set<Field*> &notVisitedFields, std::vector<Field*>& orderedFields);
 
 public:
     static void copyGrid(Grid *originalGrid) {
@@ -33,7 +33,7 @@ public:
     calculatePutVaccines(std::vector<VaccineData> &put, int numberOfVaccinesToDistribute, size_t countryID);
 
     static void calculateScore(std::vector<ScoreHolder> &districtScores, const District &district, size_t countryID);
-    static Point calculateStartPoint(std::vector<VaccineData>& fieldsToHeal, size_t countryID);
+    static Point calculateStartPoint(const std::set<Field *>& fieldsToCalc, size_t countryID);
 };
 
 

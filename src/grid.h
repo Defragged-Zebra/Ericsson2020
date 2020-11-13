@@ -16,8 +16,8 @@
 class Grid {
     std::vector<std::vector<size_t>> grid;
     std::vector<Country> countries;
-    std::vector<District> districts;
-    std::vector<Field> fields;
+    std::vector<District*> districts;
+    std::vector<Field*> fields;
     size_t width;
     size_t height;
     size_t currentTick = 0;
@@ -54,7 +54,7 @@ public:
             grid.push_back(sor);
         }
         this->countries = std::vector<Country>();
-        this->districts = std::vector<District>();
+        this->districts = std::vector<District*>();
         currentTick = 0;
         Point::setGridHeight(this->height);
         Point::setGridWidth(this->width);
@@ -68,13 +68,13 @@ public:
 
     Country &getCountryByID(size_t ID) { return countries[ID]; }
 
-    District &getDistrictByID(size_t ID) { return districts[ID]; }
+    District &getDistrictByID(size_t ID) { return *districts[ID]; }
 
     District &getDistrictByPoint(const Point &p) {
         return getDistrictByID(getFieldByPoint(p).getAssignedDistrictID());
     }
 
-    Field &getFieldByID(size_t ID) { return fields[ID]; }
+    Field &getFieldByID(size_t ID) { return *fields[ID]; }
 
     Field &getFieldByPoint(const Point &p) {
         return getFieldByID(grid[p.getY()][p.getX()]);
@@ -92,11 +92,11 @@ public:
     }
 
     //WARNING: this might generate some problems if grid is not newly created
-    void addField(const Field &newField) {
+    void addField(Field* newField) {
         fields.push_back(newField);
     }
 
-    void addDistrict(const District &newDistrict) {
+    void addDistrict(District* newDistrict) {
         districts.push_back(newDistrict);
     }
 
@@ -123,6 +123,14 @@ public:
     [[nodiscard]] Point getCoordinatesByID(size_t ID) const;
 
     int calculateChangeInProducedVaccinesByHealingDistrict(size_t countryID, const District& district);
+    ~Grid(){
+        for(const auto field:fields){
+            delete field;
+        }
+        for(const auto district:districts){
+            delete district;
+        }
+    }
 
 };
 

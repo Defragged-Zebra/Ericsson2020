@@ -10,7 +10,7 @@ std::ostream &operator<<(std::ostream &os, const Country &c) {
 }
 
 bool Country::isFieldInCountry(size_t ID) {
-    for (auto district:assignedDistrictPointers) {
+    for (auto district:assignedDistricts) {
         if (district->isFieldInDistrict(ID)) return true;
     }
     return false;

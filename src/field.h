@@ -87,8 +87,8 @@ public:
     void updateRemainingVaccines(int vaccinated);
     void callBackVaccines(int vaccines, size_t countryID);
     void pushVaccines(int vaccines, size_t countryID);
-    bool operator<(const Field &f) const{
-        return this->fieldID<f.fieldID;
+    friend bool operator<(const Field &f1,const Field &f2){
+        return f1.getFieldID()<f2.getFieldID();
     }
 
 };

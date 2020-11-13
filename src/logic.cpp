@@ -26,14 +26,16 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
                 if (heal + vaccination > 0) {
                     if (grid->getDistrictByPoint(p).updateIsClear()) {
                         //todo: in round3 change this
-                        District &district = grid->getDistrictByPoint(p);
+                        District& district = grid->getDistrictByPoint(p);
                         district.setAssignedCountryID(countryID);
-                        grid->getCountryByID(countryID).addAssignedDistrictID(&district);
+                        grid->getCountryByID(countryID).addAssignedDistrict(&district);
+#ifndef PROD
                         int change = grid->calculateChangeInProducedVaccinesByHealingDistrict(countryID,
                                                                                               grid->getDistrictByPoint(
                                                                                                       p));
                         int existing = grid->getCountryByID(countryID).getTotalProductionCapacity();
                         grid->getCountryByID(countryID).setTotalProductionCapacity(existing + change);
+#endif
                     }
                 }
             }

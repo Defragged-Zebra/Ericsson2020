@@ -27,16 +27,16 @@ std::ostream &operator<<(std::ostream &os, const Grid &g) {
     os << std::endl;
     for (const auto &district : g.districts) {
         os << district << ": ";
-        for (auto it : district.getAssignedFields()) {
-            os << *it << ", ";
+        for (auto it : district->getAssignedFields()) {
+            os << it << ", ";
         }
         os << std::endl;
     }
     os << "section3: districts assigned to a country" << std::endl;
     for (const auto &countries : g.countries) {
         os << countries << ", ";
-        for (auto it : countries.getAssignedDistrictIDs()) {
-            os << *it << ", ";
+        for (auto it : countries.getAssignedDistricts()) {
+            os << it << ", ";
         }
         os << std::endl;
     }
@@ -51,7 +51,7 @@ Point Grid::getCoordinatesByID(size_t ID) const {
 
 int Grid::calculateChangeInProducedVaccinesByHealingDistrict(size_t countryID, const District &district) {
     int changeInVaccines = 0;
-    for (Field *fieldPointer:district.getAssignedFields()) {
+    for (auto fieldPointer:district.getAssignedFields()) {
         changeInVaccines += 2;
         Point center = this->getCoordinatesByID(fieldPointer->getFieldID());
         std::vector<Point> coordinates=center.getNeighbours();

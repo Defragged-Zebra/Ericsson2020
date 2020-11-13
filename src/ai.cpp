@@ -26,10 +26,14 @@ AI::calculateDistrictScoresForNextRound(size_t countryID, std::vector<ScoreHolde
             calculateScore(districtScores, district2, countryID);
         }
     } else {
-        std::set<District *> districts = grid2.getCountryByID(countryID).getAssignedDistrictIDs();
-        for (auto &d:districts) {
-            for (auto &neighbourD:d->getNeighbourDistricts()) {
-                calculateScore(districtScores, grid2.getDistrictByID(neighbourD), countryID);
+        auto districts = grid2.getCountryByID(countryID).getAssignedDistricts();
+        for (auto d:districts) {
+            for (auto neighbourD:d->getNeighbourDistricts()) {
+                if(grid2.getDistrictByID(neighbourD).isClear()){
+                    continue;
+                }else{
+                    calculateScore(districtScores, grid2.getDistrictByID(neighbourD), countryID);
+                }
             }
         }
     }
@@ -39,7 +43,7 @@ void AI::calculateScore(std::vector<ScoreHolder> &districtScores, const District
     if (!district.isClear()) {
         auto score = Utils::ScoreHolder(district.getDistrictID());
         int vaccinesNeededForTotalHealing = 0;
-        for (Field *fieldPointer:district.getAssignedFields()) {
+        for (auto fieldPointer:district.getAssignedFields()) {
             //assuming grid is 1 tick in the future, and no unhealed district in the country
             vaccinesNeededForTotalHealing += std::max((int) std::ceil(
                     (fieldPointer->getCurrentInfectionRate() - fieldPointer->getVaccinationRate()) /
@@ -68,7 +72,7 @@ AI::calculateBackVaccines(std::vector<VaccineData> &back, int &numberOfVaccinesT
             //Egy területről az összes tartalék vakcinát nem lehet visszavenni, legalább 1 egységnyit ott kell hagyni.
             if (countryStoredVaccines > 1) {
                 back.emplace_back(Point(y, x), countryStoredVaccines - 1, countryID);
-                numberOfVaccinesToDistribute += countryStoredVaccines - 1;
+                //numberOfVaccinesToDistribute += countryStoredVaccines - 1;
             }
         }
     }
@@ -77,6 +81,7 @@ AI::calculateBackVaccines(std::vector<VaccineData> &back, int &numberOfVaccinesT
 
 std::vector<VaccineData> AI::chooseFieldsToVaccinate(int numberOfVaccinesToDistribute, size_t countryID) {
     std::vector<ScoreHolder> data;
+    std::vector<VaccineData> fieldsToHealSendBack;
     Grid *originalGrid = Logic::getGrid();
     Logic::setGrid(&AI::grid2);
     Logic::simulateTO(0, grid2.getCurrentTick() + 1, countryID);
@@ -86,21 +91,25 @@ std::vector<VaccineData> AI::chooseFieldsToVaccinate(int numberOfVaccinesToDistr
     //ToDO A* to make a path to all districts
     std::priority_queue<ScoreHolder, std::vector<ScoreHolder>, Compare::ProfIndex> districtScores(data.begin(),
                                                                                                   data.end());
-    std::vector<VaccineData> fieldsToHeal;
     while (!districtScores.empty()) {
         Utils::ScoreHolder maxScoredDistrict = districtScores.top();
+        std::set<Field *> fieldsToHeal = grid2.getDistrictByID(maxScoredDistrict.getDistrictID()).getAssignedFields();
+        Point fromWhere = AI::calculateStartPoint(fieldsToHeal, countryID);
+        std::vector<Field*> fieldsToHealContinous;
+        floodDistrict(fromWhere, fieldsToHeal, fieldsToHealContinous);
+        //ToDo check if fieldsToHeal is not empty --> nem volt folytonos a terület
         //check proposed by woranhun WARNING in extreme cases it can make problem
-        if (maxScoredDistrict.getProfitabilityIndex() < 1) break;
+        if (maxScoredDistrict.ChangeInVaccines() < 0) break;
         if (numberOfVaccinesToDistribute >= maxScoredDistrict.getVaccinesNeededForHealing()) {
             //get the fields of the district
-            for (auto field:grid2.getDistrictByID(maxScoredDistrict.getDistrictID()).getAssignedFields()) {
+            for (const auto& field:fieldsToHealContinous) {
                 int vaccines = std::max((int) std::ceil(
                         (field->getCurrentInfectionRate() - field->getVaccinationRate()) /
                         field->getPopulationDensity()), 6 - field->getPopulationDensity());
                 if (vaccines > 0) {
                     VaccineData vc = VaccineData(grid2.getCoordinatesByID(field->getFieldID()), vaccines, countryID);
                     //TODO: a-star algo modifies here too
-                    fieldsToHeal.push_back(vc);
+                    fieldsToHealSendBack.push_back(vc);
                 }
             }
             numberOfVaccinesToDistribute -= districtScores.top().getVaccinesNeededForHealing();
@@ -108,41 +117,47 @@ std::vector<VaccineData> AI::chooseFieldsToVaccinate(int numberOfVaccinesToDistr
         if (numberOfVaccinesToDistribute == 0) break;
         districtScores.pop();
     }
-    if (fieldsToHeal.empty()) {
+    if (fieldsToHealSendBack.empty()) {
         //mode B - get the easiest district and try to heal it
         std::priority_queue<ScoreHolder, std::vector<ScoreHolder>, Compare::TotalHealing> districtScores2(data.begin(),
                                                                                                           data.end());
+        if(districtScores2.empty())return std::vector<VaccineData>();
         Utils::ScoreHolder maxScoredDistrict = districtScores2.top();
-        for (auto field:grid2.getDistrictByID(maxScoredDistrict.getDistrictID()).getAssignedFields()) {
+        std::set<Field *> fieldsToHeal = grid2.getDistrictByID(maxScoredDistrict.getDistrictID()).getAssignedFields();
+        Point fromWhere = AI::calculateStartPoint(fieldsToHeal, countryID);
+        std::vector<Field*> fieldsToHealContinous;
+        floodDistrict(fromWhere, fieldsToHeal, fieldsToHealContinous);
+        for (auto field:fieldsToHealContinous) {
             int vaccines = std::max((int) std::ceil(
                     (field->getCurrentInfectionRate() - field->getVaccinationRate()) /
                     field->getPopulationDensity()), 6 - field->getPopulationDensity());
             if (vaccines > 0) {
+                if(numberOfVaccinesToDistribute-vaccines<0)break;
                 VaccineData vc = VaccineData(grid2.getCoordinatesByID(field->getFieldID()), vaccines, countryID);
                 //TODO: a-star algo modifies here too
-                fieldsToHeal.push_back(vc);
+                fieldsToHealSendBack.push_back(vc);
             }
+            numberOfVaccinesToDistribute-=vaccines;
         }
     }
     if (originalGrid->getCurrentTick() == 0) {
-        District &district = originalGrid->getDistrictByPoint(fieldsToHeal.begin()->getPoint());
-        originalGrid->getCountryByID(countryID).addAssignedDistrictID(&district);
+        auto district = originalGrid->getDistrictByPoint(fieldsToHealSendBack[0].getPoint());
+        originalGrid->getCountryByID(countryID).addAssignedDistrict(&district);
     }
 
-    Point fromWhere = AI::calculateStartPoint(fieldsToHeal, countryID);
-    std::vector<VaccineData> fieldsToHealOrdered;
-    floodDistrict(fromWhere, fieldsToHeal, fieldsToHealOrdered);
-    //ToDo check if fieldsToHeal is not empty --> nem volt folytonos a terület
-    return fieldsToHealOrdered;
+
+
+    return fieldsToHealSendBack;
 }
 
-Point AI::calculateStartPoint(std::vector<VaccineData> &fieldsToHeal, size_t countryID) {
+Point AI::calculateStartPoint(const std::set<Field *>& fieldsToCalc, size_t countryID) {
     Grid *g = Logic::getGrid();
-    for (const auto &vaccineData:fieldsToHeal) {
-        const Point &p = vaccineData.getPoint();
+    for (const auto field:fieldsToCalc) {
+        const Point &p = g->getCoordinatesByID(field->getFieldID());
         if (g->getCountryByID(countryID).isNeighbourVaccinatedFields(p)) return p;
     }
-    throw std::runtime_error("calculateStartPointFailed");
+    //throw std::runtime_error("calculateStartPointFailed");
+    return g->getCoordinatesByID((*fieldsToCalc.begin())->getFieldID());
 }
 
 
@@ -156,31 +171,20 @@ AI::calculatePutVaccines(std::vector<VaccineData> &put, int numberOfVaccinesToDi
 
 //floood kap egy Field tömböt + egy pontot, ezt olyan sorrandbe rendezni, hogy lerakható legyen.
 void
-AI::floodDistrict(const Point &p, std::vector<VaccineData> &notVisitedFields, std::vector<VaccineData> &orderedFields) {
+AI::floodDistrict(const Point &p, std::set<Field*> &notVisitedFields, std::vector<Field*> &orderedFields) {
     if (!p.withinBounds())return;
     //Ez itt egy lamda függvény :(
-    auto centerIter = std::find_if(notVisitedFields.begin(), notVisitedFields.end(), [p](VaccineData const &obj) {
-        return obj.getPoint() == p;
+    auto centerIter = std::find_if(notVisitedFields.begin(), notVisitedFields.end(), [p](Field* const &obj) {
+        return grid2.getCoordinatesByID(obj->getFieldID()) == p;
     });
     if (centerIter == notVisitedFields.end()) return;
     orderedFields.emplace_back(*centerIter);
     notVisitedFields.erase(centerIter);
     for (const auto &selected:p.getNeighbours()) {
-        if (grid2.getDistrictByPoint(p) == grid2.getDistrictByPoint(selected))
+        if (!selected.withinBounds())continue;
+        if (grid2.getDistrictByPoint(p) == grid2.getDistrictByPoint(selected)){
             floodDistrict(selected, notVisitedFields, orderedFields);
+        }
     }
-    /*//Up
-    if (grid2.getDistrictByPoint(p) == grid2.getDistrictByPoint(Point(p.getY() + 1, p.getX())))
-        floodDistrict(Point(p.getY() + 1, p.getX()), notVisitedFields, orderedFields);
-    //Right
-    if (grid2.getDistrictByPoint(p) == grid2.getDistrictByPoint(Point(p.getY(), p.getX() + 1)))
-        floodDistrict(Point(p.getY(), p.getX() + 1), notVisitedFields, orderedFields);
-    //Down
-    if (grid2.getDistrictByPoint(p) == grid2.getDistrictByPoint(Point(p.getY() - 1, p.getX())))
-        floodDistrict(Point(p.getY() - 1, p.getX()), notVisitedFields, orderedFields);
-    //Left
-    if (grid2.getDistrictByPoint(p) == grid2.getDistrictByPoint(Point(p.getY(), p.getX() - 1)))
-        floodDistrict(Point(p.getY(), p.getX() - 1), notVisitedFields, orderedFields);
-        */
 }
 

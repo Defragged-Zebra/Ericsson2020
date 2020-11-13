@@ -9,6 +9,7 @@
 #include <vector>
 #include <iostream>
 #include <set>
+#include <functional>
 #include "utils.h"
 #include "district.h"
 
@@ -18,7 +19,7 @@ class Country {
     int totalProductionCapacity{};
     int reservedVaccines{};
     //similar to field
-    std::set<District*> assignedDistrictPointers;
+    std::set<District*> assignedDistricts;
     std::set<Point> vaccinatedFields;
 public:
     Country() =default;
@@ -26,12 +27,12 @@ public:
         this->countryID = ID;
         this->totalProductionCapacity = TPC;
         this->reservedVaccines =RV;
-        this->assignedDistrictPointers = std::set<District*>();
+        this->assignedDistricts = std::set<District*>();
     }
 
     Country(size_t ID, const std::set<District*> &districts) {
         countryID = ID;
-        assignedDistrictPointers = districts;
+        assignedDistricts = districts;
     }
 
     Country(const Country &c) {
@@ -43,14 +44,14 @@ public:
             this->countryID = c.countryID;
             this->totalProductionCapacity = c.totalProductionCapacity;
             this->reservedVaccines = c.reservedVaccines;
-            this->assignedDistrictPointers = c.assignedDistrictPointers;
+            this->assignedDistricts = c.assignedDistricts;
             this->vaccinatedFields = c.vaccinatedFields;
         }
         return *this;
     }
 
-    [[nodiscard]] std::set<District*> getAssignedDistrictIDs() const { return assignedDistrictPointers; }
-    void addAssignedDistrictID(District* districtPointer){assignedDistrictPointers.insert(districtPointer);}
+    [[nodiscard]] std::set<District*> getAssignedDistricts() const { return assignedDistricts; }
+    void addAssignedDistrict(District* district){assignedDistricts.insert(district);}
 
     friend std::ostream &operator<<(std::ostream &os, const Country &c);
 

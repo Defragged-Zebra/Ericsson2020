@@ -55,7 +55,7 @@ void Iface::createGrid() {
             ss << line;
             ss >> tmp >> tmp2 >> tmp2 >> district >> infRate >> population;
             if (district > numberOfDistricts) numberOfDistricts = district;
-            grid->addField(Field(fieldID, district, infRate, 0, population,
+            grid->addField(new Field(fieldID, district, infRate, 0, population,
                                  storedValsCnt));
             grid->setGridFieldID(y, x, fieldID++);
         }
@@ -63,7 +63,7 @@ void Iface::createGrid() {
     //create the districts
     //numberOfDistricts+1 because numberOfDistricts stores the max district ID
     for (size_t i = 0; i < numberOfDistricts + 1; ++i) {
-        grid->addDistrict(District(i, std::set<Field *>(), std::set<size_t>(), false));
+        grid->addDistrict(new District(i, std::set<Field*>(), std::set<size_t>(), false));
     }
     //district update
     for (size_t y = 0; y < grid->getHeight(); ++y) {
@@ -149,6 +149,7 @@ void Iface::round(std::string &line) {
         if (tmp != ".\r" and tmp != ".")continue;
         else break;
     }
+    this->displayCurrentRound(_gameID, tickID, countryID);
     Logic::simulateTO(_gameID, tickID, countryID);
     //TODO: calculate this .. also it's buggy af, and have some serious logic errors
     //TODO: ez szar, fix it
@@ -171,6 +172,5 @@ void Iface::round(std::string &line) {
         os << "PUT " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
     }
     os << "." << std::endl;
-    this->displayCurrentRound(_gameID, tickID, countryID);
 
 }

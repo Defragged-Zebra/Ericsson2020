@@ -17,7 +17,7 @@ bool District::updateIsClear() {
                 "district.cpp - You tried to update the clean-ness of a clean field. This shouldn't happen, pls notify Spark");
     bool tmp = true;
     for (auto &assignedField : assignedFields) {
-        tmp &= (*assignedField).isClear();
+        tmp &= (assignedField)->isClear();
     }
     clear = tmp;
     return clear;
@@ -25,7 +25,6 @@ bool District::updateIsClear() {
 
 bool District::isFieldInDistrict(size_t fieldID) {
     //another lambda here
-    //TODO: throw std::runtime_error("district.cpp szejjeltesztelni ezt a kecibe");
     return std::any_of(assignedFields.begin(), assignedFields.end(),
                 [fieldID](auto currentField) { return currentField->getFieldID() == fieldID; });
     /*
