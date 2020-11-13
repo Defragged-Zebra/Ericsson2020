@@ -5,6 +5,7 @@
 #include "grid.h"
 #include "logic.h"
 #include "utils.h"
+#include "graphalgos.h"
 
 #ifndef VIRUS_AI_H
 #define VIRUS_AI_H
@@ -34,6 +35,10 @@ public:
 
     static void calculateScore(std::vector<ScoreHolder> &districtScores, const District &district, size_t countryID);
     static Point calculateStartPoint(const std::set<Field *>& fieldsToCalc, size_t countryID);
+
+    static void mikoltMedzsikIdea(const std::vector<Point>& startPoints, const std::set<Field *>& fieldsToHeal, std::vector<Field *>& result);
+
+    static std::vector<Point> calculateStartPoints(const std::set<Field *> &fieldsToCalc, size_t countryID);
 };
 
 
