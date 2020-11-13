@@ -55,7 +55,7 @@ void AI::startFromGridBorder(size_t countryID, std::vector<ScoreHolder> &distric
     }
     //remove duplicates
     std::sort(districtScores.begin(), districtScores.end());
-    std::unique(districtScores.begin(), districtScores.end());
+    districtScores.erase(std::unique(districtScores.begin(), districtScores.end()), districtScores.end());
 }
 
 void AI::calculateScore(std::vector<ScoreHolder> &districtScores, const District &district, size_t countryID) {
@@ -99,7 +99,7 @@ AI::calculateBackVaccines(std::vector<VaccineData> &back, int &numberOfVaccinesT
 }
 
 std::vector<VaccineData> AI::chooseFieldsToVaccinate(int numberOfVaccinesToDistribute, size_t countryID) {
-    std::vector<ScoreHolder> data;
+    std::vector<ScoreHolder> districtScores;
     std::vector<VaccineData> fieldsToHealSendBack;
     Grid *originalGrid = Logic::getGrid();
 
@@ -113,14 +113,14 @@ std::vector<VaccineData> AI::chooseFieldsToVaccinate(int numberOfVaccinesToDistr
     if (grid2.isClear()) return std::vector<VaccineData>();
 
     //calculate district scores
-    AI::calculateDistrictScoresForNextRound(countryID, data);
+    AI::calculateDistrictScoresForNextRound(countryID, districtScores);
 
     //calculate fields to heal
     //ToDo Filter out districts which cannot be reached. -- this is done I think
     //ToDO A* to make a path to all districts
-    numberOfVaccinesToDistribute = modeA(numberOfVaccinesToDistribute, countryID, data, fieldsToHealSendBack);
+    numberOfVaccinesToDistribute = modeA(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
     if (fieldsToHealSendBack.empty()) {
-        modeB(numberOfVaccinesToDistribute, countryID, data, fieldsToHealSendBack);
+        modeB(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
     }
 
     //TODO: refactor start points after first round
@@ -166,9 +166,12 @@ int AI::modeA(int numberOfVaccinesToDistribute, size_t countryID, std::vector<Sc
 
 void AI::modeB(int numberOfVaccinesToDistribute, size_t countryID, std::vector<ScoreHolder> &data,
                std::vector<VaccineData> &fieldsToHealSendBack) {//mode B - get the easiest district and try to heal it
-    std::priority_queue<ScoreHolder, std::vector<ScoreHolder>, Compare::TotalHealing> districtScores2(data.begin(),
-                                                                                                      data.end());
-    Utils::ScoreHolder maxScoredDistrict = districtScores2.top();
+    std::priority_queue<ScoreHolder, std::vector<ScoreHolder>, Compare::TotalHealing> districtScores(data.begin(),
+                                                                                                     data.end());
+    //Kurvŕa meg kell hivni a sortot ra, mert constructorbol nem sikerult neki
+    //TODO: Spark innen folytatni
+    districtScores.
+    Utils::ScoreHolder maxScoredDistrict = districtScores.top();
     std::set<Field *> fieldsToHeal = grid2.getDistrictByID(maxScoredDistrict.getDistrictID()).getAssignedFields();
     Point fromWhere = calculateStartPoint(fieldsToHeal, countryID);
     std::vector<Field *> fieldsToHealContinuous;
