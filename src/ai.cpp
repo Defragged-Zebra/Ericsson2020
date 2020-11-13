@@ -102,22 +102,27 @@ std::vector<VaccineData> AI::chooseFieldsToVaccinate(int numberOfVaccinesToDistr
     std::vector<ScoreHolder> data;
     std::vector<VaccineData> fieldsToHealSendBack;
     Grid *originalGrid = Logic::getGrid();
+
+    //simulate next round
     Logic::setGrid(&AI::grid2);
     Logic::simulateTO(0, grid2.getCurrentTick() + 1, countryID);
     Logic::setGrid(originalGrid);
-    //check if grid is clear?
+
+    //check if grid is clear
     grid2.updateClearByFieldCheck();
     if (grid2.isClear()) return std::vector<VaccineData>();
+
     //calculate district scores
     AI::calculateDistrictScoresForNextRound(countryID, data);
 
-    //ToDo Filter out districts which cannot be reached.
+    //calculate fields to heal
+    //ToDo Filter out districts which cannot be reached. -- this is done I think
     //ToDO A* to make a path to all districts
-
     numberOfVaccinesToDistribute = modeA(numberOfVaccinesToDistribute, countryID, data, fieldsToHealSendBack);
     if (fieldsToHealSendBack.empty()) {
         modeB(numberOfVaccinesToDistribute, countryID, data, fieldsToHealSendBack);
     }
+
     //TODO: refactor start points after first round
     if (originalGrid->getCurrentTick() == 0) {
         auto district = originalGrid->getDistrictByPoint(fieldsToHealSendBack[0].getPoint());
@@ -163,7 +168,6 @@ void AI::modeB(int numberOfVaccinesToDistribute, size_t countryID, std::vector<S
                std::vector<VaccineData> &fieldsToHealSendBack) {//mode B - get the easiest district and try to heal it
     std::priority_queue<ScoreHolder, std::vector<ScoreHolder>, Compare::TotalHealing> districtScores2(data.begin(),
                                                                                                       data.end());
-
     Utils::ScoreHolder maxScoredDistrict = districtScores2.top();
     std::set<Field *> fieldsToHeal = grid2.getDistrictByID(maxScoredDistrict.getDistrictID()).getAssignedFields();
     Point fromWhere = calculateStartPoint(fieldsToHeal, countryID);
@@ -183,15 +187,14 @@ void AI::modeB(int numberOfVaccinesToDistribute, size_t countryID, std::vector<S
     }
 }
 
-
 Point AI::calculateStartPoint(const std::set<Field *> &fieldsToCalc, size_t countryID) {
     Grid *g = Logic::getGrid();
     for (const auto field:fieldsToCalc) {
         const Point &p = g->getCoordinatesByID(field->getFieldID());
         if (g->getCountryByID(countryID).isNeighbourVaccinatedFields(p)) return p;
     }
-    //throw std::runtime_error("calculateStartPointFailed");
-    return g->getCoordinatesByID((*fieldsToCalc.begin())->getFieldID());
+    throw std::runtime_error("calculateStartPointFailed -- you tried to heal an invalid district");
+    //return g->getCoordinatesByID((*fieldsToCalc.begin())->getFieldID());
 }
 
 

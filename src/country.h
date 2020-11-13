@@ -66,28 +66,7 @@ public:
     void addToVaccinatedFields(const Point& p){
         vaccinatedFields.insert(p);
     }
-    [[nodiscard]] bool isNeighbourVaccinatedFields(const Point& p)const{
-        if(vaccinatedFields.empty()){
-            return p.getY()==0 or p.getX()==0 or p.getY()==Point::getGridHeight()-1 or p.getX()==
-                                                                                               Point::getGridWidth() - 1;
-        }else{
-            size_t centerY = p.getY();
-            size_t centerX = p.getX();
-            Point coordinates[4] = {{centerY,     centerX - 1},
-                                    {centerY - 1, centerX},
-                                    {centerY + 1, centerX},
-                                    {centerY,     centerX + 1}};
-
-            for (const auto &selected : coordinates) {
-                if(!selected.withinBounds())continue;
-                 auto it = vaccinatedFields.find(selected);
-                 if(it!=vaccinatedFields.end()) return true;
-
-            }
-
-        }
-        return false;
-    }
+    [[nodiscard]] bool isNeighbourVaccinatedFields(const Point& p)const;
 };
 
 
