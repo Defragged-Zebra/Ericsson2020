@@ -7,6 +7,7 @@
 
 #include <stdexcept>
 #include <climits>
+#include <vector>
 
 class Utils {
 public:
@@ -83,6 +84,7 @@ public:
         void setX(const size_t _x) { this->x = _x; }
 
         void setY(const size_t _y) { this->y = _y; }
+        std::vector<Point> getNeighbours()const;
     };
 
     class VaccineData {

@@ -69,16 +69,11 @@ void Iface::createGrid() {
     for (size_t y = 0; y < grid->getHeight(); ++y) {
         for (size_t x = 0; x < grid->getWidth(); ++x) {
             Point center(y, x);
-            size_t centerY = center.getY();
-            size_t centerX = center.getX();
-            Point coordinates[4] = {{centerY,     centerX - 1},
-                                    {centerY - 1, centerX},
-                                    {centerY + 1, centerX},
-                                    {centerY,     centerX + 1}};
+            std::vector<Point> coordinates = center.getNeighbours();
             District centerDistrict = grid->getDistrictByPoint(center);
             for (const auto &selected:coordinates) {
                 if (!selected.withinBounds())continue;
-                District& selectedDistrict = grid->getDistrictByPoint(selected);
+                District &selectedDistrict = grid->getDistrictByPoint(selected);
                 if (centerDistrict != selectedDistrict) {
                     centerDistrict.addNeighbourDistrict(selectedDistrict.getDistrictID());
                     selectedDistrict.addNeighbourDistrict(centerDistrict.getDistrictID());

@@ -54,12 +54,7 @@ int Grid::calculateChangeInProducedVaccinesByHealingDistrict(size_t countryID, c
     for (Field *fieldPointer:district.getAssignedFields()) {
         changeInVaccines += 2;
         Point center = this->getCoordinatesByID(fieldPointer->getFieldID());
-        size_t centerY = center.getY();
-        size_t centerX = center.getX();
-        Point coordinates[4] = {{centerY,     centerX - 1},
-                                {centerY - 1, centerX},
-                                {centerY + 1, centerX},
-                                {centerY,     centerX + 1}};
+        std::vector<Point> coordinates=center.getNeighbours();
         for (const auto &selected : coordinates) {
             /* Egy megtisztított kerület védekezési vakcina száma a kerület területeinek élszomszédos,
              * nem tiszta kerülethez tartozó területek 6 - start_info[coord].population különbségösszege,
