@@ -17,7 +17,7 @@ class AI {
     static Grid grid2;
 
     //it is important to COPY the grid
-    static void calculateDistrictScoresForNextRound(size_t countryID, std::vector<ScoreHolder> &districtScores);
+    static void calculateDistrictScoresForNextRound(size_t countryID, std::set<ScoreHolder> &districtScores);
 
     static std::vector<VaccineData>
     chooseFieldsToVaccinate(int numberOfVaccinesToDistribute, size_t countryID);
@@ -35,14 +35,14 @@ public:
     static std::vector<VaccineData> &
     calculatePutVaccines(std::vector<VaccineData> &put, int numberOfVaccinesToDistribute, size_t countryID);
 
-    static void calculateScore(std::vector<ScoreHolder> &districtScores, const District &district, size_t countryID);
+    static void calculateScore(std::set<ScoreHolder> &districtScores, const District &district, size_t countryID);
     static Point calculateStartPoint(const std::set<Field *>& fieldsToCalc, size_t countryID);
 
-    static void startFromGridBorder(size_t countryID, std::vector<ScoreHolder> &districtScores);
+    static void startFromGridBorder(size_t countryID, std::set<ScoreHolder> &districtScores);
 
     static void startFromExistingDistricts(size_t countryID, std::vector<Point> &result);
 
-    static void modeB(int numberOfVaccinesToDistribute, size_t countryID, std::vector<ScoreHolder> &districtScores,
+    static void modeB(int numberOfVaccinesToDistribute, size_t countryID, std::set<ScoreHolder> &districtScores,
                       std::vector<VaccineData> &fieldsToHealSendBack);
 
     static void modeA(int &numberOfVaccinesToDistribute, size_t countryID, std::vector<ScoreHolder> &districtScores,
@@ -61,6 +61,8 @@ public:
                                             ScoreHolder maxScoredDistrict, std::vector<Point> &startPoints);
 
     static std::vector<Point> addBorderFields();
+
+    static std::vector<Point> addBorderFields(size_t districtID);
 };
 
 

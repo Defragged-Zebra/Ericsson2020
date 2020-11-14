@@ -85,6 +85,13 @@ public:
 
         void setY(const size_t _y) { this->y = _y; }
         [[nodiscard]] std::vector<Point> getNeighbours()const;
+
+        [[nodiscard]] bool isBorder()const{
+            return this->getY()==0 or
+            this->getX()==0 or
+            this->getY()==Utils::Point::getGridHeight()-1 or
+            this->getX()==Utils::Point::getGridWidth()-1;
+        }
     };
 
     class VaccineData {
