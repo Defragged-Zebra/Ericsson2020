@@ -94,10 +94,14 @@ public:
         return f1.getFieldID() < f2.getFieldID();
     }
 
-    [[nodiscard]] int vaccinesToPutMinimal() const { return 6 - populationDensity; }
+    [[nodiscard]] int vaccinesToPutMinimal(size_t countryID) {
+        if (storedVaccines[countryID] > 0) return 0;
+        else return 6 - populationDensity;
+    }
 
-    [[nodiscard]] int vaccinesToPutForTotalHealing() const {
-        return std::max((int) std::ceil((infectionRate - vaccinationRate) / populationDensity), vaccinesToPutMinimal());
+    [[nodiscard]] int vaccinesToPutForTotalHealing(size_t countryID) {
+        return std::max((int) std::ceil((infectionRate - vaccinationRate) / populationDensity),
+                        vaccinesToPutMinimal(countryID));
     }
 };
 

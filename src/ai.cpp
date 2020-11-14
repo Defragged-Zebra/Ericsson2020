@@ -64,7 +64,7 @@ void AI::calculateScore(std::vector<ScoreHolder> &districtScores, const District
         int vaccinesNeededForTotalHealing = 0;
         for (auto fieldPointer:district.getAssignedFields()) {
             //assuming grid is 1 tick in the future, and no unhealed district in the country
-            vaccinesNeededForTotalHealing += fieldPointer->vaccinesToPutForTotalHealing();
+            vaccinesNeededForTotalHealing += fieldPointer->vaccinesToPutForTotalHealing(countryID);
         }
         int changeInVaccines = grid2.calculateChangeInProducedVaccinesByHealingDistrict(countryID,
                                                                                         district); //todo: +aStarPathVaccineCost;
@@ -123,7 +123,7 @@ std::vector<VaccineData> AI::chooseFieldsToVaccinate(int numberOfVaccinesToDistr
 
     //TODO: refactor -- start points after first round
     if (originalGrid->getCurrentTick() == 0) {
-        auto district = originalGrid->getDistrictByPoint(fieldsToHealSendBack[0].getPoint());
+        auto &district = originalGrid->getDistrictByPoint(fieldsToHealSendBack[0].getPoint());
         originalGrid->getCountryByID(countryID).addAssignedDistrict(&district);
     }
     return fieldsToHealSendBack;
@@ -154,7 +154,7 @@ void AI::addFieldsToHeal(int &numberOfVaccinesToDistribute, size_t countryID,
     if (maxScoredDistrict.ChangeInVaccines() < 0) return;
     //get the fields of the district
     for (const auto &field:fieldsToHealContinuous) {
-        int vaccinesToBeUsed = field->vaccinesToPutForTotalHealing();
+        int vaccinesToBeUsed = field->vaccinesToPutForTotalHealing(countryID);
         if (numberOfVaccinesToDistribute > vaccinesToBeUsed) {
             numberOfVaccinesToDistribute -= vaccinesToBeUsed;
             VaccineData vc = VaccineData(grid2.getCoordinatesByID(field->getFieldID()), vaccinesToBeUsed,

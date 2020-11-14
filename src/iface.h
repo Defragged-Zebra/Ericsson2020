@@ -9,6 +9,7 @@
 #include "iface.h"
 #include "logic.h"
 #include "ai.h"
+#include <ctype.h>
 
 class Iface {
 protected:

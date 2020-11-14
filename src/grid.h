@@ -106,7 +106,10 @@ public:
             return obj.getCountryID() == newCountry.getCountryID();
         });
         if (it == countries.end()) countries.push_back(newCountry);
-        else countries[newCountry.getCountryID()] = newCountry;
+        else{
+            countries[newCountry.getCountryID()].setTotalProductionCapacity(newCountry.getTotalProductionCapacity());
+            countries[newCountry.getCountryID()].setReserveVaccines(newCountry.getReserveVaccines());
+        }
     }
 
     [[nodiscard]] size_t getCurrentTick() const {
