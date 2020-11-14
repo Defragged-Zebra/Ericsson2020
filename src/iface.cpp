@@ -56,14 +56,14 @@ void Iface::createGrid() {
             ss >> tmp >> tmp2 >> tmp2 >> district >> infRate >> population;
             if (district > numberOfDistricts) numberOfDistricts = district;
             grid->addField(new Field(fieldID, district, infRate, 0, population,
-                                 storedValsCnt));
+                                     storedValsCnt));
             grid->setGridFieldID(y, x, fieldID++);
         }
     }
     //create the districts
     //numberOfDistricts+1 because numberOfDistricts stores the max district ID
     for (size_t i = 0; i < numberOfDistricts + 1; ++i) {
-        grid->addDistrict(new District(i, std::set<Field*>(), std::set<size_t>(), false));
+        grid->addDistrict(new District(i, std::set<Field *>(), std::set<size_t>(), false));
     }
     //district update
     for (size_t y = 0; y < grid->getHeight(); ++y) {
@@ -137,14 +137,15 @@ void Iface::round(std::string &line) {
         if (tmp == ".\r" or tmp == ".")break;
         //Iface::sendDebugMsg("[NOTIFY] " + tmp);
         ss.clear();
-        int _countryID, TPC, RV;
-        ss << tmp;
-        ss >> _countryID >> TPC >> RV;
-        grid->addCountry(Country(_countryID, TPC, RV));
         //TODO: parse game-data here
         if (tmp.find("WARN") != std::string::npos) {
             Iface::sendDebugMsg(line);
             //throw std::runtime_error("We've fucked it up!!444!!!");
+        } else if (std::isdigit(tmp[0])) {
+            int _countryID, TPC, RV;
+            ss << tmp;
+            ss >> _countryID >> TPC >> RV;
+            grid->addCountry(Country(_countryID, TPC, RV));
         }
         if (tmp != ".\r" and tmp != ".")continue;
         else break;
@@ -154,7 +155,6 @@ void Iface::round(std::string &line) {
     //TODO: calculate this .. also it's buggy af, and have some serious logic errors
     //TODO: ez szar, fix it
     int numberOfVaccinesToDistribute = grid->getCountryByID(countryID).getReserveVaccines();
-    //int numberOfVaccinesToDistribute = 0;
     AI::copyGrid(grid);
     std::vector<VaccineData> back; // don't change this
     back = AI::calculateBackVaccines(back, numberOfVaccinesToDistribute, countryID);
