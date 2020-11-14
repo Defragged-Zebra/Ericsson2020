@@ -84,7 +84,7 @@ public:
         void setX(const size_t _x) { this->x = _x; }
 
         void setY(const size_t _y) { this->y = _y; }
-        std::vector<Point> getNeighbours()const;
+        [[nodiscard]] std::vector<Point> getNeighbours()const;
     };
 
     class VaccineData {
@@ -161,6 +161,8 @@ public:
 
         [[nodiscard]] bool profIndex(const ScoreHolder &sc)const{return this->profitabilityIndex < sc.profitabilityIndex;}
         [[nodiscard]] bool totalHealing(const ScoreHolder &sc)const{return this->vaccinesNeededForTotalHealing < sc.vaccinesNeededForTotalHealing;}
+        bool operator==(ScoreHolder sc) const;
+        bool operator <(ScoreHolder sc) const;
 
     };
     class Compare{

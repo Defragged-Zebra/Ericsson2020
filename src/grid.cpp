@@ -43,7 +43,7 @@ std::ostream &operator<<(std::ostream &os, const Grid &g) {
     return os;
 }
 
-Point Grid::getCoordinatesByID(size_t ID) const {
+Point Grid::getPointByFieldID(size_t ID) const {
     size_t y = ID / width; //integer division is a design choice
     size_t x = ID - (width * y);
     return Point(y, x);
@@ -53,7 +53,7 @@ int Grid::calculateChangeInProducedVaccinesByHealingDistrict(size_t countryID, c
     int changeInVaccines = 0;
     for (auto fieldPointer:district.getAssignedFields()) {
         changeInVaccines += 2;
-        Point center = this->getCoordinatesByID(fieldPointer->getFieldID());
+        Point center = this->getPointByFieldID(fieldPointer->getFieldID());
         std::vector<Point> coordinates=center.getNeighbours();
         for (const auto &selected : coordinates) {
             /* Egy megtisztított kerület védekezési vakcina száma a kerület területeinek élszomszédos,
