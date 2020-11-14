@@ -7,7 +7,7 @@
 size_t Point::gridHeight = 0;
 size_t Point::gridWidth = 0;
 
-std::vector<Point> Utils::Point::getNeighbours() const{
+std::vector<Point> Utils::Point::getNeighbours() const {
     std::vector<Point> points = std::vector<Point>();
     if(Point(y + 1, x).withinBounds())points.emplace_back(Point(y + 1, x));
     if(Point(y, x + 1).withinBounds())points.emplace_back(Point(y, x + 1));
@@ -41,3 +41,12 @@ uint64_t Utils::Random::getFactor(int index) const {
     return factor[index - 1];
 }
 
+bool Utils::ScoreHolder::operator==(ScoreHolder sc) const {
+    if (this->districtID == sc.districtID)
+        return true;
+    return false;
+}
+
+bool Utils::ScoreHolder::operator<(ScoreHolder sc)const {
+    return this->districtID<sc.districtID;
+}

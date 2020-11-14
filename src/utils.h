@@ -161,6 +161,8 @@ public:
 
         [[nodiscard]] bool profIndex(const ScoreHolder &sc)const{return this->profitabilityIndex < sc.profitabilityIndex;}
         [[nodiscard]] bool totalHealing(const ScoreHolder &sc)const{return this->vaccinesNeededForTotalHealing < sc.vaccinesNeededForTotalHealing;}
+        bool operator==(ScoreHolder sc) const;
+        bool operator <(ScoreHolder sc) const;
 
     };
     class Compare{
