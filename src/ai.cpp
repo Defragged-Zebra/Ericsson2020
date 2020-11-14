@@ -177,11 +177,23 @@ void AI::modeB(int numberOfVaccinesToDistribute, size_t countryID, std::vector<S
 Point AI::calculateStartPoint(const std::set<Field *> &fieldsToCalc, size_t countryID) {
     Grid *g = Logic::getGrid();
     for (const auto field:fieldsToCalc) {
-        const Point &p = g->getCoordinatesByID(field->getFieldID());
+        const Point &p = g->getPointByFieldID(field->getFieldID());
         if (g->getCountryByID(countryID).isNeighbourVaccinatedFields(p)) return p;
     }
     throw std::runtime_error("calculateStartPointFailed -- you tried to heal an invalid district");
     //return g->getCoordinatesByID((*fieldsToCalc.begin())->getFieldID());
+
+
+std::vector<Point> AI::calculateStartPoints(const std::set<Field *>& fieldsToCalc, size_t countryID) {
+    Grid *g = Logic::getGrid();
+    std::vector<Point> goodStartPoints;
+    for (const auto field:fieldsToCalc) {
+        const Point &p = g->getPointByFieldID(field->getFieldID());
+        if (g->getCountryByID(countryID).isNeighbourVaccinatedFields(p)){
+            goodStartPoints.push_back(p);
+        }
+    }
+    return goodStartPoints;
 }
 
 
@@ -198,8 +210,8 @@ void
 AI::floodDistrict(const Point &p, std::set<Field *> &notVisitedFields, std::vector<Field *> &orderedFields) {
     if (!p.withinBounds())return;
     //Ez itt egy lamda függvény :(
-    auto centerIter = std::find_if(notVisitedFields.begin(), notVisitedFields.end(), [p](Field *const &obj) {
-        return grid2.getCoordinatesByID(obj->getFieldID()) == p;
+    auto centerIter = std::find_if(notVisitedFields.begin(), notVisitedFields.end(), [p](Field* const &obj) {
+        return grid2.getPointByFieldID(obj->getFieldID()) == p;
     });
     if (centerIter == notVisitedFields.end()) return;
     orderedFields.emplace_back(*centerIter);
@@ -210,5 +222,17 @@ AI::floodDistrict(const Point &p, std::set<Field *> &notVisitedFields, std::vect
             floodDistrict(selected, notVisitedFields, orderedFields);
         }
     }
+}
+// Pontok között keresünk legrövidebb utat. Ezek alapján vakcinázunk. Meglátjuk jó lesz-e.
+void AI::mikoltMedzsikIdea(const std::vector<Point>& startPoints, const std::set<Field *>& fieldsToHeal, std::vector<Field *>& result,size_t countryID) {
+    std::pair<std::vector <Point>,int> minPath({},INT_MAX);
+    for (const auto& p:startPoints){
+        Point end = grid2.getPointByFieldID((*fieldsToHeal.begin())->getFieldID());
+        std::pair<std::vector <Point>,int> dijkstraResult;
+        GraphAlgos ga;
+        ga.dijkstra(p, end, dijkstraResult,countryID);
+        if(dijkstraResult.second<minPath.second) minPath=dijkstraResult;
+    }
+
 }
 

@@ -9,10 +9,10 @@ size_t Point::gridWidth = 0;
 
 std::vector<Point> Utils::Point::getNeighbours() const {
     std::vector<Point> points = std::vector<Point>();
-    points.emplace_back(Point(y + 1, x));
-    points.emplace_back(Point(y, x + 1));
-    points.emplace_back(Point(y - 1, x));
-    points.emplace_back(Point(y, x - 1));
+    if(Point(y + 1, x).withinBounds())points.emplace_back(Point(y + 1, x));
+    if(Point(y, x + 1).withinBounds())points.emplace_back(Point(y, x + 1));
+    if(Point(y - 1, x).withinBounds())points.emplace_back(Point(y - 1, x));
+    if(Point(y, x - 1).withinBounds())points.emplace_back(Point(y, x - 1));
     return points;
 }
 

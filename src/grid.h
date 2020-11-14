@@ -124,7 +124,25 @@ public:
 
     size_t numberOfDistricts() { return districts.size(); }
 
-    [[nodiscard]] Point getCoordinatesByID(size_t ID) const;
+    [[nodiscard]] Point getPointByFieldID(size_t ID) const;
+    [[nodiscard]] std::vector<Field*> getNeihboursOfField(size_t FieldID) const{
+        std::vector<Field*> retVals;
+        std::vector<Point> neighbourPoints = this->getPointByFieldID(FieldID).getNeighbours();
+        for(auto p: neighbourPoints){
+            if(p.withinBounds())retVals.push_back(this->fields[this->grid[p.getY()][p.getX()]]);
+        }
+        return retVals;
+
+    }
+    [[nodiscard]] std::vector<Field*> getNeihboursOfField(const Field* f) const{
+        std::vector<Field*> retVals;
+        std::vector<Point> neighbourPoints = this->getPointByFieldID(f->getFieldID()).getNeighbours();
+        for(auto p: neighbourPoints){
+            if(p.withinBounds())retVals.push_back(this->fields[this->grid[p.getY()][p.getX()]]);
+        }
+        return retVals;
+
+    }
 
     int calculateChangeInProducedVaccinesByHealingDistrict(size_t countryID, const District &district);
 

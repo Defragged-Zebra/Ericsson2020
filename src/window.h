@@ -100,6 +100,7 @@ public:
         SDL_Quit();
     }
 
+    void createMinimalVaccinationMap(const Point &windowLoc, const Point &gridElement, size_t w, size_t h, size_t sep);
 };
 
 
