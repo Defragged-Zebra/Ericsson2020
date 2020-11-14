@@ -36,7 +36,7 @@ public:
     static void calculateScore(std::vector<ScoreHolder> &districtScores, const District &district, size_t countryID);
     static Point calculateStartPoint(const std::set<Field *>& fieldsToCalc, size_t countryID);
 
-    static void mikoltMedzsikIdea(const std::vector<Point>& startPoints, const std::set<Field *>& fieldsToHeal, std::vector<Field *>& result);
+    static void mikoltMedzsikIdea(const std::vector<Point>& startPoints, const std::set<Field *>& fieldsToHeal, std::vector<Field *>& result, size_t countryID);
 
     static std::vector<Point> calculateStartPoints(const std::set<Field *> &fieldsToCalc, size_t countryID);
 };

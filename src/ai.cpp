@@ -102,7 +102,7 @@ std::vector<VaccineData> AI::chooseFieldsToVaccinate(int numberOfVaccinesToDistr
         std::vector<Point> startPoints = AI::calculateStartPoints(fieldsToHeal, countryID);
         std::vector<Field*> fieldsToHealContinous;
         //floodDistrict(fromWhere, fieldsToHeal, fieldsToHealContinous);
-        mikoltMedzsikIdea(startPoints, fieldsToHeal, fieldsToHealContinous);
+        mikoltMedzsikIdea(startPoints, fieldsToHeal, fieldsToHealContinous,countryID);
         //ToDo check if fieldsToHeal is not empty --> nem volt folytonos a terület
         //check proposed by woranhun WARNING in extreme cases it can make problem
         if (maxScoredDistrict.ChangeInVaccines() < 0) break;
@@ -146,12 +146,12 @@ std::vector<VaccineData> AI::chooseFieldsToVaccinate(int numberOfVaccinesToDistr
 //            numberOfVaccinesToDistribute-=vaccines;
 //        }
 //    }
+if(!fieldsToHealSendBack.empty()){
     if (originalGrid->getCurrentTick() == 0) {
         auto district = originalGrid->getDistrictByPoint(fieldsToHealSendBack[0].getPoint());
         originalGrid->getCountryByID(countryID).addAssignedDistrict(&district);
     }
-
-
+}
 
     return fieldsToHealSendBack;
 }
@@ -206,12 +206,15 @@ AI::floodDistrict(const Point &p, std::set<Field*> &notVisitedFields, std::vecto
     }
 }
 // Pontok között keresünk legrövidebb utat. Ezek alapján vakcinázunk. Meglátjuk jó lesz-e.
-void AI::mikoltMedzsikIdea(const std::vector<Point>& startPoints, const std::set<Field *>& fieldsToHeal, std::vector<Field *>& result) {
+void AI::mikoltMedzsikIdea(const std::vector<Point>& startPoints, const std::set<Field *>& fieldsToHeal, std::vector<Field *>& result,size_t countryID) {
+    std::pair<std::vector <Point>,int> minPath({},INT_MAX);
     for (const auto& p:startPoints){
         Point end = grid2.getPointByFieldID((*fieldsToHeal.begin())->getFieldID());
         std::pair<std::vector <Point>,int> dijkstraResult;
         GraphAlgos ga;
-        ga.dijkstra(p, end, dijkstraResult);
+        ga.dijkstra(p, end, dijkstraResult,countryID);
+        if(dijkstraResult.second<minPath.second) minPath=dijkstraResult;
     }
+
 }
 

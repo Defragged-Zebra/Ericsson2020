@@ -140,7 +140,7 @@ void Iface::round(std::string &line) {
         int _countryID, TPC, RV;
         ss << tmp;
         ss >> _countryID >> TPC >> RV;
-        grid->addCountry(Country(_countryID, TPC, RV));
+        if(grid->getCurrentTick()==0)grid->addCountry(Country(_countryID, TPC, RV));
         //TODO: parse game-data here
         if (tmp.find("WARN") != std::string::npos) {
             Iface::sendDebugMsg(line);
