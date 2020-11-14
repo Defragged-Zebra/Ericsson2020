@@ -147,8 +147,6 @@ void Iface::round(std::string &line) {
             ss >> _countryID >> TPC >> RV;
             grid->addCountry(Country(_countryID, TPC, RV));
         }
-        if (tmp != ".\r" and tmp != ".")continue;
-        else break;
     }
     this->displayCurrentRound(_gameID, tickID, countryID);
     Logic::simulateTO(_gameID, tickID, countryID);

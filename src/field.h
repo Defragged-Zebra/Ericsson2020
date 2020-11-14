@@ -102,16 +102,6 @@ public:
         return std::max((int) std::ceil((infectionRate - vaccinationRate) / populationDensity),
                         vaccinesToPutMinimal(countryID));
     }
-
-    [[nodiscard]] int vaccinesToPutMinimal(size_t countryID) {
-        if (storedVaccines[countryID] > 0) return 0;
-        else return 6 - populationDensity;
-    }
-
-    [[nodiscard]] int vaccinesToPutForTotalHealing(size_t countryID) {
-        return std::max((int) std::ceil((infectionRate - vaccinationRate) / populationDensity),
-                        vaccinesToPutMinimal(countryID));
-    }
 };
 
 

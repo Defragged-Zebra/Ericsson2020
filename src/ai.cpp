@@ -182,9 +182,9 @@ Point AI::calculateStartPoint(const std::set<Field *> &fieldsToCalc, size_t coun
     }
     throw std::runtime_error("calculateStartPointFailed -- you tried to heal an invalid district");
     //return g->getCoordinatesByID((*fieldsToCalc.begin())->getFieldID());
+}
 
-
-std::vector<Point> AI::calculateStartPoints(const std::set<Field *>& fieldsToCalc, size_t countryID) {
+std::vector<Point> AI::calculateStartPoints(const std::set<Field *> &fieldsToCalc, size_t countryID) {
     Grid *g = Logic::getGrid();
     std::vector<Point> goodStartPoints;
     for (const auto field:fieldsToCalc) {
