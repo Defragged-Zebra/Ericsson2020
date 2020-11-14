@@ -43,8 +43,12 @@ public:
     static void modeB(int numberOfVaccinesToDistribute, size_t countryID, std::vector<ScoreHolder> &data,
                       std::vector<VaccineData> &fieldsToHealSendBack);
 
-    static int modeA(int numberOfVaccinesToDistribute, size_t countryID, std::vector<ScoreHolder> &data,
-                     std::vector<VaccineData> &fieldsToHealSendBack);
+    static void modeA(int &numberOfVaccinesToDistribute, size_t countryID, std::vector<ScoreHolder> &data,
+                      std::vector<VaccineData> &fieldsToHealSendBack);
+
+    static void addFieldsToHeal(int &numberOfVaccinesToDistribute, size_t countryID,
+                                std::vector<VaccineData> &fieldsToHealSendBack,
+                                ScoreHolder maxScoredDistrict);
 };
 
 

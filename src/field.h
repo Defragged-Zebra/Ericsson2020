@@ -82,15 +82,23 @@ public:
 
     [[nodiscard]] bool isClear() const { return infectionRate == 0; }
 
-    [[nodiscard]] std::map<size_t,int> getStoredVaccines()const{return storedVaccines;}
+    [[nodiscard]] std::map<size_t, int> getStoredVaccines() const { return storedVaccines; }
 
     void updateRemainingVaccines(int vaccinated);
+
     void callBackVaccines(int vaccines, size_t countryID);
+
     void pushVaccines(int vaccines, size_t countryID);
-    friend bool operator<(const Field &f1,const Field &f2){
-        return f1.getFieldID()<f2.getFieldID();
+
+    friend bool operator<(const Field &f1, const Field &f2) {
+        return f1.getFieldID() < f2.getFieldID();
     }
 
+    [[nodiscard]] int vaccinesToPutMinimal() const { return 6 - populationDensity; }
+
+    [[nodiscard]] int vaccinesToPutForTotalHealing() const {
+        return std::max((int) std::ceil((infectionRate - vaccinationRate) / populationDensity), vaccinesToPutMinimal());
+    }
 };
 
 
