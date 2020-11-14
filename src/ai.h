@@ -6,6 +6,7 @@
 #include "logic.h"
 #include "utils.h"
 #include "graphalgos.h"
+#include "graphalgos.h"
 
 #ifndef VIRUS_AI_H
 #define VIRUS_AI_H
@@ -39,21 +40,27 @@ public:
 
     static void startFromGridBorder(size_t countryID, std::vector<ScoreHolder> &districtScores);
 
-    static void startFromExistingDistricts(size_t countryID, std::vector<ScoreHolder> &districtScores);
+    static void startFromExistingDistricts(size_t countryID, std::vector<Point> &result);
 
-    static void modeB(int numberOfVaccinesToDistribute, size_t countryID, std::vector<ScoreHolder> &data,
+    static void modeB(int numberOfVaccinesToDistribute, size_t countryID, std::vector<ScoreHolder> &districtScores,
                       std::vector<VaccineData> &fieldsToHealSendBack);
 
-    static void modeA(int &numberOfVaccinesToDistribute, size_t countryID, std::vector<ScoreHolder> &data,
+    static void modeA(int &numberOfVaccinesToDistribute, size_t countryID, std::vector<ScoreHolder> &districtScores,
                       std::vector<VaccineData> &fieldsToHealSendBack);
 
-    static void addFieldsToHeal(int &numberOfVaccinesToDistribute, size_t countryID,
-                                std::vector<VaccineData> &fieldsToHealSendBack,
-                                ScoreHolder maxScoredDistrict);
+    static void addFieldsToHealWithFlood(int &numberOfVaccinesToDistribute, size_t countryID,
+                                         std::vector<VaccineData> &fieldsToHealSendBack,
+                                         ScoreHolder maxScoredDistrict);
 
     static void mikoltMedzsikIdea(const std::vector<Point>& startPoints, const std::set<Field *>& fieldsToHeal, std::vector<Field *>& result, size_t countryID);
 
     static std::vector<Point> calculateStartPoints(const std::set<Field *> &fieldsToCalc, size_t countryID);
+
+    static void addFieldsToHealWithDijsktra(int &numberOfVaccinesToDistribute, size_t countryID,
+                                            std::vector<VaccineData> &fieldsToHealSendBack,
+                                            ScoreHolder maxScoredDistrict, std::vector<Point> &startPoints);
+
+    static std::vector<Point> addBorderFields();
 };
 
 
