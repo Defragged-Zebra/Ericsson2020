@@ -72,9 +72,8 @@ void AI::calculateScore(std::set<ScoreHolder> &districtScores, const District &d
             //assuming grid is 1 tick in the future, and no unhealed district in the country
             vaccinesNeededForTotalHealing += fieldPointer->vaccinesToPutForTotalHealing(countryID);
         }
-        int changeInVaccines = grid2.calculateChangeInProducedVaccinesByHealingDistrict(countryID,
-                                                                                        district); //todo: +aStarPathVaccineCost;
-        //todo: store path to district (prob in scoreHolder as well?)
+        int changeInVaccines = grid2.calculateChangeInProducedVaccinesByHealingDistrict(countryID, district);
+
         score = Utils::ScoreHolder(changeInVaccines, vaccinesNeededForTotalHealing, district.getDistrictID());
         districtScores.insert(score);
     }
@@ -120,14 +119,14 @@ std::vector<VaccineData> AI::chooseFieldsToVaccinate(int numberOfVaccinesToDistr
     AI::calculateDistrictScoresForNextRound(countryID, districtScores);
 
     //calculate fields to heal
-    //if (grid2.getCurrentTick()<5) {
+    if (grid2.getCurrentTick() < 5) {
         modeB(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
-    /*}else {
+    } else {
         modeA(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
         if (fieldsToHealSendBack.empty()) {
             modeB(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
         }
-    }*/
+    }
     //TODO: refactor -- add start district(s) after first round
     if (originalGrid->getCurrentTick() == 0) {
         auto &district = originalGrid->getDistrictByPoint(fieldsToHealSendBack[0].getPoint());
@@ -199,9 +198,9 @@ Point AI::calculateStartPoint(const std::set<Field *> &fieldsToCalc, size_t coun
     Grid *g = Logic::getGrid();
     for (const auto field:fieldsToCalc) {
         const Point &p = g->getPointByFieldID(field->getFieldID());
-        if (g->getCountryByID(countryID).isNeighbourVaccinatedFields(p)) return p;
+        if (g->getCountryByID(countryID).isNeighbourToVaccinatedField(p)) return p;
     }
-    throw std::runtime_error("calculateStartPointFailed -- you tried to heal an invalid place");
+    throw std::runtime_error("calculateStartPointFailed -- you tried to heal an invalid area");
     //return g->getCoordinatesByID((*fieldsToCalc.begin())->getFieldID());
 }
 
@@ -210,7 +209,7 @@ std::vector<Point> AI::calculateStartPoints(const std::set<Field *> &fieldsToCal
     std::vector<Point> goodStartPoints;
     for (const auto field:fieldsToCalc) {
         const Point &p = g->getPointByFieldID(field->getFieldID());
-        if (g->getCountryByID(countryID).isNeighbourVaccinatedFields(p)) {
+        if (g->getCountryByID(countryID).isNeighbourToVaccinatedField(p)) {
             goodStartPoints.push_back(p);
         }
     }
@@ -318,6 +317,7 @@ std::vector<Point> AI::addBorderFields() {
     }
     return border;
 }
+
 std::vector<Point> AI::addBorderFields(size_t districtID) {
     //ToDo ezt elég 1x kiszámolni
     std::vector<Point> border;

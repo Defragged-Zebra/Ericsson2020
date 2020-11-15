@@ -2,7 +2,7 @@
 #include <fstream>
 
 //#define PROD
-//#define PRODTEST
+#define PRODTEST
 
 #include "antiVirus.h"
 #ifndef PROD

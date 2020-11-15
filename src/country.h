@@ -66,7 +66,7 @@ public:
     void addToVaccinatedFields(const Point& p){
         vaccinatedFields.insert(p);
     }
-    [[nodiscard]] bool isNeighbourVaccinatedFields(const Point& p)const;
+    [[nodiscard]] bool isNeighbourToVaccinatedField(const Point& p)const;
 };
 
 
