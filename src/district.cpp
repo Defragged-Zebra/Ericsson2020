@@ -35,3 +35,7 @@ bool District::isFieldInDistrict(size_t fieldID) {
      */
 }
 
+void District::clearAssignedFields() {
+    assignedFields.clear();
+}
+

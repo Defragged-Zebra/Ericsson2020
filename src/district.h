@@ -17,8 +17,8 @@ class District {
     //TODO: ennel valami jobbat (am meg atnezni hogy tuti kell-e ez ide)
     size_t assignedCountryID= -1;
     //"cannot store reference in std::vector, it is simply not allowed" - stackoverflow
-    std::set<Field*> assignedFields;
-    std::set<size_t> neighbourDistricts;
+    std::set<Field*> assignedFields{};
+    std::set<size_t> neighbourDistricts{};
     bool clear{};
 public:
     District() = default;
@@ -29,6 +29,7 @@ public:
             this->assignedFields = d.assignedFields;
             this->neighbourDistricts = d.neighbourDistricts;
             this->assignedCountryID = d.assignedCountryID;
+            this->clear = d.clear;
         }
         return *this;
     }
@@ -72,6 +73,8 @@ public:
 
     void setAssignedCountryID(size_t countryID) { assignedCountryID = countryID; }
     bool isFieldInDistrict(size_t fieldID);
+
+    void clearAssignedFields();
 };
 
 

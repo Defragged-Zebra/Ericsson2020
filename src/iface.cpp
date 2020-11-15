@@ -112,7 +112,7 @@ void Iface::start() {
         }
 #ifndef PROD
         grid->updateClearByFieldCheck();
-        //if(grid->isClear())break;
+        if(grid->isClear())break;
 #endif
     }
 }
@@ -174,6 +174,6 @@ void Iface::round(std::string &line) {
         os << "PUT " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
     }
     os << "." << std::endl;
-    //if(grid->getCurrentTick()==2) exit(0);
+    if(grid->getCurrentTick()==1) exit(0);
 
 }

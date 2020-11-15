@@ -14,19 +14,52 @@
 #include <algorithm>
 
 class Grid {
-    std::vector<std::vector<size_t>> grid;
-    std::vector<Country> countries;
-    std::vector<District *> districts;
-    std::vector<Field *> fields;
-    size_t width;
-    size_t height;
+    std::vector<std::vector<size_t>> grid{};
+    std::vector<Country> countries{};
+    std::vector<District *> districts{};
+    std::vector<Field *> fields{};
+    size_t width{};
+    size_t height{};
     size_t currentTick = 0;
     bool clear = false;
 
 public:
-    Grid() = delete;
+    Grid() = default;
 
-    Grid(const Grid &g) = delete;
+    Grid(const Grid &g){
+        *this = g;
+    }
+
+    Grid &operator=(const Grid& g) {
+        if (this != &g) {
+            this->width = g.width;
+            this->height = g.height;
+            this->currentTick = g.currentTick;
+            this->random = g.random;
+            this->grid = g.grid;
+            this->fields.clear();
+            for (auto f:g.fields) {
+                this->fields.push_back(new Field(*f));
+            }
+            this->districts.clear();
+            for (auto d:g.districts) {
+                auto* tmp =new District(*d);
+                tmp->clearAssignedFields();
+                this->districts.push_back(tmp);
+            }
+
+            for (size_t y = 0; y < this->getHeight(); ++y) {
+                for (size_t x = 0; x < this->getWidth(); ++x) {
+                    Point center(y, x);
+                    std::vector<Point> coordinates = center.getNeighbours();
+                    District centerDistrict = this->getDistrictByPoint(center);
+                    this->getDistrictByPoint(Point(y, x)).addAssignedField(&this->getFieldByPoint(Point(y, x)));
+                }
+            }
+            this->countries = g.countries;
+        }
+        return *this;
+    }
 
     Grid &operator=(const Grid *g) {
         if (this != g) {
@@ -172,10 +205,10 @@ public:
     }
 
     ~Grid() {
-        for (const auto field:fields) {
+        for (const auto& field:fields) {
             delete field;
         }
-        for (const auto district:districts) {
+        for (const auto& district:districts) {
             delete district;
         }
     }
