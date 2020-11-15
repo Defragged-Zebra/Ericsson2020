@@ -21,6 +21,7 @@ class Country {
     //similar to field
     std::set<District*> assignedDistricts;
     std::set<Point> vaccinatedFields;
+    std::set<Point> border;
 public:
     Country() =default;
     Country(size_t ID, size_t TPC, size_t RV){
@@ -46,6 +47,7 @@ public:
             this->reservedVaccines = c.reservedVaccines;
             this->assignedDistricts = c.assignedDistricts;
             this->vaccinatedFields = c.vaccinatedFields;
+            this->border = c.border;
         }
         return *this;
     }
@@ -67,6 +69,13 @@ public:
         vaccinatedFields.insert(p);
     }
     [[nodiscard]] bool isNeighbourToVaccinatedField(const Point& p)const;
+    void setBorder(std::set<Point>& bord){
+        border.clear();
+        border=bord;
+    }
+    std::set<Point> getBorder(){
+        return border;
+    }
 };
 
 

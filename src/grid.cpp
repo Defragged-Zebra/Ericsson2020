@@ -43,12 +43,6 @@ std::ostream &operator<<(std::ostream &os, const Grid &g) {
     return os;
 }
 
-Point Grid::getPointByFieldID(size_t ID) const {
-    size_t y = ID / width; //integer division is a design choice
-    size_t x = ID - (width * y);
-    return Point(y, x);
-}
-
 int Grid::calculateChangeInProducedVaccinesByHealingDistrict(size_t countryID, const District &district) {
     int changeInVaccines = 0;
     for (auto fieldPointer:district.getAssignedFields()) {

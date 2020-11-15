@@ -1,8 +1,6 @@
 //
 // Created by flow on 2020. 11. 06..
 //
-
-#include <z3.h>
 #include "window.h"
 
 void Window::update() {

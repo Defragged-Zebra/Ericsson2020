@@ -49,6 +49,8 @@ public:
     static int calculateVaccination(const Point &p, int &spontaneousHealAmount);
 
     static void shiftFactor2to4();
+
+    static void calculateBorder(size_t countryID);
 };
 
 

@@ -124,12 +124,14 @@ public:
 
     size_t numberOfDistricts() { return districts.size(); }
 
-    [[nodiscard]] Point getPointByFieldID(size_t ID) const;
+    [[nodiscard]] Point getPointByFieldID(size_t ID) const {
+        return Point(ID);
+    }
 
     [[nodiscard]] std::vector<Field *> getNeihboursOfField(size_t FieldID) const {
         std::vector<Field *> retVals;
         std::vector<Point> neighbourPoints = this->getPointByFieldID(FieldID).getNeighbours();
-        for (auto p: neighbourPoints) {
+        for (const auto& p: neighbourPoints) {
             if (p.withinBounds())retVals.push_back(this->fields[this->grid[p.getY()][p.getX()]]);
         }
         return retVals;
@@ -141,7 +143,7 @@ public:
     [[nodiscard]] std::vector<Field *> getNeihboursOfField(const Field *f) const {
         std::vector<Field *> retVals;
         std::vector<Point> neighbourPoints = this->getPointByFieldID(f->getFieldID()).getNeighbours();
-        for (auto p: neighbourPoints) {
+        for (const auto& p: neighbourPoints) {
             if (p.withinBounds())retVals.push_back(this->fields[this->grid[p.getY()][p.getX()]]);
         }
         return retVals;
@@ -158,7 +160,7 @@ public:
         clear = allClear;
     }
 
-    bool isClear() { return clear; }
+    [[nodiscard]] bool isClear() const { return clear; }
 
     ~Grid() {
         for (const auto field:fields) {

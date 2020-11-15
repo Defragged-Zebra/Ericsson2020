@@ -49,6 +49,9 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
                 grid->getFieldByPoint(Point(y, x)).updateInfection(inf);
             }
         }
+
+        calculateBorder(countryID);
+
         grid->IncreaseCurrentTick();
     }
 
@@ -279,4 +282,22 @@ void Logic::simulateVaccination(const std::vector<VaccineData> &back, const std:
     for (const auto &p:put) {
         grid->getFieldByPoint(p.getPoint()).pushVaccines(p.getVaccines(), p.getCounrtyID());
     }
+}
+
+void Logic::calculateBorder(size_t countryID) {
+    std::set<Point> border;
+    for (auto d:grid->getCountryByID(countryID).getAssignedDistricts()) {
+        for (auto f:d->getAssignedFields()) {
+            auto center = Point(f->getFieldID());
+            for (const auto &p:center.getNeighbours()) {
+                if (grid->getDistrictByPoint(p) != grid->getDistrictByPoint(center)) {
+                    if (!grid->getDistrictByPoint(p).isClear()) {
+                        border.insert(center);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    grid->getCountryByID(countryID).setBorder(border);
 }

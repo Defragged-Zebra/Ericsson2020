@@ -37,6 +37,11 @@ public:
     public:
         Point() = default;
 
+        explicit Point(size_t fieldID){
+            this->y = fieldID / gridWidth; //integer division is a design choice
+            this->x = fieldID - (gridWidth * this->y);
+        }
+
         Point(size_t y, size_t x) {
             this->y = y;
             this->x = x;

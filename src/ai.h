@@ -40,9 +40,6 @@ public:
 
     static void startFromGridBorder(size_t countryID, std::set<ScoreHolder> &districtScores);
 
-    static void findBorder(size_t countryID, std::vector<Point> &result);
-
-
     static void modeB(int numberOfVaccinesToDistribute, size_t countryID, std::set<ScoreHolder> &districtScores,
                       std::vector<VaccineData> &fieldsToHealSendBack);
 
@@ -62,9 +59,9 @@ public:
                                             std::vector<VaccineData> &fieldsToHealSendBack,
                                             const ScoreHolder& maxScoredDistrict, std::vector<Point> &startPoints);
 
-    static std::vector<Point> addBorderFields();
+    static std::vector<Point> mapAddBorderFields();
 
-    static std::vector<Point> addBorderFields(size_t districtID);
+    static std::vector<Point> mapAddBorderFieldsForDistrict(size_t districtID);
 };
 
 
