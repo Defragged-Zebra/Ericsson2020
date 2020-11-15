@@ -119,14 +119,14 @@ std::vector<VaccineData> AI::chooseFieldsToVaccinate(int numberOfVaccinesToDistr
     AI::calculateDistrictScoresForNextRound(countryID, districtScores);
 
     //calculate fields to heal
-    //if (grid2.getCurrentTick() < 5) {
+    if (grid2.getCurrentTick() < 5) {
         modeB(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
-    //} else {
-     //   modeA(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
+    } else {
+        modeA(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
      //   if (fieldsToHealSendBack.empty()) {
      //       modeB(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
      //   }
-    //}
+    }
     //TODO: refactor -- add start district(s) after first round
     if (originalGrid->getCurrentTick() == 0) {
         auto &district = originalGrid->getDistrictByPoint(fieldsToHealSendBack[0].getPoint());
