@@ -107,8 +107,8 @@ void Window::createGrid(const Point& windowLoc,const Point& gridSize, size_t sep
         for (size_t x = 0; x < gridSize.getX(); ++x) {
             createDistrictCell(Point(y, x), Point(y, x), sidelen, sidelen, sep+1);
             createInfectionHeatMap(Point(y,x+gridSize.getX()*(sep+1+sidelen)+20*sep+10), Point(y,x), sidelen, sidelen, sep);
-            createVaccinationMap(Point(y,(x+gridSize.getX()*(sep+sidelen)+20*sep)*2+100), Point(y,x), sidelen, sidelen, sep);
-            //createMinimalVaccinationMap(Point(y,(x+gridSize.getX()*(sep+sidelen)+20*sep)*2+100), Point(y,x), sidelen, sidelen, sep);
+            //createVaccinationMap(Point(y,(x+gridSize.getX()*(sep+sidelen)+20*sep)*2+100), Point(y,x), sidelen, sidelen, sep);
+            createMinimalVaccinationMap(Point(y,(x+gridSize.getX()*(sep+sidelen)+20*sep)*2+100), Point(y,x), sidelen, sidelen, sep);
         }
     }
 }
