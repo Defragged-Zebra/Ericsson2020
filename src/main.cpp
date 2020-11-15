@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 
-//#define PROD
+#define PROD
 #define PRODTEST
 
 #include "antiVirus.h"

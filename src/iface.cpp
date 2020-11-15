@@ -5,8 +5,7 @@
 #include "iface.h"
 
 void Iface::initAntiVirus() {
-    login(1);
-
+    login();
     std::string line;
     std::getline(is, line);
     std::stringstream ss;
