@@ -25,10 +25,10 @@ void Window::update(){
             }
             if(event.type==SDL_MOUSEBUTTONUP){
                 if(pressed){
-                    SDL_GetGlobalMouseState(&x,&y);
+                    SDL_GetMouseState(&x,&y);
                     SDL_Rect clearA({1550,0,1800-1550,1000-0});
                     SDL_FillRect(screen, &clearA, SDL_MapRGB (screen->format, 0, 0, 0));
-                    showStatus(Point(0,1550),Point(std::floor((y/21.0))-8,std::floor(x/21.0)-5),100,50,10);
+                    showStatus(Point(0,1550),Point(std::floor((y/21.0)),std::floor(x/21.0)),100,50,10);
                     y=0;x=0;
                 }
                 pressed=false;
