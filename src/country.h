@@ -18,9 +18,8 @@ class Country {
     size_t countryID{};
     int totalProductionCapacity{};
     int reservedVaccines{};
-    //similar to field
     std::set<size_t> assignedDistricts{};
-    std::set<Point> vaccinatedFields{};
+    std::map<size_t,std::set<Point>> vaccinatedFields{};
     std::set<Point> border{};
 public:
     Country() = default;
@@ -28,7 +27,7 @@ public:
     Country(size_t ID, size_t TPC, size_t RV) {
         this->countryID = ID;
         this->totalProductionCapacity = TPC;
-        this->reservedVaccines =RV;
+        this->reservedVaccines = RV;
         this->assignedDistricts = std::set<size_t>();
     }
 
@@ -54,11 +53,11 @@ public:
     }
 
     [[nodiscard]] std::set<size_t> getAssignedDistricts() const { return assignedDistricts; }
-    void addAssignedDistrict(size_t district){assignedDistricts.insert(district);
-    void addAssignedDistrict(District *district) {
-            assignedDistricts.insert(district);
-            vaccinatedFields[district->getDistrictID()].clear();
-        }
+
+    void addAssignedDistrict(size_t district) {
+        assignedDistricts.insert(district);
+        vaccinatedFields[district].clear();
+    }
 
     friend std::ostream &operator<<(std::ostream &os, const Country &c);
 

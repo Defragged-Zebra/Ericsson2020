@@ -14,7 +14,7 @@ Overview of AI
 #include "ai.h"
 
 uint64_t fuckCpp[4] = {0};
-Grid* AI::grid2 = new Grid(0, 0, fuckCpp);
+Grid *AI::grid2 = new Grid(0, 0, fuckCpp);
 
 
 void AI::calculateDistrictScoresForNextRound(size_t countryID, std::set<ScoreHolder> &districtScores) {
@@ -107,9 +107,9 @@ std::vector<VaccineData> AI::chooseFieldsToVaccinate(int numberOfVaccinesToDistr
         modeB(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
     } else {
         modeA(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
-     //   if (fieldsToHealSendBack.empty()) {
-     //       modeB(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
-     //   }
+        //   if (fieldsToHealSendBack.empty()) {
+        //       modeB(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
+        //   }
     }
     //TODO: refactor -- add start district(s) after first round
     if (originalGrid->getCurrentTick() == 0) {
@@ -166,13 +166,13 @@ void AI::modeB(int numberOfVaccinesToDistribute, size_t countryID, std::set<Scor
 
     //spend remaining vaccines with ||(numberOfVaccinesToDistribute > 10 * (grid2->getCurrentTick() - 1)))
     while (!orderedDistrictScores.empty() and (fieldsToHealSendBack.empty() or
-           (numberOfVaccinesToDistribute > 10 * (grid2->getCurrentTick() - 1)))) {
+                                               (numberOfVaccinesToDistribute > 10 * (grid2->getCurrentTick() - 1)))) {
         ScoreHolder topElement = orderedDistrictScores.top();
         if (grid2->getCurrentTick() == 1) {
             startPoints = mapAddBorderFieldsForDistrict(orderedDistrictScores.top().getDistrictID());
         } else {
-            std::set<Point >calcBorder = grid2->getCountryByID(countryID).getBorder();
-            startPoints = std::vector<Point> (calcBorder.begin(),calcBorder.end());
+            std::set<Point> calcBorder = grid2->getCountryByID(countryID).getBorder();
+            startPoints = std::vector<Point>(calcBorder.begin(), calcBorder.end());
         }
         addFieldsToHealWithDijsktra(numberOfVaccinesToDistribute, countryID, fieldsToHealSendBack,
                                     topElement, startPoints);
@@ -208,13 +208,13 @@ std::vector<VaccineData> &
 AI::calculatePutVaccines(std::vector<VaccineData> &put, int numberOfVaccinesToDistribute, size_t countryID) {
     put = chooseFieldsToVaccinate(numberOfVaccinesToDistribute, countryID);
     Country &c = Logic::getGrid()->getCountryByID(countryID);
-    for (const auto &vd:put) c.addToVaccinatedFields(vd.getPoint());
+    for (const auto &vd:put)
+        c.addToVaccinatedFields(vd.getPoint(), AI::grid2->getDistrictByPoint(vd.getPoint()).getDistrictID());
     return put;
 }
 
-//floood kap egy Field tömböt + egy pontot, ezt olyan sorrandbe rendezni, hogy lerakható legyen.
-void
-AI::floodDistrict(const Point &p, std::set<Field *> &notVisitedFields, std::vector<Field *> &orderedFields) {
+//flood kap egy Field tömböt + egy pontot, ezt olyan sorrandbe rendezni, hogy lerakható legyen.
+void AI::floodDistrict(const Point &p, std::set<Field *> &notVisitedFields, std::vector<Field *> &orderedFields) {
     if (!p.withinBounds())return;
     //Ez itt egy lamda függvény :(
     auto centerIter = std::find_if(notVisitedFields.begin(), notVisitedFields.end(), [p](Field *const &obj) {

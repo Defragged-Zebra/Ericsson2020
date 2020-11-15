@@ -13,10 +13,9 @@
 
 
 class AI {
-    //this is a copy, NOT a reference/pointer
+    //this is a copy
     static Grid* grid2;
 
-    //it is important to COPY the grid
     static void calculateDistrictScoresForNextRound(size_t countryID, std::set<ScoreHolder> &districtScores);
 
     static std::vector<VaccineData>
