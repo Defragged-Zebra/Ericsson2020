@@ -35,6 +35,7 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
                                                                                                       p));
                         int existing = grid->getCountryByID(countryID).getTotalProductionCapacity();
                         grid->getCountryByID(countryID).setTotalProductionCapacity(existing + change);
+                        grid->getCountryByID(countryID).setReserveVaccines(grid->getCountryByID(countryID).getReserveVaccines()+grid->getCountryByID(countryID).getTotalProductionCapacity());
 #endif
                     }
                 }

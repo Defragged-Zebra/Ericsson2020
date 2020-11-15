@@ -191,7 +191,11 @@ void AI::modeB(int numberOfVaccinesToDistribute, size_t countryID, std::set<Scor
 //        orderedDistrictScores.pop();
     while(!orderedDistrictScores.empty() and fieldsToHealSendBack.empty()){
         ScoreHolder topElement=orderedDistrictScores.top();
-        startPoints = addBorderFields(topElement.getDistrictID());
+        if(grid2.getCurrentTick()==1){
+            startPoints = addBorderFields(topElement.getDistrictID());
+        }else{
+            startFromExistingDistricts(countryID,startPoints);
+        }
         addFieldsToHealWithDijsktra(numberOfVaccinesToDistribute, countryID, fieldsToHealSendBack,
                                     orderedDistrictScores.top(), startPoints);
         orderedDistrictScores.pop();
