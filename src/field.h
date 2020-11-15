@@ -103,7 +103,8 @@ public:
     }
 
     [[nodiscard]] int vaccinesToPutMinimal(size_t countryID) {
-        if (isClear() or storedVaccines[countryID] > 0) return 0;
+        //DAFQ??????????? megbaszlak, ha ide még 1x isClear-t teszel....
+        if (storedVaccines[countryID] > 0) return 0;
         else return 6 - populationDensity;
     }
 

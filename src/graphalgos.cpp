@@ -48,7 +48,6 @@ void GraphAlgos::dijkstra(const Point &start, const Point &goal, std::pair<std::
         }
     }
     std::vector<Point> path;
-
     result = std::pair(path, calcPath(parent, path, g->getFieldByPoint(start).getFieldID(),
                                       g->getFieldByPoint(goal).getFieldID()));
 }

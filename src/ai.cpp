@@ -278,8 +278,8 @@ void AI::addFieldsToHealWithDijsktra(int &numberOfVaccinesToDistribute, size_t c
                 result = std::pair(std::vector(1, startPoint),
                                    grid2.getFieldByPoint(startPoint).vaccinesToPutMinimal(countryID));
             } else {
-                result.first.push_back(startPoint);
                 ga.dijkstra(startPoint, endPoint, result, countryID);
+                result.first.insert(result.first.begin(), 1, startPoint);
                 result.second += grid2.getFieldByPoint(startPoint).vaccinesToPutMinimal(countryID);
             }
             if (minResult.second > result.second) {
