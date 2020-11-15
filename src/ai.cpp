@@ -92,6 +92,7 @@ std::vector<VaccineData> AI::chooseFieldsToVaccinate(int numberOfVaccinesToDistr
     //simulate next round
     Logic::setGrid(&AI::grid2);
     Logic::simulateTO(0, grid2.getCurrentTick() + 1, countryID);
+
     Logic::setGrid(originalGrid);
 
     //check if grid is clear
