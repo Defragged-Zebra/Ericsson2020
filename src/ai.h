@@ -45,7 +45,7 @@ public:
     static void modeB(int numberOfVaccinesToDistribute, size_t countryID, std::set<ScoreHolder> &districtScores,
                       std::vector<VaccineData> &fieldsToHealSendBack);
 
-    static void modeA(int &numberOfVaccinesToDistribute, size_t countryID, std::vector<ScoreHolder> &districtScores,
+    static void modeA(int &numberOfVaccinesToDistribute, size_t countryID, std::set<ScoreHolder> &districtScores,
                       std::vector<VaccineData> &fieldsToHealSendBack);
 
     static void addFieldsToHealWithFlood(int &numberOfVaccinesToDistribute, size_t countryID,

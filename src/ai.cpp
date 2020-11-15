@@ -119,15 +119,15 @@ std::vector<VaccineData> AI::chooseFieldsToVaccinate(int numberOfVaccinesToDistr
     AI::calculateDistrictScoresForNextRound(countryID, districtScores);
 
     //calculate fields to heal
-    modeB(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
-    /*
-    //ToDo Filter out districts which cannot be reached. -- this is done I think
-    modeA(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
-    if (fieldsToHealSendBack.empty()) {
+    //if (grid2.getCurrentTick()<5) {
         modeB(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
+    /*}else {
+        modeA(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
+        if (fieldsToHealSendBack.empty()) {
+            modeB(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
+        }
     }*/
-
-    //TODO: refactor -- start points after first round
+    //TODO: refactor -- add start district(s) after first round
     if (originalGrid->getCurrentTick() == 0) {
         auto &district = originalGrid->getDistrictByPoint(fieldsToHealSendBack[0].getPoint());
         originalGrid->getCountryByID(countryID).addAssignedDistrict(&district);
@@ -136,7 +136,7 @@ std::vector<VaccineData> AI::chooseFieldsToVaccinate(int numberOfVaccinesToDistr
 }
 
 //mode A: We check if we can heal entire districts in 1 turn, so our production capacity can increase
-void AI::modeA(int &numberOfVaccinesToDistribute, size_t countryID, std::vector<ScoreHolder> &districtScores,
+void AI::modeA(int &numberOfVaccinesToDistribute, size_t countryID, std::set<ScoreHolder> &districtScores,
                std::vector<VaccineData> &fieldsToHealSendBack) {
     std::priority_queue<ScoreHolder, std::vector<ScoreHolder>, Compare::ProfIndex> orderedDistrictScores(
             districtScores.begin(), districtScores.end());
@@ -200,7 +200,7 @@ Point AI::calculateStartPoint(const std::set<Field *> &fieldsToCalc, size_t coun
         const Point &p = g->getPointByFieldID(field->getFieldID());
         if (g->getCountryByID(countryID).isNeighbourVaccinatedFields(p)) return p;
     }
-    throw std::runtime_error("calculateStartPointFailed -- you tried to heal an invalid district");
+    throw std::runtime_error("calculateStartPointFailed -- you tried to heal an invalid place");
     //return g->getCoordinatesByID((*fieldsToCalc.begin())->getFieldID());
 }
 
