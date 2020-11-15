@@ -323,6 +323,7 @@ void Window::showStatus(const Point &windowLoc, const Point &gridElement, size_t
     if (!gridElement.withinBounds())return;
     std::string text;
     std::stringstream ss;
+    ss <<"TickID: " <<grid->getCurrentTick() <<std::endl;
     ss << "Y: " << gridElement.getY() << " X: " << gridElement.getX() << std::endl;
     ss << grid->getFieldByPoint(gridElement) << std::endl;
     int lineH = 0;

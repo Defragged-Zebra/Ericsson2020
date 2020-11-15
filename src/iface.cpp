@@ -5,7 +5,8 @@
 #include "iface.h"
 
 void Iface::initAntiVirus() {
-    login();
+    login(1299122113);
+
     std::string line;
     std::getline(is, line);
     std::stringstream ss;
@@ -111,7 +112,7 @@ void Iface::start() {
         }
 #ifndef PROD
         grid->updateClearByFieldCheck();
-        if(grid->isClear())break;
+        //if(grid->isClear())break;
 #endif
     }
 }
