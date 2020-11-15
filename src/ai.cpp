@@ -270,11 +270,12 @@ void AI::addFieldsToHealWithDijsktra(int &numberOfVaccinesToDistribute, size_t c
     }
     GraphAlgos ga;
     std::pair<std::vector<Point>, int> result;
-    std::pair<std::vector<Point>, int> minResult({Point(-1, -1)}, INT_MAX);
     Point startPForMinimum;
     for (const auto &endPoint:endPoints) {
+        std::pair<std::vector<Point>, int> minResult({Point(-1, -1)}, INT_MAX);
         for (const auto &startPoint:startPoints) {
             if (startPoint == endPoint) {
+                //this if part is not needed, and result should be total healing btw
                 result = std::pair(std::vector(1, startPoint),
                                    grid2.getFieldByPoint(startPoint).vaccinesToPutMinimal(countryID));
             } else {
@@ -287,17 +288,21 @@ void AI::addFieldsToHealWithDijsktra(int &numberOfVaccinesToDistribute, size_t c
                 startPForMinimum = startPoint;
             }
         }
-    }
-    if (numberOfVaccinesToDistribute >= minResult.second) {
+        //we want a path to each endpoint
         for (const auto &p:minResult.first) {
-            int vaccines = grid2.getFieldByPoint(p).vaccinesToPutMinimal(countryID);
-            if (numberOfVaccinesToDistribute > vaccines) {
-                fieldsToHealSendBack.emplace_back(VaccineData(p, vaccines, countryID));
-                numberOfVaccinesToDistribute -= vaccines;
-            } else {
-                //todo: ez lehet fog majd gondot okozni
-                return;
+            //the put should omit it too, if we've already put vaccines to that field in this round -- this would solve the sometimes duplicates error below too
+            if (!grid2.getDistrictByPoint(p).isClear()) {
+                int vaccines = grid2.getFieldByPoint(p).vaccinesToPutMinimal(countryID);
+                if (numberOfVaccinesToDistribute >= vaccines) {
+                    fieldsToHealSendBack.emplace_back(VaccineData(p, vaccines, countryID));
+                    numberOfVaccinesToDistribute -= vaccines;
+                    //sometimes duplicates
+                    startPoints.emplace_back(p);
+                } else {
+                    return;
+                }
             }
+
         }
     }
 

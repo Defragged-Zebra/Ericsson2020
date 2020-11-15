@@ -28,6 +28,7 @@ class Window {
     SDL_Color green = {0, 255, 0};
     SDL_Color blue = {0, 0, 255};
     std::vector<SDL_Color> colors;
+    size_t mode = 0;
 
 public:
     Window &operator=(const Window &) = delete;
@@ -106,7 +107,7 @@ public:
 
     void createMinimalVaccinationMap(const Point &windowLoc, const Point &gridElement, size_t w, size_t h, size_t sep);
 
-    void showStatus(const Point &windowLoc, const Point &gridElement, size_t w=100, size_t h=900, size_t sep=5);
+    void showStatus(const Point &windowLoc, const Point &gridElement, size_t w = 100, size_t h = 900, size_t sep = 5);
 };
 
 
