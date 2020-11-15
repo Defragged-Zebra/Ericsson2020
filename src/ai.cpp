@@ -119,14 +119,14 @@ std::vector<VaccineData> AI::chooseFieldsToVaccinate(int numberOfVaccinesToDistr
     AI::calculateDistrictScoresForNextRound(countryID, districtScores);
 
     //calculate fields to heal
-    if (grid2.getCurrentTick() < 5) {
+    //if (grid2.getCurrentTick() < 5) {
         modeB(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
-    } else {
-        modeA(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
-        if (fieldsToHealSendBack.empty()) {
-            modeB(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
-        }
-    }
+    //} else {
+     //   modeA(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
+     //   if (fieldsToHealSendBack.empty()) {
+     //       modeB(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
+     //   }
+    //}
     //TODO: refactor -- add start district(s) after first round
     if (originalGrid->getCurrentTick() == 0) {
         auto &district = originalGrid->getDistrictByPoint(fieldsToHealSendBack[0].getPoint());
@@ -164,9 +164,7 @@ void AI::addFieldsToHealWithFlood(int &numberOfVaccinesToDistribute, size_t coun
         int vaccinesToBeUsed = field->vaccinesToPutForTotalHealing(countryID);
         if (numberOfVaccinesToDistribute > vaccinesToBeUsed) {
             numberOfVaccinesToDistribute -= vaccinesToBeUsed;
-            VaccineData vc = VaccineData(grid2.getCoordinatesByID(field->getFieldID()), vaccinesToBeUsed,
-                                         countryID);
-            //TODO: a-star algo modifies here too
+            VaccineData vc = VaccineData(grid2.getCoordinatesByID(field->getFieldID()), vaccinesToBeUsed, countryID);
             fieldsToHealSendBack.push_back(vc);
         }
     }
@@ -181,7 +179,10 @@ void AI::modeB(int numberOfVaccinesToDistribute, size_t countryID, std::set<Scor
     std::vector<Point> startPoints;
 
     //ToDO refactor orderedDistrictScores
-    while (!orderedDistrictScores.empty() and fieldsToHealSendBack.empty()) {
+
+    //spend remaining vaccines with ||(numberOfVaccinesToDistribute > 10 * (grid2.getCurrentTick() - 1)))
+    while (!orderedDistrictScores.empty() and (fieldsToHealSendBack.empty() or
+           (numberOfVaccinesToDistribute > 10 * (grid2.getCurrentTick() - 1)))) {
         ScoreHolder topElement = orderedDistrictScores.top();
         if (grid2.getCurrentTick() == 1) {
             startPoints = addBorderFields(topElement.getDistrictID());
@@ -189,9 +190,10 @@ void AI::modeB(int numberOfVaccinesToDistribute, size_t countryID, std::set<Scor
             findBorder(countryID, startPoints);
         }
         addFieldsToHealWithDijsktra(numberOfVaccinesToDistribute, countryID, fieldsToHealSendBack,
-                                    orderedDistrictScores.top(), startPoints);
+                                    topElement, startPoints);
         orderedDistrictScores.pop();
     }
+
 }
 
 Point AI::calculateStartPoint(const std::set<Field *> &fieldsToCalc, size_t countryID) {
@@ -260,7 +262,7 @@ void AI::mikoltMedzsikIdea(const std::vector<Point> &startPoints, const std::set
 
 void AI::addFieldsToHealWithDijsktra(int &numberOfVaccinesToDistribute, size_t countryID,
                                      std::vector<VaccineData> &fieldsToHealSendBack,
-                                     ScoreHolder maxScoredDistrict, std::vector<Point> &startPoints) {
+                                     const ScoreHolder &maxScoredDistrict, std::vector<Point> &startPoints) {
     District district = grid2.getDistrictByID(maxScoredDistrict.getDistrictID());
     std::vector<Point> endPoints;
     for (auto field:district.getAssignedFields()) {
@@ -289,9 +291,11 @@ void AI::addFieldsToHealWithDijsktra(int &numberOfVaccinesToDistribute, size_t c
             }
         }
         //we want a path to each endpoint
+        if (minResult.second > numberOfVaccinesToDistribute) return;
         for (const auto &p:minResult.first) {
             //the put should omit it too, if we've already put vaccines to that field in this round -- this would solve the sometimes duplicates error below too
-            if (!grid2.getDistrictByPoint(p).isClear()) {
+            if (!grid2.getDistrictByPoint(p).isClear() or
+                (grid2.getFieldByPoint(p).getStoredVaccines()[countryID] > 0)) {
                 int vaccines = grid2.getFieldByPoint(p).vaccinesToPutMinimal(countryID);
                 if (numberOfVaccinesToDistribute >= vaccines) {
                     fieldsToHealSendBack.emplace_back(VaccineData(p, vaccines, countryID));
