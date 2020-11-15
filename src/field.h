@@ -112,6 +112,8 @@ public:
         return std::max((int) std::ceil((infectionRate - vaccinationRate) / populationDensity),
                         vaccinesToPutMinimal(countryID));
     }
+
+
 };
 
 

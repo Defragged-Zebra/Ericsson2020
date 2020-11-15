@@ -131,7 +131,7 @@ public:
     [[nodiscard]] std::vector<Field *> getNeihboursOfField(size_t FieldID) const {
         std::vector<Field *> retVals;
         std::vector<Point> neighbourPoints = this->getPointByFieldID(FieldID).getNeighbours();
-        for (const auto& p: neighbourPoints) {
+        for (const auto &p: neighbourPoints) {
             if (p.withinBounds())retVals.push_back(this->fields[this->grid[p.getY()][p.getX()]]);
         }
         return retVals;
@@ -143,7 +143,7 @@ public:
     [[nodiscard]] std::vector<Field *> getNeihboursOfField(const Field *f) const {
         std::vector<Field *> retVals;
         std::vector<Point> neighbourPoints = this->getPointByFieldID(f->getFieldID()).getNeighbours();
-        for (const auto& p: neighbourPoints) {
+        for (const auto &p: neighbourPoints) {
             if (p.withinBounds())retVals.push_back(this->fields[this->grid[p.getY()][p.getX()]]);
         }
         return retVals;
@@ -161,6 +161,15 @@ public:
     }
 
     [[nodiscard]] bool isClear() const { return clear; }
+
+    void getNotVaccinatedFields(size_t countryID, std::map<size_t, std::set<Point>> notVaccinatedFields) const {
+        for (auto d:districts) {
+            for (auto f:d->getAssignedFields()) {
+                if (f->getStoredVaccines()[countryID] == 0)
+                    notVaccinatedFields[d->getDistrictID()].insert(getCoordinatesByID(f->getAssignedDistrictID()));
+            }
+        }
+    }
 
     ~Grid() {
         for (const auto field:fields) {

@@ -19,19 +19,20 @@ class Country {
     int totalProductionCapacity{};
     int reservedVaccines{};
     //similar to field
-    std::set<District*> assignedDistricts;
-    std::set<Point> vaccinatedFields;
+    std::set<District *> assignedDistricts;
+    std::map<size_t, std::set<Point>> vaccinatedFields;
     std::set<Point> border;
 public:
-    Country() =default;
-    Country(size_t ID, size_t TPC, size_t RV){
+    Country() = default;
+
+    Country(size_t ID, size_t TPC, size_t RV) {
         this->countryID = ID;
         this->totalProductionCapacity = TPC;
-        this->reservedVaccines =RV;
-        this->assignedDistricts = std::set<District*>();
+        this->reservedVaccines = RV;
+        this->assignedDistricts = std::set<District *>();
     }
 
-    Country(size_t ID, const std::set<District*> &districts) {
+    Country(size_t ID, const std::set<District *> &districts) {
         countryID = ID;
         assignedDistricts = districts;
     }
@@ -52,8 +53,12 @@ public:
         return *this;
     }
 
-    [[nodiscard]] std::set<District*> getAssignedDistricts() const { return assignedDistricts; }
-    void addAssignedDistrict(District* district){assignedDistricts.insert(district);}
+    [[nodiscard]] std::set<District *> getAssignedDistricts() const { return assignedDistricts; }
+
+    void addAssignedDistrict(District *district) {
+        assignedDistricts.insert(district);
+        vaccinatedFields[district->getDistrictID()].clear();
+    }
 
     friend std::ostream &operator<<(std::ostream &os, const Country &c);
 
@@ -62,20 +67,39 @@ public:
     void setTotalProductionCapacity(int tpc) { totalProductionCapacity = tpc; }
 
     [[nodiscard]] int getReserveVaccines() const { return reservedVaccines; }
-    [[nodiscard]] size_t getCountryID() const {return countryID;}
+
+    [[nodiscard]] size_t getCountryID() const { return countryID; }
+
     void setReserveVaccines(int rv) { reservedVaccines = rv; }
+
     bool isFieldInCountry(size_t ID);
-    void addToVaccinatedFields(const Point& p){
-        vaccinatedFields.insert(p);
+
+    void addToVaccinatedFields(const Point &p, size_t districtID) {
+        vaccinatedFields[districtID].insert(p);
     }
-    [[nodiscard]] bool isNeighbourToVaccinatedField(const Point& p)const;
-    void setBorder(std::set<Point>& bord){
+
+    [[nodiscard]] bool isNeighbourToVaccinatedField(const Point &p) const;
+
+    void setBorder(std::set<Point> &bord) {
         border.clear();
-        border=bord;
+        border = bord;
     }
-    std::set<Point> getBorder(){
-        return border;
+
+    std::set<Point> getBorder() { return border; }
+
+    //TODO: ey csak egy tipp
+    void thereAreNoVaccinatedFieldsHere(std::map<size_t, std::set<Point>> &notVaccinatedFields) {
+        for (const auto &nvd:notVaccinatedFields) {
+            auto &vd = vaccinatedFields[nvd.first];
+            for (const auto &nvf:nvd.second) {
+                auto it = std::find(vd.begin(), vd.end(), nvf);
+                if (it != vd.end()) {
+                    vd.erase(it);
+                }
+            }
+        }
     }
+
 };
 
 

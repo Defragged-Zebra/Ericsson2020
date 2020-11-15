@@ -21,8 +21,10 @@ bool Country::isNeighbourToVaccinatedField(const Point &p) const {
         return p.isBorder();
     } else {
         for (const auto &selected : p.getNeighbours()) {
-            if (vaccinatedFields.find(selected) != vaccinatedFields.end()) return true;
-            else if (border.find(selected) != border.end()) return true;
+            for (const auto &vd:vaccinatedFields) {
+                if (vd.second.find(selected) != vd.second.end()) return true;
+            }
+            if (border.find(selected) != border.end()) return true;
         }
     }
     return false;

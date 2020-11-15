@@ -26,7 +26,7 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
                 if (heal + vaccination > 0) {
                     if (grid->getDistrictByPoint(p).updateIsClear()) {
                         //todo: in round3 change this
-                        District& district = grid->getDistrictByPoint(p);
+                        District &district = grid->getDistrictByPoint(p);
                         district.setAssignedCountryID(countryID);
                         grid->getCountryByID(countryID).addAssignedDistrict(&district);
 #ifndef PROD
@@ -35,7 +35,9 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
                                                                                                       p));
                         int existing = grid->getCountryByID(countryID).getTotalProductionCapacity();
                         grid->getCountryByID(countryID).setTotalProductionCapacity(existing + change);
-                        grid->getCountryByID(countryID).setReserveVaccines(grid->getCountryByID(countryID).getReserveVaccines()+grid->getCountryByID(countryID).getTotalProductionCapacity());
+                        grid->getCountryByID(countryID).setReserveVaccines(
+                                grid->getCountryByID(countryID).getReserveVaccines() +
+                                grid->getCountryByID(countryID).getTotalProductionCapacity());
 #endif
                     }
                 }
@@ -49,6 +51,10 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
                 grid->getFieldByPoint(Point(y, x)).updateInfection(inf);
             }
         }
+
+        std::map<size_t, std::set<Point>> nvf;
+        grid->getNotVaccinatedFields(countryID, nvf);
+        grid->getCountryByID(countryID).thereAreNoVaccinatedFieldsHere(nvf);
 
         calculateBorder(countryID);
 
