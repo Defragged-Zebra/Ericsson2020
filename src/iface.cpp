@@ -170,5 +170,6 @@ void Iface::round(std::string &line) {
         os << "PUT " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
     }
     os << "." << std::endl;
+    //if(grid->getCurrentTick()==2) exit(0);
 
 }
