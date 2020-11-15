@@ -10,6 +10,8 @@ void Window::update(){
     createGrid(Point(0,0),Point(grid->getHeight(),grid->getWidth()),0,20);
     SDL_UpdateWindowSurface(window);
     bool running=true;
+    int y=0, x=0;
+    bool pressed=false;
     while(running){
         while (SDL_PollEvent(&event)){
             if(event.type==SDL_KEYDOWN){
@@ -17,6 +19,20 @@ void Window::update(){
                     running = false;
                     break;
                 }
+            }
+            if(event.type==SDL_MOUSEBUTTONDOWN){
+                pressed=true;
+            }
+            if(event.type==SDL_MOUSEBUTTONUP){
+                if(pressed){
+                    SDL_GetGlobalMouseState(&x,&y);
+                    SDL_Rect clearA({1550,0,1800-1550,1000-0});
+                    SDL_FillRect(screen, &clearA, SDL_MapRGB (screen->format, 0, 0, 0));
+                    showStatus(Point(0,1550),Point(std::floor((y/21.0))-8,std::floor(x/21.0)-5),100,50,10);
+                    y=0;x=0;
+                }
+                pressed=false;
+
             }
             if(event.type==SDL_QUIT){
                 exit(0);
@@ -213,5 +229,25 @@ void Window::createMinimalVaccinationMap(const Point &windowLoc, const Point &gr
     SDL_RenderCopy(renderer, felirat_t, nullptr, &hova);
     SDL_FreeSurface(felirat);
     SDL_DestroyTexture(felirat_t);
+}
+void Window::showStatus(const Point &windowLoc, const Point &gridElement, size_t w, size_t h, size_t sep){
+    if(!gridElement.withinBounds())return;
+    std::string text;
+    std::stringstream ss;
+    ss<<"Y: "<<gridElement.getY()<<" X: "<<gridElement.getX()<<std::endl;
+    ss<<grid->getFieldByPoint(gridElement)<<std::endl;
+    int lineH=0;
+    while(std::getline(ss,text)){
+        SDL_Surface *felirat;
+        SDL_Texture *felirat_t;
+        SDL_Rect hova = { (int)(windowLoc.getX()), (int)(windowLoc.getY()+lineH), static_cast<int>(w), static_cast<int>(h) };
+        felirat = TTF_RenderUTF8_Blended(font, text.c_str(), SDL_Color({255,255,255}));
+        felirat_t = SDL_CreateTextureFromSurface(renderer, felirat);
+        SDL_RenderCopy(renderer, felirat_t, nullptr, &hova);
+        SDL_FreeSurface(felirat);
+        SDL_DestroyTexture(felirat_t);
+        lineH+=h+sep;
+    }
+
 }
 
