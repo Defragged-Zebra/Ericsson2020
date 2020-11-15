@@ -2,15 +2,13 @@
 #include <fstream>
 
 //#define PROD
-//#define PRODTEST
+#define PRODTEST
 
 #include "antiVirus.h"
 #ifndef PROD
 #include "visualization.h"
 #endif
 
-//comment this line to exclude graphics
-#define production
 
 int main() {
 //    debug3();

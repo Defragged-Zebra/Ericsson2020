@@ -101,8 +101,9 @@ public:
     friend bool operator<(const Field &f1, const Field &f2) {
         return f1.getFieldID() < f2.getFieldID();
     }
+
     [[nodiscard]] int vaccinesToPutMinimal(size_t countryID) {
-        if (storedVaccines[countryID] > 0) return 0;
+        if (isClear() or storedVaccines[countryID] > 0) return 0;
         else return 6 - populationDensity;
     }
 
