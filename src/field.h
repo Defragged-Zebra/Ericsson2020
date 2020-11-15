@@ -17,11 +17,11 @@ class Field {
     int vaccinationRate{};
     int populationDensity{};
     size_t assignedDistrictID{};
-    std::map<size_t, int> storedVaccines; //countryID, stored amount
+    std::map<size_t, int> storedVaccines{}; //countryID, stored amount
     //this stores the history of the infectionRate-s
-    std::deque<int> lastInfectionRates;
+    std::deque<int> lastInfectionRates{};
     //this stores the history of the infection values returned by the Logic::calculateInfectionValue()
-    std::deque<int> lastInfectionValues;
+    std::deque<int> lastInfectionValues{};
     size_t lastInfRateLen{};
 public:
     Field() = default;
@@ -112,6 +112,7 @@ public:
         return std::max((int) std::ceil((infectionRate - vaccinationRate) / populationDensity),
                         vaccinesToPutMinimal(countryID));
     }
+    ~Field()= default;
 };
 
 

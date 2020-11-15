@@ -77,7 +77,9 @@ public:
         ers << msg << std::endl;
     }
 
-    virtual ~Iface() {}
+    virtual ~Iface() {
+
+    }
 
     void round(std::string &line);
 };

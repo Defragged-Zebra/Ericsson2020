@@ -28,7 +28,7 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
                         //todo: in round3 change this
                         District& district = grid->getDistrictByPoint(p);
                         district.setAssignedCountryID(countryID);
-                        grid->getCountryByID(countryID).addAssignedDistrict(&district);
+                        grid->getCountryByID(countryID).addAssignedDistrict(district.getDistrictID());
 #ifndef PROD
                         int change = grid->calculateChangeInProducedVaccinesByHealingDistrict(countryID,
                                                                                               grid->getDistrictByPoint(
@@ -287,7 +287,7 @@ void Logic::simulateVaccination(const std::vector<VaccineData> &back, const std:
 void Logic::calculateBorder(size_t countryID) {
     std::set<Point> border;
     for (auto d:grid->getCountryByID(countryID).getAssignedDistricts()) {
-        for (auto f:d->getAssignedFields()) {
+        for (auto f:grid->getDistrictByID(d).getAssignedFields()) {
             auto center = Point(f->getFieldID());
             for (const auto &p:center.getNeighbours()) {
                 if (grid->getDistrictByPoint(p) != grid->getDistrictByPoint(center)) {

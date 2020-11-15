@@ -9,12 +9,12 @@ std::ostream &operator<<(std::ostream &os, const Country &c) {
     return os;
 }
 
-bool Country::isFieldInCountry(size_t ID) {
-    for (auto district:assignedDistricts) {
-        if (district->isFieldInDistrict(ID)) return true;
-    }
-    return false;
-}
+//bool Country::isFieldInCountry(size_t ID) {
+//    for (auto district:assignedDistricts) {
+//        if (district->isFieldInDistrict(ID)) return true;
+//    }
+//    return false;
+//}
 
 bool Country::isNeighbourToVaccinatedField(const Point &p) const {
     if (vaccinatedFields.empty()) {

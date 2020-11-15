@@ -14,19 +14,19 @@ Overview of AI
 #include "ai.h"
 
 uint64_t fuckCpp[4] = {0};
-Grid AI::grid2 = Grid(0, 0, fuckCpp);
+Grid* AI::grid2 = new Grid(0, 0, fuckCpp);
 
 
 void AI::calculateDistrictScoresForNextRound(size_t countryID, std::set<ScoreHolder> &districtScores) {
-    if (grid2.getCurrentTick() == 1) {
+    if (grid2->getCurrentTick() == 1) {
         startFromGridBorder(countryID, districtScores);
     } else {
         std::set<Point> startPoints;
-        startPoints = grid2.getCountryByID(countryID).getBorder();
+        startPoints = grid2->getCountryByID(countryID).getBorder();
 
         for (const auto &center:startPoints) {
             for (const auto &p:center.getNeighbours()) {
-                District neighbourD = grid2.getDistrictByPoint(p);
+                District neighbourD = grid2->getDistrictByPoint(p);
                 if (neighbourD.isClear()) {
                     continue;
                 } else {
@@ -42,7 +42,7 @@ void AI::startFromGridBorder(size_t countryID, std::set<ScoreHolder> &districtSc
     std::vector<Point> border = mapAddBorderFields();
 
     for (const auto &p:border) {
-        District &district = grid2.getDistrictByPoint(p);
+        District &district = grid2->getDistrictByPoint(p);
         calculateScore(districtScores, district, countryID);
     }
 }
@@ -55,7 +55,7 @@ void AI::calculateScore(std::set<ScoreHolder> &districtScores, const District &d
             //assuming grid is 1 tick in the future, and no unhealed district in the country
             vaccinesNeededForTotalHealing += fieldPointer->vaccinesToPutForTotalHealing(countryID);
         }
-        int changeInVaccines = grid2.calculateChangeInProducedVaccinesByHealingDistrict(countryID, district);
+        int changeInVaccines = grid2->calculateChangeInProducedVaccinesByHealingDistrict(countryID, district);
 
         score = Utils::ScoreHolder(changeInVaccines, vaccinesNeededForTotalHealing, district.getDistrictID());
         districtScores.insert(score);
@@ -68,9 +68,9 @@ AI::calculateBackVaccines(std::vector<VaccineData> &back, int &numberOfVaccinesT
     //TODO: ezt az egeszet itt refactorolni kell majd
     //ToDo We should take back vaccines only if the district is healed.
     //ToDO We should check only the cells where we put vaccines in the past.
-    for (int y = 0; y < grid2.getHeight(); ++y) {
-        for (int x = 0; x < grid2.getWidth(); ++x) {
-            std::map<size_t, int> allStoredVaccines = grid2.getFieldByPoint(Point(y, x)).getStoredVaccines();
+    for (int y = 0; y < grid2->getHeight(); ++y) {
+        for (int x = 0; x < grid2->getWidth(); ++x) {
+            std::map<size_t, int> allStoredVaccines = grid2->getFieldByPoint(Point(y, x)).getStoredVaccines();
             int countryStoredVaccines;
             try { countryStoredVaccines = allStoredVaccines.at(countryID); }
             catch (std::out_of_range &exc) { countryStoredVaccines = 0; }
@@ -90,20 +90,20 @@ std::vector<VaccineData> AI::chooseFieldsToVaccinate(int numberOfVaccinesToDistr
     Grid *originalGrid = Logic::getGrid();
 
     //simulate next round
-    Logic::setGrid(&AI::grid2);
-    Logic::simulateTO(0, grid2.getCurrentTick() + 1, countryID);
+    Logic::setGrid(AI::grid2);
+    Logic::simulateTO(0, grid2->getCurrentTick() + 1, countryID);
 
     Logic::setGrid(originalGrid);
 
     //check if grid is clear
-    grid2.updateClearByFieldCheck();
-    if (grid2.isClear()) return std::vector<VaccineData>();
+    grid2->updateClearByFieldCheck();
+    if (grid2->isClear()) return std::vector<VaccineData>();
 
     //calculate district scores
     AI::calculateDistrictScoresForNextRound(countryID, districtScores);
 
     //calculate fields to heal
-    if (grid2.getCurrentTick() < 4) {
+    if (grid2->getCurrentTick() < 4) {
         modeB(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
     } else {
         modeA(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
@@ -114,7 +114,7 @@ std::vector<VaccineData> AI::chooseFieldsToVaccinate(int numberOfVaccinesToDistr
     //TODO: refactor -- add start district(s) after first round
     if (originalGrid->getCurrentTick() == 0) {
         auto &district = originalGrid->getDistrictByPoint(fieldsToHealSendBack[0].getPoint());
-        originalGrid->getCountryByID(countryID).addAssignedDistrict(&district);
+        originalGrid->getCountryByID(countryID).addAssignedDistrict(district.getDistrictID());
     }
     return fieldsToHealSendBack;
 }
@@ -136,7 +136,7 @@ void AI::modeA(int &numberOfVaccinesToDistribute, size_t countryID, std::set<Sco
 void AI::addFieldsToHealWithFlood(int &numberOfVaccinesToDistribute, size_t countryID,
                                   std::vector<VaccineData> &fieldsToHealSendBack,
                                   ScoreHolder maxScoredDistrict) {
-    std::set<Field *> fieldsToHeal = grid2.getDistrictByID(maxScoredDistrict.getDistrictID()).getAssignedFields();
+    std::set<Field *> fieldsToHeal = grid2->getDistrictByID(maxScoredDistrict.getDistrictID()).getAssignedFields();
     Point startPoint = calculateStartPoint(fieldsToHeal, countryID);
     std::vector<Field *> fieldsToHealContinuous;
     floodDistrict(startPoint, fieldsToHeal, fieldsToHealContinuous);
@@ -148,7 +148,7 @@ void AI::addFieldsToHealWithFlood(int &numberOfVaccinesToDistribute, size_t coun
         int vaccinesToBeUsed = field->vaccinesToPutForTotalHealing(countryID);
         if (numberOfVaccinesToDistribute > vaccinesToBeUsed) {
             numberOfVaccinesToDistribute -= vaccinesToBeUsed;
-            VaccineData vc = VaccineData(grid2.getCoordinatesByID(field->getFieldID()), vaccinesToBeUsed, countryID);
+            VaccineData vc = VaccineData(grid2->getCoordinatesByID(field->getFieldID()), vaccinesToBeUsed, countryID);
             fieldsToHealSendBack.push_back(vc);
         }
     }
@@ -164,14 +164,14 @@ void AI::modeB(int numberOfVaccinesToDistribute, size_t countryID, std::set<Scor
 
     //ToDO refactor orderedDistrictScores
 
-    //spend remaining vaccines with ||(numberOfVaccinesToDistribute > 10 * (grid2.getCurrentTick() - 1)))
+    //spend remaining vaccines with ||(numberOfVaccinesToDistribute > 10 * (grid2->getCurrentTick() - 1)))
     while (!orderedDistrictScores.empty() and (fieldsToHealSendBack.empty() or
-           (numberOfVaccinesToDistribute > 10 * (grid2.getCurrentTick() - 1)))) {
+           (numberOfVaccinesToDistribute > 10 * (grid2->getCurrentTick() - 1)))) {
         ScoreHolder topElement = orderedDistrictScores.top();
-        if (grid2.getCurrentTick() == 1) {
+        if (grid2->getCurrentTick() == 1) {
             startPoints = mapAddBorderFieldsForDistrict(orderedDistrictScores.top().getDistrictID());
         } else {
-            std::set<Point >calcBorder = grid2.getCountryByID(countryID).getBorder();
+            std::set<Point >calcBorder = grid2->getCountryByID(countryID).getBorder();
             startPoints = std::vector<Point> (calcBorder.begin(),calcBorder.end());
         }
         addFieldsToHealWithDijsktra(numberOfVaccinesToDistribute, countryID, fieldsToHealSendBack,
@@ -218,14 +218,14 @@ AI::floodDistrict(const Point &p, std::set<Field *> &notVisitedFields, std::vect
     if (!p.withinBounds())return;
     //Ez itt egy lamda függvény :(
     auto centerIter = std::find_if(notVisitedFields.begin(), notVisitedFields.end(), [p](Field *const &obj) {
-        return grid2.getPointByFieldID(obj->getFieldID()) == p;
+        return grid2->getPointByFieldID(obj->getFieldID()) == p;
     });
     if (centerIter == notVisitedFields.end()) return;
     orderedFields.emplace_back(*centerIter);
     notVisitedFields.erase(centerIter);
     for (const auto &selected:p.getNeighbours()) {
         if (!selected.withinBounds())continue;
-        if (grid2.getDistrictByPoint(p) == grid2.getDistrictByPoint(selected)) {
+        if (grid2->getDistrictByPoint(p) == grid2->getDistrictByPoint(selected)) {
             floodDistrict(selected, notVisitedFields, orderedFields);
         }
     }
@@ -236,7 +236,7 @@ void AI::mikoltMedzsikIdea(const std::vector<Point> &startPoints, const std::set
                            std::vector<Field *> &result, size_t countryID) {
     std::pair<std::vector<Point>, int> minPath({}, INT_MAX);
     for (const auto &p:startPoints) {
-        Point end = grid2.getPointByFieldID((*fieldsToHeal.begin())->getFieldID());
+        Point end = grid2->getPointByFieldID((*fieldsToHeal.begin())->getFieldID());
         std::pair<std::vector<Point>, int> dijkstraResult;
         GraphAlgos ga;
         ga.dijkstra(p, end, dijkstraResult, countryID);
@@ -248,11 +248,11 @@ void AI::mikoltMedzsikIdea(const std::vector<Point> &startPoints, const std::set
 void AI::addFieldsToHealWithDijsktra(int &numberOfVaccinesToDistribute, size_t countryID,
                                      std::vector<VaccineData> &fieldsToHealSendBack,
                                      const ScoreHolder &maxScoredDistrict, std::vector<Point> &startPoints) {
-    District district = grid2.getDistrictByID(maxScoredDistrict.getDistrictID());
+    District district = grid2->getDistrictByID(maxScoredDistrict.getDistrictID());
     std::vector<Point> endPoints;
     for (auto field:district.getAssignedFields()) {
         if (field->getCurrentInfectionRate() > 0) {
-            endPoints.push_back(grid2.getCoordinatesByID(field->getFieldID()));
+            endPoints.push_back(grid2->getCoordinatesByID(field->getFieldID()));
         }
     }
     GraphAlgos ga;
@@ -264,11 +264,11 @@ void AI::addFieldsToHealWithDijsktra(int &numberOfVaccinesToDistribute, size_t c
             if (startPoint == endPoint) {
                 //this if part is not needed, and result should be total healing btw
                 result = std::pair(std::vector(1, startPoint),
-                                   grid2.getFieldByPoint(startPoint).vaccinesToPutMinimal(countryID));
+                                   grid2->getFieldByPoint(startPoint).vaccinesToPutMinimal(countryID));
             } else {
                 ga.dijkstra(startPoint, endPoint, result, countryID);
                 result.first.insert(result.first.begin(), 1, startPoint);
-                result.second += grid2.getFieldByPoint(startPoint).vaccinesToPutMinimal(countryID);
+                result.second += grid2->getFieldByPoint(startPoint).vaccinesToPutMinimal(countryID);
             }
             if (minResult.second > result.second) {
                 minResult = result;
@@ -279,9 +279,9 @@ void AI::addFieldsToHealWithDijsktra(int &numberOfVaccinesToDistribute, size_t c
         if (minResult.second > numberOfVaccinesToDistribute) return;
         for (const auto &p:minResult.first) {
             //the put should omit it too, if we've already put vaccines to that field in this round -- this would solve the sometimes duplicates error below too
-            if (!grid2.getDistrictByPoint(p).isClear() or
-                (grid2.getFieldByPoint(p).getStoredVaccines()[countryID] > 0)) {
-                int vaccines = grid2.getFieldByPoint(p).vaccinesToPutMinimal(countryID);
+            if (!grid2->getDistrictByPoint(p).isClear() or
+                (grid2->getFieldByPoint(p).getStoredVaccines()[countryID] > 0)) {
+                int vaccines = grid2->getFieldByPoint(p).vaccinesToPutMinimal(countryID);
                 if (numberOfVaccinesToDistribute >= vaccines) {
                     fieldsToHealSendBack.emplace_back(VaccineData(p, vaccines, countryID));
                     numberOfVaccinesToDistribute -= vaccines;
@@ -300,14 +300,14 @@ void AI::addFieldsToHealWithDijsktra(int &numberOfVaccinesToDistribute, size_t c
 std::vector<Point> AI::mapAddBorderFields() {
     //ToDo ezt elég 1x kiszámolni
     std::vector<Point> border;
-    for (size_t x = 1; x < grid2.getWidth() - 1; ++x) {
+    for (size_t x = 1; x < grid2->getWidth() - 1; ++x) {
 
         border.emplace_back(0, x);
-        border.emplace_back(grid2.getHeight() - 1, x);
+        border.emplace_back(grid2->getHeight() - 1, x);
     }
-    for (size_t y = 0; y < grid2.getHeight(); ++y) {
+    for (size_t y = 0; y < grid2->getHeight(); ++y) {
         border.emplace_back(y, 0);
-        border.emplace_back(y, grid2.getWidth() - 1);
+        border.emplace_back(y, grid2->getWidth() - 1);
     }
     return border;
 }
@@ -315,8 +315,8 @@ std::vector<Point> AI::mapAddBorderFields() {
 std::vector<Point> AI::mapAddBorderFieldsForDistrict(size_t districtID) {
     //ToDo ezt elég 1x kiszámolni
     std::vector<Point> border;
-    for (auto f :grid2.getDistrictByID(districtID).getAssignedFields()) {
-        Point p = grid2.getPointByFieldID(f->getFieldID());
+    for (auto f :grid2->getDistrictByID(districtID).getAssignedFields()) {
+        Point p = grid2->getPointByFieldID(f->getFieldID());
         if (p.isBorder())border.push_back(p);
 
     }
