@@ -60,7 +60,7 @@ public:
 
     static void addFieldsToHealWithDijsktra(int &numberOfVaccinesToDistribute, size_t countryID,
                                             std::vector<VaccineData> &fieldsToHealSendBack,
-                                            ScoreHolder maxScoredDistrict, std::vector<Point> &startPoints);
+                                            const ScoreHolder& maxScoredDistrict, std::vector<Point> &startPoints);
 
     static std::vector<Point> addBorderFields();
 

@@ -28,6 +28,8 @@ class Window {
     SDL_Color green = {0, 255, 0};
     SDL_Color blue = {0, 0, 255};
     std::vector<SDL_Color> colors;
+    size_t mode = 0;
+    std::vector<size_t> markedDistricts{};
 
 public:
     Window &operator=(const Window &) = delete;
@@ -89,7 +91,7 @@ public:
     //hány sor, hány oszlop, köztük hely, négyzet mérete
     void createGrid(const Point &windowLoc, const Point &gridSize, size_t sep = 10, size_t sidelen = 30);
 
-    void createRect(const Point &p, size_t w, size_t h, size_t sep);
+    void createRect(const Point &p, size_t w, size_t h, size_t sep, SDL_Color &color);
 
     void createDistrictCell(const Point &windowLoc, const Point &gridElement, size_t w, size_t h, size_t sep);
 
@@ -106,7 +108,7 @@ public:
 
     void createMinimalVaccinationMap(const Point &windowLoc, const Point &gridElement, size_t w, size_t h, size_t sep);
 
-    void showStatus(const Point &windowLoc, const Point &gridElement, size_t w=100, size_t h=900, size_t sep=5);
+    void showStatus(const Point &windowLoc, const Point &gridElement, size_t w = 100, size_t h = 900, size_t sep = 5);
 };
 
 
