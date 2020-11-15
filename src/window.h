@@ -10,6 +10,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL_ttf.h>
 #include <SDL.h>
+#include <SDL2/SDL_mouse.h>
 #include <vector>
 
 #include "grid.h"
@@ -104,6 +105,8 @@ public:
     }
 
     void createMinimalVaccinationMap(const Point &windowLoc, const Point &gridElement, size_t w, size_t h, size_t sep);
+
+    void showStatus(const Point &windowLoc, const Point &gridElement, size_t w=100, size_t h=900, size_t sep=5);
 };
 
 

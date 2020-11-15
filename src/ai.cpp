@@ -23,6 +23,7 @@ void AI::calculateDistrictScoresForNextRound(size_t countryID, std::set<ScoreHol
     } else {
         std::vector<Point> startPoints;
         findBorder(countryID, startPoints);
+
         for (const auto &center:startPoints) {
             for (const auto &p:center.getNeighbours()) {
                 District neighbourD = grid2.getDistrictByPoint(p);
@@ -49,7 +50,6 @@ void AI::findBorder(size_t countryID, std::vector<Point> &result) {
                         break;
                     }
                 }
-
             }
         }
     }
@@ -57,6 +57,7 @@ void AI::findBorder(size_t countryID, std::vector<Point> &result) {
 
 void AI::startFromGridBorder(size_t countryID, std::set<ScoreHolder> &districtScores) {
     std::vector<Point> border = addBorderFields();
+
     for (const auto &p:border) {
         District &district = grid2.getDistrictByPoint(p);
         calculateScore(districtScores, district, countryID);
@@ -317,13 +318,13 @@ std::vector<Point> AI::addBorderFields() {
     }
     return border;
 }
-
 std::vector<Point> AI::addBorderFields(size_t districtID) {
     //ToDo ezt elég 1x kiszámolni
     std::vector<Point> border;
     for (auto f :grid2.getDistrictByID(districtID).getAssignedFields()) {
         Point p = grid2.getPointByFieldID(f->getFieldID());
         if (p.isBorder())border.push_back(p);
+
     }
     return border;
 }

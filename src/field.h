@@ -25,6 +25,14 @@ class Field {
     size_t lastInfRateLen{};
 public:
     Field() = default;
+    friend std::ostream &operator<<(std::ostream &os, const Field &f){
+        os<<"FieldID: "<<f.getFieldID()<<std::endl;
+        os<<"InfRate: "<<f.getCurrentInfectionRate()<<std::endl;
+        os<<"VaccRate: "<<f.getVaccinationRate()<<std::endl;
+        os<<"PopulDensity: "<<f.getPopulationDensity()<<std::endl;
+        os<<"AssigDistrID: "<<f.getAssignedDistrictID()<<std::endl;
+        return os;
+    }
 
     Field(const int fieldID, const int assignedDistrictID, const int currentInfectionValue, const int vaccinationRate,
           const int populationDensity, size_t numberOfStoredPastValues) {
