@@ -110,6 +110,10 @@ void Iface::start() {
             Iface::sendDebugMsg("[DEBUG] Hibát okozta\"" + line + "\" [DEBUG VEGE]");
             //throw std::runtime_error("Miafasz történt?");
         }
+#ifndef PROD
+        grid->updateClearByFieldCheck();
+        if(grid->isClear())break;
+#endif
     }
 }
 

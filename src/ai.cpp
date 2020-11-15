@@ -168,7 +168,7 @@ void AI::modeB(int numberOfVaccinesToDistribute, size_t countryID, std::set<Scor
            (numberOfVaccinesToDistribute > 10 * (grid2.getCurrentTick() - 1)))) {
         ScoreHolder topElement = orderedDistrictScores.top();
         if (grid2.getCurrentTick() == 1) {
-            startPoints = mapAddBorderFields();
+            startPoints = mapAddBorderFieldsForDistrict(orderedDistrictScores.top().getDistrictID());
         } else {
             std::set<Point >calcBorder = grid2.getCountryByID(countryID).getBorder();
             startPoints = std::vector<Point> (calcBorder.begin(),calcBorder.end());
