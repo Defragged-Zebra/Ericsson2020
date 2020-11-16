@@ -5,7 +5,7 @@
 #include "country.h"
 
 std::ostream &operator<<(std::ostream &os, const Country &c) {
-    os << c.countryID << " " << c.getTotalProductionCapacity() << " " << c.getReserveVaccines();
+    os << "Country ID: "<<c.countryID << std::endl<<"TPC:" << c.getTotalProductionCapacity() <<std::endl<< "RV:" << c.getReserveVaccines()<<std::endl;
     return os;
 }
 
