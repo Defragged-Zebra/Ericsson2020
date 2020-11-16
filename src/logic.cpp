@@ -11,13 +11,13 @@
 Grid *Logic::grid = nullptr;
 
 void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
-    for (int i = 0; (grid->getCurrentTick() < tickID); ++i) {
+    for (size_t i = 0; (grid->getCurrentTick() < tickID); ++i) {
 
         int heal = 0;
         int vaccination = 0;
         size_t healStartTick = grid->getWidth() + grid->getHeight();
-        for (int x = 0; x < grid->getWidth(); ++x) {
-            for (int y = 0; y < grid->getHeight(); ++y) {
+        for (size_t x = 0; x < grid->getWidth(); ++x) {
+            for (size_t y = 0; y < grid->getHeight(); ++y) {
                 const Point &p = Point(y, x);
                 vaccination = Logic::calculateVaccination(p, heal);
                 heal = Logic::calculateSpontaneousHealing(p, healStartTick, vaccination);

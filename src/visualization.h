@@ -1,7 +1,8 @@
 //
 // Created by woranhun on 2020. 11. 02..
 //
-
+#include "config.h"
+#ifndef PROD
 #ifndef VIRUS_VISUALIZATION_H
 #define VIRUS_VISUALIZATION_H
 #include "iface.h"
@@ -28,3 +29,4 @@ public:
 
 
 #endif //VIRUS_VISUALIZATION_H
+#endif

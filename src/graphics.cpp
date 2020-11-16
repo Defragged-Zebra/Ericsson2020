@@ -23,9 +23,9 @@ void Graphics::terminalGraphicsRun(size_t gameID, size_t tickID, size_t countryI
     int infectionValue, healValue;
     int activeTransmitters;
     std::string outputText;
-    for (int i = 0; i < x; ++i) {
+    for (size_t i = 0; i < x; ++i) {
         std::cout << "\033[0m| ";
-        for (int j = 0; j < y; ++j) {
+        for (size_t j = 0; j < y; ++j) {
             infectionValue = grid->getFieldByID((*grid)[i][j]).getCurrentInfectionRate();
             healValue = grid->getFieldByID((*grid)[i][j]).getVaccinationRate();
             activeTransmitters = (infectionValue - healValue);
@@ -50,7 +50,7 @@ void Graphics::terminalGraphicsRun(size_t gameID, size_t tickID, size_t countryI
     }
     std::cout << "\033[0m";
     std::cout << "+";
-    for (int i = 0; i < y; ++i) {
+    for (size_t i = 0; i < y; ++i) {
         std::cout << "-";
     }
     std::cout << "+" << std::endl;

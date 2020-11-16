@@ -1,6 +1,8 @@
 //
 // Created by flow on 2020. 11. 06..
 //
+#include "config.h"
+#ifndef PROD
 #include "window.h"
 
 void Window::update() {
@@ -425,3 +427,4 @@ void Window::showStatus(const Point &windowLoc, const Point &gridElement, size_t
     }
 }
 
+#endif

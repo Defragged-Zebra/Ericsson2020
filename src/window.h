@@ -1,7 +1,8 @@
 //
 // Created by flow on 2020. 11. 06..
 //
-
+#include "config.h"
+#ifndef PROD
 #ifndef VIRUS_WINDOW_H
 #define VIRUS_WINDOW_H
 #include <iostream>
@@ -114,3 +115,4 @@ public:
 
 
 #endif //VIRUS_WINDOW_H
+#endif
