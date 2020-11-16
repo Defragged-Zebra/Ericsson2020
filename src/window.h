@@ -111,6 +111,8 @@ public:
     void showStatus(const Point &windowLoc, const Point &gridElement, size_t w = 100, size_t h = 900, size_t sep = 5);
 
     void createPopulationMap(const Point &windowLoc, const Point &gridElement, size_t w, size_t h, size_t sep);
+
+    void createAcquiredDistrictsMap(const Point &windowLoc, const Point &gridElement, size_t w, size_t h, size_t sep);
 };
 
 

@@ -162,10 +162,10 @@ void Window::createGrid(const Point &windowLoc, const Point &gridSize, size_t se
                     break;
                 }
                 case 4: {
-                    std::string text("district view is fucked up Flow pls fix it");
-                    //createDistrictCell(offset, Point(y, x), sidelen, sidelen, sep);
+                    createAcquiredDistrictsMap(offset, Point(y, x), sidelen, sidelen, sep);
+                    break;
                 }
-                case 15: {
+                case 5: {
                     //not printing the text :/
                     std::string text("district view is fucked up Flow pls fix it");
                     SDL_Color col = {0, 0, 0};
@@ -254,8 +254,7 @@ Window::createInfectionHeatMap(const Point &windowLoc, const Point &gridElement,
     SDL_DestroyTexture(felirat_t);
 }
 
-void
-Window::createVaccinationMap(const Point &windowLoc, const Point &gridElement, size_t w, size_t h, size_t sep) {
+void Window::createVaccinationMap(const Point &windowLoc, const Point &gridElement, size_t w, size_t h, size_t sep) {
     //színes négyzet létrehozása
     uint32_t tempcolorval = this->grid->getFieldByPoint(gridElement).getStoredVaccines()[0];
     uint8_t r = 255;
@@ -291,17 +290,16 @@ Window::createVaccinationMap(const Point &windowLoc, const Point &gridElement, s
     SDL_DestroyTexture(felirat_t);
 }
 
-void
-Window::createPopulationMap(const Point &windowLoc, const Point &gridElement, size_t w, size_t h, size_t sep) {
+void Window::createPopulationMap(const Point &windowLoc, const Point &gridElement, size_t w, size_t h, size_t sep) {
     //színes négyzet létrehozása
     uint32_t tempcolorval = this->grid->getFieldByPoint(gridElement).getPopulationDensity();
     uint8_t r = 255;
     uint8_t g = 255;
     uint8_t b = 255;
     if (tempcolorval != 0) {
-        r = 55+ floor(tempcolorval * 40);
+        r = 55 + floor(tempcolorval * 40);
         g = 255;
-        b = 55+  floor(tempcolorval * 40);
+        b = 55 + floor(tempcolorval * 40);
     }
     SDL_Color color = {r, g, b};
     SDL_Rect block;
@@ -329,9 +327,8 @@ Window::createPopulationMap(const Point &windowLoc, const Point &gridElement, si
 }
 
 
-void
-Window::createMinimalVaccinationMap(const Point &windowLoc, const Point &gridElement, size_t w, size_t h,
-                                    size_t sep) {
+void Window::createMinimalVaccinationMap(const Point &windowLoc, const Point &gridElement, size_t w, size_t h,
+                                         size_t sep) {
     //színes négyzet létrehozása
     uint32_t tempcolorval = this->grid->getFieldByPoint(gridElement).vaccinesToPutMinimal(0);
     uint8_t r = 255;
@@ -367,6 +364,45 @@ Window::createMinimalVaccinationMap(const Point &windowLoc, const Point &gridEle
     SDL_DestroyTexture(felirat_t);
 }
 
+void Window::createAcquiredDistrictsMap(const Point &windowLoc, const Point &gridElement, size_t w, size_t h,
+                                        size_t sep) {
+    //színes négyzet létrehozása
+    auto AcquiredDistricts = this->grid->getCountryByID(0).getAssignedDistricts();
+    District &d = grid->getDistrictByPoint(gridElement);
+    uint8_t r = 255;
+    uint8_t g = 255;
+    uint8_t b = 255;
+    if (std::find(AcquiredDistricts.begin(), AcquiredDistricts.end(),
+                  d.getDistrictID()) != AcquiredDistricts.end()) {
+        r = 50;
+        g = 50;
+        b = 50;
+    }
+    SDL_Color color = {r, g, b};
+    SDL_Rect block;
+    block.x = windowLoc.getX() + gridElement.getX() * (w + sep) + sep;
+    block.y = windowLoc.getY() + gridElement.getY() * (h + sep) + sep;
+    block.w = w;
+    block.h = h;
+    SDL_FillRect(screen, &block, SDL_MapRGB(screen->format, color.r, color.g, color.b));
+    //szám létrehozása
+    std::string text;
+    std::stringstream ss;
+    ss << this->grid->getFieldByPoint(gridElement).vaccinesToPutMinimal(0);
+    ss >> text;
+    SDL_Color col = {0, static_cast<Uint8>((Uint8) 255 - color.g), static_cast<Uint8>((Uint8) 255 - color.b)};
+    SDL_Surface *felirat;
+    SDL_Texture *felirat_t;
+    SDL_Rect hova = {(int) (windowLoc.getX() + gridElement.getX() * (w + sep) + sep),
+                     (int) (windowLoc.getY() + gridElement.getY() * (h + sep) + sep), static_cast<int>(w - 3),
+                     static_cast<int>(h - 3)};
+    felirat = TTF_RenderUTF8_Blended(font, text.c_str(), col);
+    felirat_t = SDL_CreateTextureFromSurface(renderer, felirat);
+    SDL_RenderCopy(renderer, felirat_t, nullptr, &hova);
+    SDL_FreeSurface(felirat);
+    SDL_DestroyTexture(felirat_t);
+}
+
 void Window::showStatus(const Point &windowLoc, const Point &gridElement, size_t w, size_t h, size_t sep) {
     if (!gridElement.withinBounds())return;
     std::string text;
@@ -374,7 +410,7 @@ void Window::showStatus(const Point &windowLoc, const Point &gridElement, size_t
     ss << "TickID: " << grid->getCurrentTick() << std::endl;
     ss << "Y: " << gridElement.getY() << " X: " << gridElement.getX() << std::endl;
     ss << grid->getFieldByPoint(gridElement) << std::endl;
-    ss << grid->getCountryByID(0)<<std::endl;
+    ss << grid->getCountryByID(0) << std::endl;
     int lineH = 0;
     while (std::getline(ss, text)) {
         SDL_Surface *felirat;
