@@ -86,7 +86,7 @@ AI::calculateBackVaccines(std::vector<VaccineData> &back, int &numberOfVaccinesT
     return back;
 }
 
-std::vector<VaccineData> AI::chooseFieldsToVaccinate(int numberOfVaccinesToDistribute, size_t countryID) {
+std::vector<VaccineData> AI::chooseFieldsToVaccinate(int &numberOfVaccinesToDistribute, size_t countryID) {
     std::set<ScoreHolder> districtScores;
     std::vector<VaccineData> fieldsToHealSendBack;
     Grid *originalGrid = Logic::getGrid();
@@ -105,7 +105,8 @@ std::vector<VaccineData> AI::chooseFieldsToVaccinate(int numberOfVaccinesToDistr
     AI::calculateDistrictScoresForNextRound(countryID, districtScores);
 
     //calculate fields to heal
-    if (grid2->getCurrentTick() < 4) {
+    //TODO: configba berakni ezt is / refactorolni
+    if (grid2->getCurrentTick() < SWITCH_TICK) {
         modeB(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
     } else {
         modeA(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
@@ -158,9 +159,9 @@ void AI::addFieldsToHealWithFlood(int &numberOfVaccinesToDistribute, size_t coun
 }
 
 //mode B: we check which district is the easiest to heal, and try to heal that
-void AI::modeB(int numberOfVaccinesToDistribute, size_t countryID, std::set<ScoreHolder> &districtScores,
+void AI::modeB(int &numberOfVaccinesToDistribute, size_t countryID, std::set<ScoreHolder> &districtScores,
                std::vector<VaccineData> &fieldsToHealSendBack) {
-    std::priority_queue<ScoreHolder, std::vector<ScoreHolder>, Compare::ProfIndex> orderedDistrictScores(
+    std::priority_queue<ScoreHolder, std::vector<ScoreHolder>, Compare::> orderedDistrictScores(
             districtScores.begin(), districtScores.end());
     std::vector<Point> startPoints;
 
@@ -197,7 +198,7 @@ void AI::modeB(int numberOfVaccinesToDistribute, size_t countryID, std::set<Scor
 
 }
 
-void AI::modeC(int numberOfVaccinesToDistribute, size_t countryID, std::set<ScoreHolder> &districtScores,
+void AI::modeC(int &numberOfVaccinesToDistribute, size_t countryID, std::set<ScoreHolder> &districtScores,
                std::vector<VaccineData> &fieldsToHealSendBack) {
     fieldsToHealSendBack.emplace_back(Point(0,0),0,countryID);
 }
@@ -229,7 +230,7 @@ std::vector<Point> AI::calculateStartPoints(const std::set<Field *> &fieldsToCal
 
 
 std::vector<VaccineData> &
-AI::calculatePutVaccines(std::vector<VaccineData> &put, int numberOfVaccinesToDistribute, size_t countryID) {
+AI::calculatePutVaccines(std::vector<VaccineData> &put, int &numberOfVaccinesToDistribute, size_t countryID) {
     put = chooseFieldsToVaccinate(numberOfVaccinesToDistribute, countryID);
     Country &c = Logic::getGrid()->getCountryByID(countryID);
     for (const auto &vd:put)
@@ -256,8 +257,8 @@ void AI::floodDistrict(const Point &p, std::set<Field *> &notVisitedFields, std:
 }
 
 // Pontok között keresünk legrövidebb utat. Ezek alapján vakcinázunk. Meglátjuk jó lesz-e.
-void AI::mikoltMedzsikIdea(const std::vector<Point> &startPoints, const std::set<Field *> &fieldsToHeal,
-                           std::vector<Field *> &result, size_t countryID) {
+void AI::mikoltsAlgorithm(const std::vector<Point> &startPoints, const std::set<Field *> &fieldsToHeal,
+                          std::vector<Field *> &result, size_t countryID) {
     std::pair<std::vector<Point>, int> minPath({}, INT_MAX);
     for (const auto &p:startPoints) {
         Point end = grid2->getPointByFieldID((*fieldsToHeal.begin())->getFieldID());
