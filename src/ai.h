@@ -11,6 +11,7 @@
 #include "utils.h"
 #include "graphalgos.h"
 #include "graphalgos.h"
+#include "config.h"
 
 class AI {
     //this is a copy
@@ -20,7 +21,7 @@ class AI {
     static void calculateDistrictScoresForNextRound(size_t countryID, std::set<ScoreHolder> &districtScores);
 
     static std::vector<VaccineData>
-    chooseFieldsToVaccinate(int numberOfVaccinesToDistribute, size_t countryID);
+    chooseFieldsToVaccinate(int &numberOfVaccinesToDistribute, size_t countryID);
     static void floodDistrict(const Point& p, std::set<Field*> &notVisitedFields, std::vector<Field*>& orderedFields);
 
 
@@ -34,28 +35,28 @@ public:
     calculateBackVaccines(std::vector<VaccineData> &back, int &numberOfVaccinesToDistribute, size_t countryID);
 
     static std::vector<VaccineData> &
-    calculatePutVaccines(std::vector<VaccineData> &put, int numberOfVaccinesToDistribute, size_t countryID);
+    calculatePutVaccines(std::vector<VaccineData> &put, int &numberOfVaccinesToDistribute, size_t countryID);
 
     static void calculateScore(std::set<ScoreHolder> &districtScores, const District &district, size_t countryID);
     static Point calculateStartPoint(const std::set<Field *>& fieldsToCalc, size_t countryID);
 
     static void startFromGridBorder(size_t countryID, std::set<ScoreHolder> &districtScores);
 
-    static void modeB(int numberOfVaccinesToDistribute, size_t countryID, std::set<ScoreHolder> &districtScores,
+    static void modeB(int &numberOfVaccinesToDistribute, size_t countryID, std::set<ScoreHolder> &districtScores,
                       std::vector<VaccineData> &fieldsToHealSendBack);
 
 
     static void modeA(int &numberOfVaccinesToDistribute, size_t countryID, std::set<ScoreHolder> &districtScores,
                       std::vector<VaccineData> &fieldsToHealSendBack);
 
-    static void modeC(int numberOfVaccinesToDistribute, size_t countryID, std::set<ScoreHolder> &districtScores,
+    static void modeC(int &numberOfVaccinesToDistribute, size_t countryID, std::set<ScoreHolder> &districtScores,
                       std::vector<VaccineData> &fieldsToHealSendBack);
 
     static void addFieldsToHealWithFlood(int &numberOfVaccinesToDistribute, size_t countryID,
                                          std::vector<VaccineData> &fieldsToHealSendBack,
                                          ScoreHolder maxScoredDistrict);
 
-    static void mikoltMedzsikIdea(const std::vector<Point>& startPoints, const std::set<Field *>& fieldsToHeal, std::vector<Field *>& result, size_t countryID);
+    static void mikoltsAlgorithm(const std::vector<Point>& startPoints, const std::set<Field *>& fieldsToHeal, std::vector<Field *>& result, size_t countryID);
 
     static std::vector<Point> calculateStartPoints(const std::set<Field *> &fieldsToCalc, size_t countryID);
 
@@ -69,6 +70,18 @@ public:
     ~AI(){
         delete grid2;
     }
+
+    static void calculateDistrictScoresWithWannabes(size_t countryID, std::set<ScoreHolder> &districtScores);
+
+    static void calculateWannabeBorder(size_t countryID);
+
+    static Point calculateWannabeStartPoint(const std::set<Field *> &fieldsToCalc, size_t countryID);
+
+    static void addFieldsToWannaHealWithFlood(int &numberOfVaccinesToDistribute, size_t countryID,
+                                              std::vector<VaccineData> &fieldsToHealSendBack, ScoreHolder maxScoredDistrict);
+
+    static void modeWanna(int &numberOfVaccinesToDistribute, size_t countryID, std::set<ScoreHolder> &districtScores,
+                   std::vector<VaccineData> &fieldsToHealSendBack);
 };
 
 

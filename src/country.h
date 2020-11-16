@@ -19,8 +19,11 @@ class Country {
     int totalProductionCapacity{};
     int reservedVaccines{};
     std::set<size_t> assignedDistricts{};
-    std::map<size_t,std::set<Point>> vaccinatedFields{};
+    std::set<size_t> wannabeDistricts{};
+    std::map<size_t, std::set<Point>> vaccinatedFields{};
+    std::map<size_t, std::set<Point>> wannabeVaccinatedFields{};
     std::set<Point> border{};
+    std::set<Point> wannabeBorder{};
 public:
     Country() = default;
 
@@ -48,6 +51,9 @@ public:
             this->assignedDistricts = c.assignedDistricts;
             this->vaccinatedFields = c.vaccinatedFields;
             this->border = c.border;
+            this->wannabeDistricts = c.wannabeDistricts;
+            this->wannabeBorder = c.wannabeBorder;
+            this->wannabeVaccinatedFields = c.wannabeVaccinatedFields;
         }
         return *this;
     }
@@ -76,6 +82,9 @@ public:
     void addToVaccinatedFields(const Point &p, size_t districtID) {
         vaccinatedFields[districtID].insert(p);
     }
+    void addToWannabeVaccinatedFields(const Point &p, size_t districtID) {
+        wannabeVaccinatedFields[districtID].insert(p);
+    }
 
     [[nodiscard]] bool isNeighbourToVaccinatedField(const Point &p) const;
 
@@ -84,9 +93,15 @@ public:
         border = bord;
     }
 
+    void setWannabeBorder(std::set<Point> &bord) {
+        wannabeBorder.clear();
+        wannabeBorder = bord;
+    }
+
     std::set<Point> getBorder() { return border; }
 
-    //TODO: ez csak egy tipp
+    std::set<Point> getWannabeBorder() { return wannabeBorder; }
+
     void thereAreNoVaccinatedFieldsHere(std::map<size_t, std::set<Point>> &notVaccinatedFields) {
         for (const auto &nvd:notVaccinatedFields) {
             auto &vd = vaccinatedFields[nvd.first];
@@ -98,9 +113,28 @@ public:
             }
         }
     }
+    void thereAreNoWannabeVaccinatedFieldsHere(std::map<size_t, std::set<Point>> &notWannabeVaccinatedFields) {
+        for (const auto &nvd:notWannabeVaccinatedFields) {
+            auto &vd = wannabeVaccinatedFields[nvd.first];
+            for (const auto &nvf:nvd.second) {
+                auto it = std::find(vd.begin(), vd.end(), nvf);
+                if (it != vd.end()) {
+                    vd.erase(it);
+                }
+            }
+        }
+    }
 
-    bool hasDistrict(){return !assignedDistricts.empty();}
+    bool hasDistrict() { return !assignedDistricts.empty(); }
 
+    [[nodiscard]] std::set<size_t> getWannabeDistricts() const { return wannabeDistricts; }
+
+    void addWannabeDistrict(size_t district) {
+        wannabeDistricts.insert(district);
+        wannabeVaccinatedFields[district].clear();
+    }
+
+    [[nodiscard]] bool isNeighbourToWannabeVaccinatedField(const Point &p) const;
 };
 
 

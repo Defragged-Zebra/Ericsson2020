@@ -165,9 +165,15 @@ void Iface::round(std::string &line) {
     std::vector<VaccineData> back; // don't change this
     back = AI::calculateBackVaccines(back, numberOfVaccinesToDistribute, countryID);
 
+    //debug:
+    ers<<"Vaccines before ai decision: "<<numberOfVaccinesToDistribute<<std::endl;
+
     std::vector<VaccineData> put; // don't change this
     put = AI::calculatePutVaccines(put, numberOfVaccinesToDistribute, countryID);
     Logic::simulateVaccination(back, put);
+
+//debug:
+ers<<"Vaccines after ai decision: "<<numberOfVaccinesToDistribute<<std::endl;
 
     //Send result back
     os << "RES " << _gameID << " " << tickID << " " << countryID << std::endl;

@@ -194,7 +194,13 @@ public:
         class ProducedVaccines{
         public:
             bool operator()(const ScoreHolder &sc1,const ScoreHolder &sc2)const{
-                return sc1.getChangeInVaccines() > sc2.getChangeInVaccines();
+                return sc1.getChangeInVaccines() < sc2.getChangeInVaccines();
+            }
+        };
+        class MinimalVaccinesToHeal{
+        public:
+            bool operator()(const ScoreHolder &sc1,const ScoreHolder &sc2)const{
+                return sc1.getVaccinesNeededForHealing() < sc2.getVaccinesNeededForHealing();
             }
         };
     };
