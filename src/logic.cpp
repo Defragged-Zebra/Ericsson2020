@@ -23,10 +23,26 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
                 heal = Logic::calculateSpontaneousHealing(p, healStartTick, vaccination);
                 grid->getFieldByPoint(p).updateVaccination(heal + vaccination);
                 grid->getFieldByPoint(p).updateRemainingVaccines(vaccination);
-                if (heal + vaccination > 0) grid->getDistrictByPoint(p).updateIsClear();
+                if (heal + vaccination > 0) {
+                    if (grid->getDistrictByPoint(p).updateIsClear()) {
+                        //todo: in round3 change this
+                        District &district = grid->getDistrictByPoint(p);
+                        district.setAssignedCountryID(countryID);
+                        grid->getCountryByID(countryID).addAssignedDistrict(district.getDistrictID());
+#ifndef PROD
+                        int change = grid->calculateDistrictProductionCapacity(countryID, grid->getDistrictByPoint(p));
+                        int existing = grid->getCountryByID(countryID).getTotalProductionCapacity();
+                        grid->getCountryByID(countryID).setTotalProductionCapacity(existing + change);
+#endif
+                    }
+                }
             }
         }
-
+#ifndef PROD
+        grid->getCountryByID(countryID).setReserveVaccines(grid->getCountryByID(countryID).getReserveVaccines() +
+                                                           grid->getCountryByID(
+                                                                   countryID).getTotalProductionCapacity());
+#endif
         int inf = 0;
         for (int x = 0; x < grid->getWidth(); ++x) {
             for (int y = 0; y < grid->getHeight(); ++y) {
@@ -34,10 +50,17 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
                 grid->getFieldByPoint(Point(y, x)).updateInfection(inf);
             }
         }
+
+        std::map<size_t, std::set<Point>> nvf;
+        grid->getNotVaccinatedFields(countryID, nvf);
+        grid->getCountryByID(countryID).thereAreNoVaccinatedFieldsHere(nvf);
+
+        calculateBorder(countryID);
+
         grid->IncreaseCurrentTick();
     }
-}
 
+}
 
 
 int Logic::calculateSpontaneousHealingLEGACY(const Point &p, int healStartTick) {
@@ -149,17 +172,10 @@ int Logic::calculateCrossInfectionLEGACY(const Point &center, uint64_t factor3) 
     int t = int(factor3 % 7) + 3;
     size_t centerY = center.getY();
     size_t centerX = center.getX();
-    Point coordinates[5] = {{centerY,     centerX},
-                            {centerY,     centerX - 1},
-                            {centerY - 1, centerX},
-                            {centerY + 1, centerX},
-                            {centerY,     centerX + 1}};
-
+    std::vector<Point> coordinates = center.getNeighbours();
+    coordinates.push_back(center);
     for (const auto &selected : coordinates) {
-        if (selected.getX() < 0 || selected.getY() < 0 || selected.getX() > grid->getWidth() - 1 ||
-            selected.getY() > grid->getHeight() - 1) {
-            continue;
-        }
+        if (!selected.withinBounds()) continue;
         int dist = distance(center, selected);
         Field &selectedField = grid->getFieldByPoint(selected);
         std::deque<int> &lastInfectionRate = selectedField.getLastInfectionRates();
@@ -181,7 +197,6 @@ int Logic::calculateCrossInfectionLEGACY(const Point &center, uint64_t factor3) 
 }
 
 
-
 double Logic::calculateCrossInfection(const Point &center, uint64_t factor3) {
     Field &field = grid->getFieldByPoint(center);
     double sum = 0;
@@ -196,8 +211,7 @@ double Logic::calculateCrossInfection(const Point &center, uint64_t factor3) {
                             {centerY,     centerX + 1}};
 
     for (const auto &selected : coordinates) {
-        if (selected.getX() < 0 || selected.getY() < 0 || selected.getX() > grid->getWidth() - 1 ||
-            selected.getY() > grid->getHeight() - 1) {
+        if (!selected.withinBounds()) {
             elementsToAverage--;
             continue;
         }
@@ -223,17 +237,18 @@ double Logic::calculateCrossInfection(const Point &center, uint64_t factor3) {
 }
 
 int Logic::calculateVaccination(const Point &p, int &spontaneousHealAmount) {
+    Field &f = grid->getFieldByPoint(p);
     // IR: last infection rate
-    int IR = grid->getFieldByPoint(p).getCurrentInfectionRate();
+    int IR = f.getCurrentInfectionRate();
     //P: population density
-    int P = grid->getFieldByPoint(p).getPopulationDensity();
+    int P = f.getPopulationDensity();
     //Ha egy adott területen az IR > 0
-    if (IR > 0) {
+    if (IR > 0 && !f.isClear()) {
         //van n db tartalék vakcina az összes országnak együttvéve
-        std::map<size_t, int> vaccinesMap = grid->getFieldByPoint(p).getStoredVaccines();
+        std::map<size_t, int> vaccinesMap = f.getStoredVaccines();
         //reserve vaccines
         int n = 0;
-        for (auto tmp:vaccinesMap) {
+        for (const auto &tmp:vaccinesMap) {
             n += tmp.second;
         }
         //X: vaccination rate
@@ -263,4 +278,31 @@ int Logic::calculateSpontaneousHealing(const Point &p, int healStartTick, int va
         return std::floor(h * (grid->getFieldByPoint(p).getCurrentInfectionRate() - vaccinated) /
                           grid->getFieldByPoint(p).getCurrentInfectionRate());
     }
+}
+
+void Logic::simulateVaccination(const std::vector<VaccineData> &back, const std::vector<VaccineData> &put) {
+    for (const auto &b:back) {
+        grid->getFieldByPoint(b.getPoint()).callBackVaccines(b.getVaccines(), b.getCounrtyID());
+    }
+    for (const auto &p:put) {
+        grid->getFieldByPoint(p.getPoint()).pushVaccines(p.getVaccines(), p.getCounrtyID());
+    }
+}
+
+void Logic::calculateBorder(size_t countryID) {
+    std::set<Point> border;
+    for (auto d:grid->getCountryByID(countryID).getAssignedDistricts()) {
+        for (auto f:grid->getDistrictByID(d).getAssignedFields()) {
+            auto center = Point(f->getFieldID());
+            for (const auto &p:center.getNeighbours()) {
+                if (grid->getDistrictByPoint(p) != grid->getDistrictByPoint(center)) {
+                    if (!grid->getDistrictByPoint(p).isClear()) {
+                        border.insert(center);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    grid->getCountryByID(countryID).setBorder(border);
 }

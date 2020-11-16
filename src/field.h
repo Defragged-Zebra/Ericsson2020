@@ -17,14 +17,22 @@ class Field {
     int vaccinationRate{};
     int populationDensity{};
     size_t assignedDistrictID{};
-    std::map<size_t, int> storedVaccines; //countryID, stored amount
+    std::map<size_t, int> storedVaccines{}; //countryID, stored amount
     //this stores the history of the infectionRate-s
-    std::deque<int> lastInfectionRates;
+    std::deque<int> lastInfectionRates{};
     //this stores the history of the infection values returned by the Logic::calculateInfectionValue()
-    std::deque<int> lastInfectionValues;
+    std::deque<int> lastInfectionValues{};
     size_t lastInfRateLen{};
 public:
     Field() = default;
+    friend std::ostream &operator<<(std::ostream &os, const Field &f){
+        os<<"FieldID: "<<f.getFieldID()<<std::endl;
+        os<<"InfRate: "<<f.getCurrentInfectionRate()<<std::endl;
+        os<<"VaccRate: "<<f.getVaccinationRate()<<std::endl;
+        os<<"PopulDensity: "<<f.getPopulationDensity()<<std::endl;
+        os<<"AssigDistrID: "<<f.getAssignedDistrictID()<<std::endl;
+        return os;
+    }
 
     Field(const int fieldID, const int assignedDistrictID, const int currentInfectionValue, const int vaccinationRate,
           const int populationDensity, size_t numberOfStoredPastValues) {
@@ -36,8 +44,8 @@ public:
         this->storedVaccines = std::map<size_t, int>();
         this->lastInfectionRates = std::deque<int>();
         this->lastInfectionValues = std::deque<int>();
-        lastInfectionRates.push_back(currentInfectionValue);
-        lastInfectionValues.push_back(currentInfectionValue > 0 ? 1 : 0);
+        this->lastInfectionRates.push_back(currentInfectionValue);
+        this->lastInfectionValues.push_back(currentInfectionValue > 0 ? 1 : 0);
         this->lastInfRateLen = numberOfStoredPastValues;
     }
 
@@ -82,10 +90,29 @@ public:
 
     [[nodiscard]] bool isClear() const { return infectionRate == 0; }
 
-    std::map<size_t,int>& getStoredVaccines(){return storedVaccines;}
+    [[nodiscard]] std::map<size_t, int> getStoredVaccines() const { return storedVaccines; }
 
     void updateRemainingVaccines(int vaccinated);
 
+    void callBackVaccines(int vaccines, size_t countryID);
+
+    void pushVaccines(int vaccines, size_t countryID);
+
+    friend bool operator<(const Field &f1, const Field &f2) {
+        return f1.getFieldID() < f2.getFieldID();
+    }
+
+    [[nodiscard]] int vaccinesToPutMinimal(size_t countryID) {
+        //don't check for clear, it'll break other stuff
+        if (storedVaccines[countryID] > 0) return 0;
+        else return 6 - populationDensity;
+    }
+
+    [[nodiscard]] int vaccinesToPutForTotalHealing(size_t countryID) {
+        return std::max((int) std::ceil((infectionRate - vaccinationRate) / populationDensity),
+                        vaccinesToPutMinimal(countryID));
+    }
+    ~Field()= default;
 };
 
 

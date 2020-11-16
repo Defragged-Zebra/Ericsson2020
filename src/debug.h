@@ -6,6 +6,7 @@
 #define VIRUS_DEBUG_H
 #include <iostream>
 #include "utils.h"
+
 void debug() {
     u_long factors[4] = {1569741360, 1785505948, 516548029, 1302116447};
     Utils::Random rd = Utils::Random(factors);

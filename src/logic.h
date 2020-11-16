@@ -8,11 +8,9 @@
 #include <algorithm>
 #include <vector>
 #include <stdexcept>
-//in the end I included this bc they surely not asking to write such low lvl funcs like floor(double n) as those require bitshifting stuff;
 #include <cmath>
 #include "grid.h"
-
-//for debug purposes
+#include "config.h"
 #include <iostream>
 #include <stdexcept>
 #include "utils.h"
@@ -36,6 +34,8 @@ public:
 
     static void simulateTO(int gameID, size_t tickID, size_t countryID);
 
+    static void simulateVaccination(const std::vector<VaccineData>& back, const std::vector<VaccineData>& put);
+
     static int calculateSpontaneousHealing(const Point &p, int healStartTick, int vaccinated);
 
     static int calculateSpontaneousHealingLEGACY(const Point &p, int healStartTick);
@@ -47,6 +47,8 @@ public:
     static int calculateVaccination(const Point &p, int &spontaneousHealAmount);
 
     static void shiftFactor2to4();
+
+    static void calculateBorder(size_t countryID);
 };
 
 

@@ -5,8 +5,11 @@
 #include "iface.h"
 
 void Iface::initAntiVirus() {
+#ifdef SEED_FIXED
+    login(SEED);
+#else
     login();
-
+#endif
     std::string line;
     std::getline(is, line);
     std::stringstream ss;
@@ -55,21 +58,30 @@ void Iface::createGrid() {
             ss << line;
             ss >> tmp >> tmp2 >> tmp2 >> district >> infRate >> population;
             if (district > numberOfDistricts) numberOfDistricts = district;
-            grid->addField(Field(fieldID, district, infRate, 0, population,
-                                 storedValsCnt));
+            grid->addField(new Field(fieldID, district, infRate, 0, population,
+                                     storedValsCnt));
             grid->setGridFieldID(y, x, fieldID++);
         }
     }
     //create the districts
+    //numberOfDistricts+1 because numberOfDistricts stores the max district ID
     for (size_t i = 0; i < numberOfDistricts + 1; ++i) {
-        grid->addDistrict(District(i, std::vector<Field *>(), false));
+        grid->addDistrict(new District(i, std::set<Field *>(), std::set<size_t>(), false));
     }
-    //TODO ez itt mi a fasz?
-    //district update -- ugye hogy tobbet kene kommentelni? xD
+    //district update
     for (size_t y = 0; y < grid->getHeight(); ++y) {
         for (size_t x = 0; x < grid->getWidth(); ++x) {
-//            ers << "Field - y: " << y << "\tx: " << x << "\tAssigned district: "
-//                      << grid->getDistrictByPoint(Point(y, x)) << std::endl;
+            Point center(y, x);
+            std::vector<Point> coordinates = center.getNeighbours();
+            District centerDistrict = grid->getDistrictByPoint(center);
+            for (const auto &selected:coordinates) {
+                if (!selected.withinBounds())continue;
+                District &selectedDistrict = grid->getDistrictByPoint(selected);
+                if (centerDistrict != selectedDistrict) {
+                    centerDistrict.addNeighbourDistrict(selectedDistrict.getDistrictID());
+                    selectedDistrict.addNeighbourDistrict(centerDistrict.getDistrictID());
+                }
+            }
             grid->getDistrictByPoint(Point(y, x)).addAssignedField(&grid->getFieldByPoint(Point(y, x)));
         }
     }
@@ -80,7 +92,7 @@ void Iface::createGrid() {
 void Iface::start() {
     std::string line;
     while (std::getline(is, line)) {
-        if (line == ".\r" or line == "\r" or line ==".") { // Lécci hadd működjön linuxon is :(
+        if (line == ".\r" or line == "\r" or line == ".") {
             continue;
         } else if (line == "SUCCESS") {
             Iface::sendDebugMsg("SUCCESS");
@@ -93,14 +105,20 @@ void Iface::start() {
             break;
         } else if (line.find("WARN") != std::string::npos) {
             Iface::sendDebugMsg(line);
-            throw std::runtime_error("Beszoptuk a faszt!!444!!!");
+            //throw std::runtime_error("Beszoptuk a faszt!!444!!!");
         } else if (line.find("REQ") != std::string::npos) {
             Iface::round(line);
         } else {
             Iface::sendDebugMsg("Miafasz történt?");
             Iface::sendDebugMsg("[DEBUG] Hibát okozta\"" + line + "\" [DEBUG VEGE]");
-            throw std::runtime_error("Miafasz történt?");
+            //throw std::runtime_error("Miafasz történt?");
         }
+#ifndef PROD
+        grid->updateClearByFieldCheck();
+        if(grid->isClear()){
+            break;
+        }
+#endif
     }
 }
 
@@ -125,34 +143,39 @@ void Iface::round(std::string &line) {
     //Process input values
     tmp = "";
     while (std::getline(is, tmp)) {
-        Iface::sendDebugMsg("[NOTIFY] " + tmp);
+        if (tmp == ".\r" or tmp == ".")break;
+        //Iface::sendDebugMsg("[NOTIFY] " + tmp);
+        ss.clear();
         //TODO: parse game-data here
         if (tmp.find("WARN") != std::string::npos) {
             Iface::sendDebugMsg(line);
-            throw std::runtime_error("We've fucked it up!!444!!!");
+            //throw std::runtime_error("We've fucked it up!!444!!!");
+        } else if (std::isdigit(tmp[0])) {
+            int _countryID, TPC, RV;
+            ss << tmp;
+            ss >> _countryID >> TPC >> RV;
+            grid->addCountry(Country(_countryID, TPC, RV));
         }
-        if (tmp != ".\r" and tmp!=".")continue;
-        else break;
     }
+    this->displayCurrentRound(_gameID, tickID, countryID);
     Logic::simulateTO(_gameID, tickID, countryID);
-
     //TODO: calculate this .. also it's buggy af, and have some serious logic errors
-    //TODO: ez szar, fix it
-    int numberOfVaccinesToDistribute = grid->getCountryByID(countryID).getTotalProductionCapacity();
+    int numberOfVaccinesToDistribute = grid->getCountryByID(countryID).getReserveVaccines();
     AI::copyGrid(grid);
+    std::vector<VaccineData> back; // don't change this
+    back = AI::calculateBackVaccines(back, numberOfVaccinesToDistribute, countryID);
+
+    std::vector<VaccineData> put; // don't change this
+    put = AI::calculatePutVaccines(put, numberOfVaccinesToDistribute, countryID);
+    Logic::simulateVaccination(back, put);
+
     //Send result back
     os << "RES " << _gameID << " " << tickID << " " << countryID << std::endl;
-    std::vector<VaccineData> back; // don't change this
-    back = AI::calculateBackVaccines(back, tickID, numberOfVaccinesToDistribute, countryID);
     for (auto &i : back) {
         os << "BACK " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
     }
-    std::vector<VaccineData> put; // don't change this
-    put = AI::calculatePutVaccines(put, tickID, numberOfVaccinesToDistribute, countryID);
-    for (auto &i : back) {
+    for (auto &i : put) {
         os << "PUT " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
     }
-
-    this->displayCurrentRound(_gameID, tickID, countryID);
-
+    os << "." << std::endl;
 }

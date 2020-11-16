@@ -25,26 +25,42 @@ std::ostream &operator<<(std::ostream &os, const Grid &g) {
     }
     os << "section2: fields assigned to a district" << std::endl;
     os << std::endl;
-    for (size_t i = 0; i < g.districts.size(); ++i) {
-        os << g.districts[i] << ": ";
-        for (size_t j = 0; j < g.districts[i].getAssignedFields().size(); ++j) {
-            os << g.districts[i].getAssignedFields()[j] << ", ";
+    for (const auto &district : g.districts) {
+        os << district << ": ";
+        for (auto it : district->getAssignedFields()) {
+            os << it << ", ";
         }
         os << std::endl;
     }
     os << "section3: districts assigned to a country" << std::endl;
-    for (size_t i = 0; i < g.countries.size(); ++i) {
-        os << g.countries[i] << ", ";
-        for (size_t j = 0; j < g.countries[i].getAssignedDistrictIDs().size(); ++j) {
-            os << g.countries[j].getAssignedDistrictIDs()[j] << ", ";
+    for (const auto &countries : g.countries) {
+        os << countries << ", ";
+        for (auto it : countries.getAssignedDistricts()) {
+            os << it << ", ";
         }
         os << std::endl;
     }
     return os;
 }
 
-Point Grid::getCoordinatesByID(size_t ID) {
-    size_t y=ID/width; //integer division is a design choice
-    size_t x=ID-(width*y);
-    return Point(y,x);
+int Grid::calculateDistrictProductionCapacity(size_t countryID, const District &district) {
+    int changeInVaccines = 0;
+    for (auto fieldPointer:district.getAssignedFields()) {
+        changeInVaccines += 2;
+        Point center = this->getPointByFieldID(fieldPointer->getFieldID());
+        std::vector<Point> coordinates=center.getNeighbours();
+        for (const auto &selected : coordinates) {
+            /* Egy megtisztított kerület védekezési vakcina száma a kerület területeinek élszomszédos,
+             * nem tiszta kerülethez tartozó területek 6 - start_info[coord].population különbségösszege,
+             * osztva 3-mal, ennek a felső egészrésze.
+             */
+            if (!selected.withinBounds()) continue;
+            if (this->getDistrictByPoint(selected) == this->getDistrictByPoint(center)) continue;
+            int plusMinus;
+            this->getDistrictByPoint(selected).isClear() ? plusMinus = +1 : plusMinus = -1;
+            changeInVaccines += (int) (plusMinus * (ceil(
+                    (6 - this->getFieldByPoint(selected).getPopulationDensity()) / (double) 3)));
+        }
+    }
+    return changeInVaccines;
 }

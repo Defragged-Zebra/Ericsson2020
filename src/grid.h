@@ -14,43 +14,63 @@
 #include <algorithm>
 
 class Grid {
-    std::vector<std::vector<size_t>> grid;
-    std::vector<Country> countries;
-    std::vector<District> districts;
-    std::vector<Field> fields;
-    size_t width;
-    size_t height;
+    std::vector<std::vector<size_t>> grid{};
+    std::vector<Country> countries{};
+    std::vector<District *> districts{};
+    std::vector<Field *> fields{};
+    size_t width{};
+    size_t height{};
     size_t currentTick = 0;
+    bool clear = false;
 
 public:
-    Grid() = delete;
+    Grid() = default;
 
-    Grid(const Grid &g) = delete;
+    Grid(const Grid &g){
+        *this = g;
+    }
+
+    Grid &operator=(const Grid& g) {
+        if (this != &g) {
+            this->width = g.width;
+            this->height = g.height;
+            this->currentTick = g.currentTick;
+            this->random = g.random;
+            this->grid = g.grid;
+            this->fields.clear();
+            for (auto f:g.fields) {
+                this->fields.push_back(new Field(*f));
+            }
+            this->districts.clear();
+            for (auto d:g.districts) {
+                auto* tmp =new District(*d);
+                tmp->clearAssignedFields();
+                this->districts.push_back(tmp);
+            }
+
+            for (size_t y = 0; y < this->getHeight(); ++y) {
+                for (size_t x = 0; x < this->getWidth(); ++x) {
+                    Point center(y, x);
+                    std::vector<Point> coordinates = center.getNeighbours();
+                    District centerDistrict = this->getDistrictByPoint(center);
+                    this->getDistrictByPoint(Point(y, x)).addAssignedField(&this->getFieldByPoint(Point(y, x)));
+                }
+            }
+            this->countries = g.countries;
+        }
+        return *this;
+    }
 
     Grid &operator=(const Grid *g) {
         if (this != g) {
-            width = g->width;
-            height = g->height;
-            currentTick = g->currentTick;
-            random = g->random;
-            for (const auto & country: g->countries) {
-                countries.push_back(country);
-            }
-            for (const auto & district : g->districts) {
-                districts.push_back(district);
-            }
-            for (const auto & field : g->fields) {
-                fields.push_back(field);
-            }
-            for (size_t i = 0; i < height; ++i) {
-                std::vector<size_t> sor = std::vector<size_t>(width);
-                grid.push_back(sor);
-            }
-            for (int y = 0; y < height; ++y) {
-                for (int x = 0; x < width; ++x) {
-                    grid[y][x] = g->grid[y][x];
-                }
-            }
+            this->width = g->width;
+            this->height = g->height;
+            this->currentTick = g->currentTick;
+            this->random = g->random;
+            this->grid = g->grid;
+            this->fields = g->fields;
+            this->districts = g->districts;
+            this->countries = g->countries;
         }
         return *this;
     }
@@ -68,8 +88,10 @@ public:
             grid.push_back(sor);
         }
         this->countries = std::vector<Country>();
-        this->districts = std::vector<District>();
+        this->districts = std::vector<District *>();
         currentTick = 0;
+        Point::setGridHeight(this->height);
+        Point::setGridWidth(this->width);
     }
 
     //soronként töltjük fel a gridet(sorfolytonosan)
@@ -80,13 +102,13 @@ public:
 
     Country &getCountryByID(size_t ID) { return countries[ID]; }
 
-    District &getDistrictByID(size_t ID) { return districts[ID]; }
+    District &getDistrictByID(size_t ID) { return *districts[ID]; }
 
     District &getDistrictByPoint(const Point &p) {
         return getDistrictByID(getFieldByPoint(p).getAssignedDistrictID());
     }
 
-    Field &getFieldByID(size_t ID) { return fields[ID]; }
+    Field &getFieldByID(size_t ID) { return *fields[ID]; }
 
     Field &getFieldByPoint(const Point &p) {
         return getFieldByID(grid[p.getY()][p.getX()]);
@@ -104,16 +126,23 @@ public:
     }
 
     //WARNING: this might generate some problems if grid is not newly created
-    void addField(const Field &newField) {
+    void addField(Field *newField) {
         fields.push_back(newField);
     }
 
-    void addDistrict(const District &newDistrict) {
+    void addDistrict(District *newDistrict) {
         districts.push_back(newDistrict);
     }
 
     void addCountry(const Country &newCountry) {
-        countries.push_back(newCountry);
+        auto it = std::find_if(countries.begin(), countries.end(), [newCountry](Country const &obj) {
+            return obj.getCountryID() == newCountry.getCountryID();
+        });
+        if (it == countries.end()) countries.push_back(newCountry);
+        else {
+            countries[newCountry.getCountryID()].setTotalProductionCapacity(newCountry.getTotalProductionCapacity());
+            countries[newCountry.getCountryID()].setReserveVaccines(newCountry.getReserveVaccines());
+        }
     }
 
     [[nodiscard]] size_t getCurrentTick() const {
@@ -128,7 +157,62 @@ public:
 
     size_t numberOfDistricts() { return districts.size(); }
 
-    Point getCoordinatesByID(size_t ID);
+    [[nodiscard]] Point getPointByFieldID(size_t ID) const {
+        return Point(ID);
+    }
+
+    [[nodiscard]] std::vector<Field *> getNeihboursOfField(size_t FieldID) const {
+        std::vector<Field *> retVals;
+        std::vector<Point> neighbourPoints = this->getPointByFieldID(FieldID).getNeighbours();
+        for (const auto &p: neighbourPoints) {
+            if (p.withinBounds())retVals.push_back(this->fields[this->grid[p.getY()][p.getX()]]);
+        }
+        return retVals;
+
+    }
+
+    [[nodiscard]] inline Point getCoordinatesByID(size_t ID) const { return getPointByFieldID(ID); }
+
+    [[nodiscard]] std::vector<Field *> getNeihboursOfField(const Field *f) const {
+        std::vector<Field *> retVals;
+        std::vector<Point> neighbourPoints = this->getPointByFieldID(f->getFieldID()).getNeighbours();
+        for (const auto &p: neighbourPoints) {
+            if (p.withinBounds())retVals.push_back(this->fields[this->grid[p.getY()][p.getX()]]);
+        }
+        return retVals;
+
+    }
+
+    int calculateDistrictProductionCapacity(size_t countryID, const District &district);
+
+    void updateClearByFieldCheck() {
+        bool allClear = true;
+        for (auto field:fields) {
+            allClear &= field->isClear();
+        }
+        clear = allClear;
+    }
+
+    [[nodiscard]] bool isClear() const { return clear; }
+
+    void getNotVaccinatedFields(size_t countryID, std::map<size_t, std::set<Point>> notVaccinatedFields) const {
+        for (auto d:districts) {
+            for (auto f:d->getAssignedFields()) {
+                if (f->getStoredVaccines()[countryID] == 0)
+                    notVaccinatedFields[d->getDistrictID()].insert(getCoordinatesByID(f->getAssignedDistrictID()));
+            }
+        }
+    }
+
+    ~Grid() {
+        for (const auto& field:fields) {
+            delete field;
+        }
+        for (const auto& district:districts) {
+            delete district;
+        }
+    }
+
 };
 
 

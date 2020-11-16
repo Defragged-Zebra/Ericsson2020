@@ -9,6 +9,8 @@
 #include "iface.h"
 #include "logic.h"
 #include "ai.h"
+#include <ctype.h>
+#include "config.h"
 
 class Iface {
 protected:
@@ -76,7 +78,9 @@ public:
         ers << msg << std::endl;
     }
 
-    virtual ~Iface() {}
+    virtual ~Iface() {
+
+    }
 
     void round(std::string &line);
 };
