@@ -9,13 +9,14 @@
 
 
 
-
-
+//switches
 #define PROD
 //#define PRODTEST
+#define SEED_FIXED
 
-//#define SEED_FIXED
-#define SEED 1315868879
+
+//values
+#define SEED 1318360533
 #define FILENAME "../testfiles/round2/segfault.csv"
 
 
@@ -25,5 +26,9 @@
 
 
 
+
+
+//------------------------------------------------------------------------
+//macro logic goes here if we want to have some
 //------------------------------------------------------------------------
 #endif //VIRUS_CONFIG_H

@@ -1,10 +1,9 @@
 #include <iostream>
-#include <fstream>
-
 #include "config.h"
-
 #include "antiVirus.h"
+
 #ifndef PROD
+#include <fstream>
 #include "visualization.h"
 #endif
 
