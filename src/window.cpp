@@ -193,7 +193,6 @@ void Window::createGrid(const Point &windowLoc, const Point &gridSize, size_t se
         }
     }
 }
-
 void Window::createRect(const Point &p, size_t w, size_t h, size_t sep, SDL_Color &color) {
     SDL_Rect block;
     block.x = p.getX() * (w + sep) + sep;
@@ -424,6 +423,5 @@ void Window::showStatus(const Point &windowLoc, const Point &gridElement, size_t
         SDL_DestroyTexture(felirat_t);
         lineH += h + sep;
     }
-
 }
 
