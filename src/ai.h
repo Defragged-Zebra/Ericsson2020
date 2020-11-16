@@ -70,6 +70,18 @@ public:
     ~AI(){
         delete grid2;
     }
+
+    static void calculateDistrictScoresWithWannabes(size_t countryID, std::set<ScoreHolder> &districtScores);
+
+    static void calculateWannabeBorder(size_t countryID);
+
+    static Point calculateWannabeStartPoint(const std::set<Field *> &fieldsToCalc, size_t countryID);
+
+    static void addFieldsToWannaHealWithFlood(int &numberOfVaccinesToDistribute, size_t countryID,
+                                              std::vector<VaccineData> &fieldsToHealSendBack, ScoreHolder maxScoredDistrict);
+
+    static void modeWanna(int &numberOfVaccinesToDistribute, size_t countryID, std::set<ScoreHolder> &districtScores,
+                   std::vector<VaccineData> &fieldsToHealSendBack);
 };
 
 

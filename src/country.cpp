@@ -29,3 +29,16 @@ bool Country::isNeighbourToVaccinatedField(const Point &p) const {
     }
     return false;
 }
+bool Country::isNeighbourToWannabeVaccinatedField(const Point &p) const {
+    //if (wannabeVaccinatedFields.empty()) {
+    //    return false;
+    //} else {
+        for (const auto &selected : p.getNeighbours()) {
+            for (const auto &vd:wannabeVaccinatedFields) {
+                if (vd.second.find(selected) != vd.second.end()) return true;
+            }
+            if (wannabeBorder.find(selected) != wannabeBorder.end()) return true;
+        }
+    //}
+    return false;
+}

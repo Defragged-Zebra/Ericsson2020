@@ -49,6 +49,8 @@ public:
     static void shiftFactor2to4();
 
     static void calculateBorder(size_t countryID);
+
+    static void calculateWannabeBorder(size_t countryID);
 };
 
 
