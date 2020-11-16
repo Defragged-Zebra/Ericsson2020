@@ -24,11 +24,11 @@ int main() {
 #else
     #ifdef PRODTEST
         std::ifstream ifs;
-        ifs.open("../testfiles/round2/server1.csv");
+        ifs.open("../testfiles/round2/noFlooding.csv");
         AntiVirus av = AntiVirus(new Protocol(ifs, std::cout, std::cout));
     #else
         std::ifstream ifs;
-        ifs.open("../testfiles/round2/server1299122113.csv");
+        ifs.open("../testfiles/round2/noFlooding.csv");
         AntiVirus av = AntiVirus(new Visualization(ifs, std::cout, std::cout));
     #endif
 #endif

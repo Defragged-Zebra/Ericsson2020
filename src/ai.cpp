@@ -162,22 +162,36 @@ void AI::modeB(int numberOfVaccinesToDistribute, size_t countryID, std::set<Scor
             districtScores.begin(), districtScores.end());
     std::vector<Point> startPoints;
 
-    //ToDO refactor orderedDistrictScores
-
-    //spend remaining vaccines with ||(numberOfVaccinesToDistribute > 10 * (grid2->getCurrentTick() - 1)))
-    while (!orderedDistrictScores.empty() and (fieldsToHealSendBack.empty() or
-                                               (numberOfVaccinesToDistribute > 10 * (grid2->getCurrentTick() - 1)))) {
-        ScoreHolder topElement = orderedDistrictScores.top();
-        if (grid2->getCurrentTick() == 1) {
-            startPoints = mapAddBorderFieldsForDistrict(orderedDistrictScores.top().getDistrictID());
-        } else {
-            std::set<Point> calcBorder = grid2->getCountryByID(countryID).getBorder();
-            startPoints = std::vector<Point>(calcBorder.begin(), calcBorder.end());
+    if (grid2->getCurrentTick() > 1) {
+        while (!orderedDistrictScores.empty() and (fieldsToHealSendBack.empty() or
+                                                   (numberOfVaccinesToDistribute >
+                                                    10 * (grid2->getCurrentTick() - 1)))) {
+            ScoreHolder topElement = orderedDistrictScores.top();
+            if (grid2->getCurrentTick() == 1) {
+                startPoints = mapAddBorderFieldsForDistrict(orderedDistrictScores.top().getDistrictID());
+            } else {
+                std::set<Point> calcBorder = grid2->getCountryByID(countryID).getBorder();
+                startPoints = std::vector<Point>(calcBorder.begin(), calcBorder.end());
+            }
+            addFieldsToHealWithDijsktra(numberOfVaccinesToDistribute, countryID, fieldsToHealSendBack,
+                                        topElement, startPoints);
+            orderedDistrictScores.pop();
         }
-        addFieldsToHealWithDijsktra(numberOfVaccinesToDistribute, countryID, fieldsToHealSendBack,
-                                    topElement, startPoints);
-        orderedDistrictScores.pop();
+    } else {
+        while (!orderedDistrictScores.empty() and fieldsToHealSendBack.empty()) {
+            ScoreHolder topElement = orderedDistrictScores.top();
+            if (grid2->getCurrentTick() == 1) {
+                startPoints = mapAddBorderFieldsForDistrict(orderedDistrictScores.top().getDistrictID());
+            } else {
+                std::set<Point> calcBorder = grid2->getCountryByID(countryID).getBorder();
+                startPoints = std::vector<Point>(calcBorder.begin(), calcBorder.end());
+            }
+            addFieldsToHealWithDijsktra(numberOfVaccinesToDistribute, countryID, fieldsToHealSendBack,
+                                        topElement, startPoints);
+            orderedDistrictScores.pop();
+        }
     }
+
 
 }
 

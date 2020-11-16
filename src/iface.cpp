@@ -5,7 +5,7 @@
 #include "iface.h"
 
 void Iface::initAntiVirus() {
-#ifndef PROD
+#ifdef SEEDFIXED
     login(SEED);
 #else
     login();
