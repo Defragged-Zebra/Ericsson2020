@@ -116,7 +116,7 @@ void Iface::start() {
 #ifndef PROD
         grid->updateClearByFieldCheck();
         if(grid->isClear()){
-            break;
+            //break;
         }
 #endif
     }

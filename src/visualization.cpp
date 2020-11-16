@@ -1,7 +1,8 @@
 //
 // Created by woranhun on 2020. 11. 02..
 //
-
+#include "config.h"
+#ifndef PROD
 #include "visualization.h"
 
 void Visualization::displayCurrentRound(int gameID, int tickID, int countryID) {
@@ -17,3 +18,4 @@ void Visualization::displayCurrentRound(int gameID, int tickID, int countryID) {
     ablak.update();
     // show windows comes here
 }
+#endif

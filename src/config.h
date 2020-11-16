@@ -12,12 +12,12 @@
 //switches
 #define PROD
 //#define PRODTEST
-//#define SEED_FIXED
+#define SEED_FIXED
 
 
 //values
 #define SEED 1318360533
-#define FILENAME "../testfiles/round2/segfault.csv"
+#define FILENAME "../testfiles/round2/server1318360533.csv"
 
 
 
