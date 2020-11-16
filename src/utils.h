@@ -163,7 +163,7 @@ public:
 
         [[nodiscard]] int getVaccinesNeededForHealing() const { return vaccinesNeededForTotalHealing; }
 
-        [[nodiscard]] int ChangeInVaccines() const { return changeInVaccines; };
+        [[nodiscard]] int getChangeInVaccines() const { return changeInVaccines; };
 
         [[nodiscard]] double getProfitabilityIndex() const { return profitabilityIndex; }
 
@@ -189,6 +189,12 @@ public:
         public:
             bool operator()(const ScoreHolder &sc1,const ScoreHolder &sc2)const{
                 return sc1.getVaccinesNeededForHealing() > sc2.getVaccinesNeededForHealing();
+            }
+        };
+        class ProducedVaccines{
+        public:
+            bool operator()(const ScoreHolder &sc1,const ScoreHolder &sc2)const{
+                return sc1.getChangeInVaccines() > sc2.getChangeInVaccines();
             }
         };
     };

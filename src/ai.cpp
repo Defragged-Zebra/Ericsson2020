@@ -144,7 +144,7 @@ void AI::addFieldsToHealWithFlood(int &numberOfVaccinesToDistribute, size_t coun
     floodDistrict(startPoint, fieldsToHeal, fieldsToHealContinuous);
     //ToDo check if fieldsToHeal is not empty --> nem volt folytonos a terület
     //check proposed by woranhun -- in really extreme cases it can make problem
-    if (maxScoredDistrict.ChangeInVaccines() < 0) return;
+    if (maxScoredDistrict.getChangeInVaccines() < 0) return;
     //get the fields of the district
     for (const auto &field:fieldsToHealContinuous) {
         int vaccinesToBeUsed = field->vaccinesToPutForTotalHealing(countryID);
