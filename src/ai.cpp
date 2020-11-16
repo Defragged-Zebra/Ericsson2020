@@ -161,7 +161,7 @@ void AI::addFieldsToHealWithFlood(int &numberOfVaccinesToDistribute, size_t coun
 //mode B: we check which district is the easiest to heal, and try to heal that
 void AI::modeB(int &numberOfVaccinesToDistribute, size_t countryID, std::set<ScoreHolder> &districtScores,
                std::vector<VaccineData> &fieldsToHealSendBack) {
-    std::priority_queue<ScoreHolder, std::vector<ScoreHolder>, Compare::> orderedDistrictScores(
+    std::priority_queue<ScoreHolder, std::vector<ScoreHolder>, Compare::ProducedVaccines> orderedDistrictScores(
             districtScores.begin(), districtScores.end());
     std::vector<Point> startPoints;
 
