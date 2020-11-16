@@ -12,7 +12,6 @@
 #include "country.h"
 #include "district.h"
 #include <algorithm>
-#include "config.h"
 
 class Grid {
     std::vector<std::vector<size_t>> grid{};

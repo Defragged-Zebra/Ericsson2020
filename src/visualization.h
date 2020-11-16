@@ -6,7 +6,6 @@
 #define VIRUS_VISUALIZATION_H
 #include "iface.h"
 #include "window.h"
-#include "config.h"
 
 class Visualization : public Iface{
     Window ablak;

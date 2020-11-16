@@ -10,7 +10,6 @@
 #include <algorithm>
 #include <set>
 #include <functional>
-#include "config.h"
 
 class District {
     size_t districtID{} ;

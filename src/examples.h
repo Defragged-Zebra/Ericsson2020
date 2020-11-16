@@ -7,7 +7,6 @@
 
 #include <iostream>
 #include <sstream>
-#include "config.h"
 
 std::stringstream ex1() {
     std::stringstream ss;

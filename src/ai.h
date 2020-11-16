@@ -11,7 +11,6 @@
 #include "utils.h"
 #include "graphalgos.h"
 #include "graphalgos.h"
-#include "config.h"
 
 class AI {
     //this is a copy
