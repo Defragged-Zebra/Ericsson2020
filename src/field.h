@@ -10,6 +10,7 @@
 #include <queue>
 #include <sstream>
 #include <cmath>
+#include "config.h"
 
 class Field {
     size_t fieldID{};

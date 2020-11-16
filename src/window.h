@@ -15,6 +15,7 @@
 
 #include "grid.h"
 #include "utils.h"
+#include "config.h"
 
 class Window {
     SDL_Window *window;

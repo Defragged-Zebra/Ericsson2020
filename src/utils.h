@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <climits>
 #include <vector>
+#include "config.h"
 
 class Utils {
 public:

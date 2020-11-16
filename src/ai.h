@@ -2,15 +2,16 @@
 // Created by lukac on 11/6/2020.
 //
 
+
+#ifndef VIRUS_AI_H
+#define VIRUS_AI_H
+
 #include "grid.h"
 #include "logic.h"
 #include "utils.h"
 #include "graphalgos.h"
 #include "graphalgos.h"
-
-#ifndef VIRUS_AI_H
-#define VIRUS_AI_H
-
+#include "config.h"
 
 class AI {
     //this is a copy

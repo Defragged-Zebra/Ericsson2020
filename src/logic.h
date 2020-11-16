@@ -8,11 +8,9 @@
 #include <algorithm>
 #include <vector>
 #include <stdexcept>
-//in the end I included this bc they surely not asking to write such low lvl funcs like floor(double n) as those require bitshifting stuff;
 #include <cmath>
 #include "grid.h"
-
-//for debug purposes
+#include "config.h"
 #include <iostream>
 #include <stdexcept>
 #include "utils.h"

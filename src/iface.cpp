@@ -5,8 +5,11 @@
 #include "iface.h"
 
 void Iface::initAntiVirus() {
-    login(1299122113);
-
+#ifndef PROD
+    login(SEED);
+#else
+    login();
+#endif
     std::string line;
     std::getline(is, line);
     std::stringstream ss;
@@ -112,7 +115,9 @@ void Iface::start() {
         }
 #ifndef PROD
         grid->updateClearByFieldCheck();
-        if(grid->isClear())break;
+        if(grid->isClear()){
+            break;
+        }
 #endif
     }
 }
@@ -155,7 +160,6 @@ void Iface::round(std::string &line) {
     this->displayCurrentRound(_gameID, tickID, countryID);
     Logic::simulateTO(_gameID, tickID, countryID);
     //TODO: calculate this .. also it's buggy af, and have some serious logic errors
-    //TODO: ez szar, fix it
     int numberOfVaccinesToDistribute = grid->getCountryByID(countryID).getReserveVaccines();
     AI::copyGrid(grid);
     std::vector<VaccineData> back; // don't change this
@@ -174,6 +178,4 @@ void Iface::round(std::string &line) {
         os << "PUT " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
     }
     os << "." << std::endl;
-    if(grid->getCurrentTick()==1) exit(0);
-
 }

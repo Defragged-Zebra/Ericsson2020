@@ -8,7 +8,7 @@
 #include <iostream>
 
 #include "iface.h"
-
+#include "config.h"
 
 class Protocol : public Iface {
 public:

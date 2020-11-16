@@ -6,6 +6,7 @@
 #define VIRUS_GRAPHICS_H
 
 #include "iface.h"
+#include "config.h"
 
 class Graphics : public Iface {
 public:

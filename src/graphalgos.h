@@ -10,6 +10,7 @@
 #include "field.h"
 #include "grid.h"
 #include "logic.h"
+#include "config.h"
 
 class GraphAlgos {
     typedef std::pair<int,Point> node;
