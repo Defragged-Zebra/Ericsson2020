@@ -16,6 +16,7 @@
 class AI {
     //this is a copy
     static Grid* grid2;
+    static bool stalled;
 
     static void calculateDistrictScoresForNextRound(size_t countryID, std::set<ScoreHolder> &districtScores);
 
@@ -46,6 +47,9 @@ public:
 
 
     static void modeA(int &numberOfVaccinesToDistribute, size_t countryID, std::set<ScoreHolder> &districtScores,
+                      std::vector<VaccineData> &fieldsToHealSendBack);
+
+    static void modeC(int numberOfVaccinesToDistribute, size_t countryID, std::set<ScoreHolder> &districtScores,
                       std::vector<VaccineData> &fieldsToHealSendBack);
 
     static void addFieldsToHealWithFlood(int &numberOfVaccinesToDistribute, size_t countryID,

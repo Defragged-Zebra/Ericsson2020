@@ -98,6 +98,9 @@ public:
             }
         }
     }
+
+    bool hasDistrict(){return !assignedDistricts.empty();}
+
 };
 
 

@@ -184,7 +184,7 @@ public:
 
     }
 
-    int calculateChangeInProducedVaccinesByHealingDistrict(size_t countryID, const District &district);
+    int calculateDistrictProductionCapacity(size_t countryID, const District &district);
 
     void updateClearByFieldCheck() {
         bool allClear = true;

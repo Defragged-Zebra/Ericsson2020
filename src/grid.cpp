@@ -43,7 +43,7 @@ std::ostream &operator<<(std::ostream &os, const Grid &g) {
     return os;
 }
 
-int Grid::calculateChangeInProducedVaccinesByHealingDistrict(size_t countryID, const District &district) {
+int Grid::calculateDistrictProductionCapacity(size_t countryID, const District &district) {
     int changeInVaccines = 0;
     for (auto fieldPointer:district.getAssignedFields()) {
         changeInVaccines += 2;

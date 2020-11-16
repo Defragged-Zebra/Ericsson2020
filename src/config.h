@@ -16,7 +16,7 @@
 
 //#define SEED_FIXED
 #define SEED 1315868879
-#define FILENAME "../testfiles/round2/noFlooding.csv"
+#define FILENAME "../testfiles/round2/segfault.csv"
 
 
 

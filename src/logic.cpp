@@ -30,20 +30,19 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
                         district.setAssignedCountryID(countryID);
                         grid->getCountryByID(countryID).addAssignedDistrict(district.getDistrictID());
 #ifndef PROD
-                        int change = grid->calculateChangeInProducedVaccinesByHealingDistrict(countryID,
-                                                                                              grid->getDistrictByPoint(
-                                                                                                      p));
+                        int change = grid->calculateDistrictProductionCapacity(countryID, grid->getDistrictByPoint(p));
                         int existing = grid->getCountryByID(countryID).getTotalProductionCapacity();
                         grid->getCountryByID(countryID).setTotalProductionCapacity(existing + change);
-                        grid->getCountryByID(countryID).setReserveVaccines(
-                                grid->getCountryByID(countryID).getReserveVaccines() +
-                                grid->getCountryByID(countryID).getTotalProductionCapacity());
 #endif
                     }
                 }
             }
         }
-
+#ifndef PROD
+        grid->getCountryByID(countryID).setReserveVaccines(grid->getCountryByID(countryID).getReserveVaccines() +
+                                                           grid->getCountryByID(
+                                                                   countryID).getTotalProductionCapacity());
+#endif
         int inf = 0;
         for (int x = 0; x < grid->getWidth(); ++x) {
             for (int y = 0; y < grid->getHeight(); ++y) {
