@@ -47,12 +47,16 @@ void AI::calculateDistrictScoresWithWannabes(size_t countryID, std::set<ScoreHol
         calculateWannabeBorder(countryID);
         startPoints = grid2->getCountryByID(countryID).getWannabeBorder();
 
+        auto wannabeDistricts = grid2->getCountryByID(countryID).getWannabeDistricts();
         for (const auto &center:startPoints) {
             for (const auto &p:center.getNeighbours()) {
                 District neighbourD = grid2->getDistrictByPoint(p);
                 if (neighbourD.isClear()) {
                     continue;
-                } else {
+                } else if(std::find(wannabeDistricts.begin(), wannabeDistricts.end(),
+                                    grid2->getDistrictByPoint(p).getDistrictID()) != wannabeDistricts.end()){
+                    continue;
+                }else {
                     calculateScore(districtScores, neighbourD, countryID);
                 }
             }
@@ -148,6 +152,7 @@ std::vector<VaccineData> AI::chooseFieldsToVaccinate(int &numberOfVaccinesToDist
     while (numberOfVaccinesToDistribute > smallestDistrictValue) {
         districtScores.clear();
         calculateDistrictScoresWithWannabes(countryID, districtScores);
+        if(districtScores.empty())break;
         std::priority_queue<ScoreHolder, std::vector<ScoreHolder>, Compare::TotalHealing> orderedDistrictScores2(
                 districtScores.begin(), districtScores.end());
         smallestDistrictValue = orderedDistrictScores2.top().getVaccinesNeededForHealing();
@@ -291,11 +296,10 @@ Point AI::calculateStartPoint(const std::set<Field *> &fieldsToCalc, size_t coun
 }
 
 Point AI::calculateWannabeStartPoint(const std::set<Field *> &fieldsToCalc, size_t countryID) {
-    Grid *g = Logic::getGrid();
     for (const auto field:fieldsToCalc) {
-        const Point &p = g->getPointByFieldID(field->getFieldID());
-        if (g->getCountryByID(countryID).isNeighbourToVaccinatedField(p)) return p;
-        if (g->getCountryByID(countryID).isNeighbourToWannabeVaccinatedField(p)) return p;
+        const Point &p = grid2->getPointByFieldID(field->getFieldID());
+        if (grid2->getCountryByID(countryID).isNeighbourToVaccinatedField(p)) return p;
+        if (grid2->getCountryByID(countryID).isNeighbourToWannabeVaccinatedField(p)) return p;
     }
     throw std::runtime_error("calculateWannabeStartPoint -- you tried to heal an invalid area");
 }
@@ -437,7 +441,7 @@ void AI::calculateWannabeBorder(size_t countryID) {
     std::set<Point> futureBorder;
     Country &country = grid2->getCountryByID(countryID);
     const std::set<size_t> &wannabeDistricts = country.getWannabeDistricts();
-    for (auto d:country.getAssignedDistricts()) {
+    for (auto d:country.getWannabeDistricts()) {
         for (auto f:grid2->getDistrictByID(d).getAssignedFields()) {
             auto center = Point(f->getFieldID());
             for (const auto &p:center.getNeighbours()) {
@@ -445,9 +449,9 @@ void AI::calculateWannabeBorder(size_t countryID) {
                     //TODO: refactor from isClear to isInCountry
                     //old: if (!grid2->getDistrictByPoint(p).isClear())
                     if (std::find(wannabeDistricts.begin(), wannabeDistricts.end(),
-                                  grid2->getDistrictByPoint(p).getDistrictID()) != wannabeDistricts.end()) {
+                                  grid2->getDistrictByPoint(p).getDistrictID()) == wannabeDistricts.end()) {
                         const std::set<Point> &border = country.getBorder();
-                        if (std::find(border.begin(),border.end(), center) != border.end())
+                        if (std::find(border.begin(),border.end(), p) == border.end())
                             futureBorder.insert(center);
                         break;
                     }
