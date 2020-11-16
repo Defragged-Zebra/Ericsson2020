@@ -14,9 +14,9 @@
 #define PROD
 //#define PRODTEST
 
-#define SEEDFIXED
+//#define SEED_FIXED
 #define SEED 1315868879
-#define FILENAME
+#define FILENAME "../testfiles/round2/noFlooding.csv"
 
 
 
