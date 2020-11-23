@@ -163,7 +163,7 @@ void Iface::round(std::string &line) {
     int numberOfVaccinesToDistribute = grid->getCountryByID(countryID).getReserveVaccines();
     AI::copyGrid(grid);
     std::vector<VaccineData> back; // don't change this
-    //back = AI::calculateBackVaccines(back, numberOfVaccinesToDistribute, countryID);
+    back = AI::calculateBackVaccines(back, numberOfVaccinesToDistribute, countryID);
 
     //debug:
     ers<<"Vaccines before ai decision: "<<numberOfVaccinesToDistribute<<std::endl;

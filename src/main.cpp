@@ -3,8 +3,8 @@
 #include "antiVirus.h"
 
 #ifndef PROD
-#include <fstream>
 #include "visualization.h"
+#include <fstream>
 #endif
 
 

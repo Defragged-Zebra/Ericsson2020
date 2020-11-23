@@ -2,20 +2,101 @@
 // Created by lukac on 11/6/2020.
 //
 
-/*
-Overview of AI
- -calculateDistrictScoresForNextRound()
- -chooseDistrictsToHeal()
-
-
-
-*/
-
 #include "ai.h"
 
 uint64_t fuckCpp[4] = {0};
 Grid *AI::grid2 = new Grid(0, 0, fuckCpp);
-bool stalled = false;
+
+
+std::vector<VaccineData> &
+AI::calculateBackVaccines(std::vector<VaccineData> &back, int &numberOfVaccinesToDistribute, size_t countryID) {
+    //TODO: ezt az egeszet itt refactorolni kell majd
+    //ToDo We should take back vaccines only if the district is healed.
+    //ToDO We should check only the cells where we put vaccines in the past.
+//    for (int y = 0; y < grid2->getHeight(); ++y) {
+//        for (int x = 0; x < grid2->getWidth(); ++x) {
+//            std::map<size_t, int> allStoredVaccines = grid2->getFieldByPoint(Point(y, x)).getStoredVaccines();
+//            int countryStoredVaccines;
+//            try { countryStoredVaccines = allStoredVaccines.at(countryID); }
+//            catch (std::out_of_range &exc) { countryStoredVaccines = 0; }
+//            //Egy területről az összes tartalék vakcinát nem lehet visszavenni, legalább 1 egységnyit ott kell hagyni.
+//            if (countryStoredVaccines > 1) {
+//                back.emplace_back(Point(y, x), countryStoredVaccines - 1, countryID);
+//                //numberOfVaccinesToDistribute += countryStoredVaccines - 1;
+//            }
+//        }
+//    }
+    return back;
+}
+
+
+std::vector<VaccineData> &
+AI::calculatePutVaccines(std::vector<VaccineData> &put, int &numberOfVaccinesToDistribute, size_t countryID) {
+    std::vector<VaccineData> put2 = chooseFieldsToVaccinate(numberOfVaccinesToDistribute, countryID);
+    Country &c = Logic::getGrid()->getCountryByID(countryID);
+    std::vector<std::vector<bool>> check(grid2->getHeight());
+    for (auto &row:check) {
+        row = std::vector<bool>(grid2->getWidth(), true);
+    }
+
+    for (const auto &vd:put2)
+        if (check[vd.getY()][vd.getX()]) {
+            check[vd.getY()][vd.getX()] = false;
+            c.addToVaccinatedFields(vd.getPoint(), AI::grid2->getDistrictByPoint(vd.getPoint()).getDistrictID());
+            put.push_back(vd);
+        }
+    return put;
+}
+
+
+std::vector<VaccineData> AI::chooseFieldsToVaccinate(int &numberOfVaccinesToDistribute, size_t countryID) {
+    std::set<ScoreHolder> districtScores;
+    std::vector<VaccineData> fieldsToHealSendBack;
+    Grid *originalGrid = Logic::getGrid();
+
+    //simulate next round
+    Logic::setGrid(AI::grid2);
+    Logic::simulateTO(0, grid2->getCurrentTick() + 1, countryID);
+    Logic::setGrid(originalGrid);
+
+    //check if grid is clear
+    grid2->updateClearByFieldCheck();
+    if (grid2->isClear()) return std::vector<VaccineData>();
+
+    //calculate district scores
+    AI::calculateDistrictScoresForNextRound(countryID, districtScores);
+
+    //save the smallest vaccine value
+    std::priority_queue<ScoreHolder, std::vector<ScoreHolder>, Compare::TotalHealing> orderedDistrictScores(
+            districtScores.begin(), districtScores.end());
+    int smallestDistrictValue = orderedDistrictScores.top().getVaccinesNeededForHealing();
+
+    //calculate fields to heal
+    if (grid2->getCurrentTick() < SWITCH_TICK) {
+        modeB(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
+    } else {
+        modeA(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
+    }
+    if (fieldsToHealSendBack.empty()) {
+        modeC(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
+    }
+
+    while (numberOfVaccinesToDistribute > smallestDistrictValue) {
+        districtScores.clear();
+        calculateDistrictScoresWithWannabes(countryID, districtScores);
+        if (districtScores.empty())break;
+        std::priority_queue<ScoreHolder, std::vector<ScoreHolder>, Compare::TotalHealing> orderedDistrictScores2(
+                districtScores.begin(), districtScores.end());
+        smallestDistrictValue = orderedDistrictScores2.top().getVaccinesNeededForHealing();
+        if (grid2->getCurrentTick() < SWITCH_TICK) {
+            modeB(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
+        } else {
+            modeWanna(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
+        }
+    }
+
+    return fieldsToHealSendBack;
+}
 
 
 void AI::calculateDistrictScoresForNextRound(size_t countryID, std::set<ScoreHolder> &districtScores) {
@@ -53,10 +134,10 @@ void AI::calculateDistrictScoresWithWannabes(size_t countryID, std::set<ScoreHol
                 District neighbourD = grid2->getDistrictByPoint(p);
                 if (neighbourD.isClear()) {
                     continue;
-                } else if(std::find(wannabeDistricts.begin(), wannabeDistricts.end(),
-                                    grid2->getDistrictByPoint(p).getDistrictID()) != wannabeDistricts.end()){
+                } else if (std::find(wannabeDistricts.begin(), wannabeDistricts.end(),
+                                     grid2->getDistrictByPoint(p).getDistrictID()) != wannabeDistricts.end()) {
                     continue;
-                }else {
+                } else {
                     calculateScore(districtScores, neighbourD, countryID);
                 }
             }
@@ -90,77 +171,6 @@ void AI::calculateScore(std::set<ScoreHolder> &districtScores, const District &d
     }
 }
 
-
-std::vector<VaccineData> &
-AI::calculateBackVaccines(std::vector<VaccineData> &back, int &numberOfVaccinesToDistribute, size_t countryID) {
-    //TODO: ezt az egeszet itt refactorolni kell majd
-    //ToDo We should take back vaccines only if the district is healed.
-    //ToDO We should check only the cells where we put vaccines in the past.
-    for (int y = 0; y < grid2->getHeight(); ++y) {
-        for (int x = 0; x < grid2->getWidth(); ++x) {
-            std::map<size_t, int> allStoredVaccines = grid2->getFieldByPoint(Point(y, x)).getStoredVaccines();
-            int countryStoredVaccines;
-            try { countryStoredVaccines = allStoredVaccines.at(countryID); }
-            catch (std::out_of_range &exc) { countryStoredVaccines = 0; }
-            //Egy területről az összes tartalék vakcinát nem lehet visszavenni, legalább 1 egységnyit ott kell hagyni.
-            if (countryStoredVaccines > 1) {
-                back.emplace_back(Point(y, x), countryStoredVaccines - 1, countryID);
-                //numberOfVaccinesToDistribute += countryStoredVaccines - 1;
-            }
-        }
-    }
-    return back;
-}
-
-std::vector<VaccineData> AI::chooseFieldsToVaccinate(int &numberOfVaccinesToDistribute, size_t countryID) {
-    std::set<ScoreHolder> districtScores;
-    std::vector<VaccineData> fieldsToHealSendBack;
-    Grid *originalGrid = Logic::getGrid();
-
-    //simulate next round
-    Logic::setGrid(AI::grid2);
-    Logic::simulateTO(0, grid2->getCurrentTick() + 1, countryID);
-
-    Logic::setGrid(originalGrid);
-
-    //check if grid is clear
-    grid2->updateClearByFieldCheck();
-    if (grid2->isClear()) return std::vector<VaccineData>();
-
-    //calculate district scores
-    AI::calculateDistrictScoresForNextRound(countryID, districtScores);
-
-    //save the smallest vaccine value
-    std::priority_queue<ScoreHolder, std::vector<ScoreHolder>, Compare::TotalHealing> orderedDistrictScores(
-            districtScores.begin(), districtScores.end());
-    int smallestDistrictValue = orderedDistrictScores.top().getVaccinesNeededForHealing();
-
-    //calculate fields to heal
-    if (grid2->getCurrentTick() < SWITCH_TICK) {
-        modeB(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
-    } else {
-        modeA(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
-    }
-    if (fieldsToHealSendBack.empty()) {
-        modeC(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
-    }
-    //hotfix
-    auto c = grid2->getCountryByID(countryID);
-    //for (const auto &vd:fieldsToHealSendBack)
-    //c.addToWannabeVaccinatedFields(vd.getPoint(), AI::grid2->getDistrictByPoint(vd.getPoint()).getDistrictID());
-
-    while (numberOfVaccinesToDistribute > smallestDistrictValue) {
-        districtScores.clear();
-        calculateDistrictScoresWithWannabes(countryID, districtScores);
-        if(districtScores.empty())break;
-        std::priority_queue<ScoreHolder, std::vector<ScoreHolder>, Compare::TotalHealing> orderedDistrictScores2(
-                districtScores.begin(), districtScores.end());
-        smallestDistrictValue = orderedDistrictScores2.top().getVaccinesNeededForHealing();
-        modeWanna(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
-    }
-
-    return fieldsToHealSendBack;
-}
 
 //mode A: We check if we can heal entire districts in 1 turn, so our production capacity can increase
 void AI::modeA(int &numberOfVaccinesToDistribute, size_t countryID, std::set<ScoreHolder> &districtScores,
@@ -254,8 +264,10 @@ void AI::modeB(int &numberOfVaccinesToDistribute, size_t countryID, std::set<Sco
             if (!(grid2->getCountryByID(countryID).hasDistrict())) {
                 startPoints = mapAddBorderFieldsForDistrict(orderedDistrictScores.top().getDistrictID());
             } else {
-                std::set<Point> calcBorder = grid2->getCountryByID(countryID).getBorder();
-                startPoints = std::vector<Point>(calcBorder.begin(), calcBorder.end());
+                if (startPoints.empty()) {
+                    std::set<Point> calcBorder = grid2->getCountryByID(countryID).getBorder();
+                    startPoints = std::vector<Point>(calcBorder.begin(), calcBorder.end());
+                }
             }
             addFieldsToHealWithDijsktra(numberOfVaccinesToDistribute, countryID, fieldsToHealSendBack,
                                         maxScoredDisrtict, startPoints);
@@ -304,27 +316,7 @@ Point AI::calculateWannabeStartPoint(const std::set<Field *> &fieldsToCalc, size
     throw std::runtime_error("calculateWannabeStartPoint -- you tried to heal an invalid area");
 }
 
-std::vector<Point> AI::calculateStartPoints(const std::set<Field *> &fieldsToCalc, size_t countryID) {
-    Grid *g = Logic::getGrid();
-    std::vector<Point> goodStartPoints;
-    for (const auto field:fieldsToCalc) {
-        const Point &p = g->getPointByFieldID(field->getFieldID());
-        if (g->getCountryByID(countryID).isNeighbourToVaccinatedField(p)) {
-            goodStartPoints.push_back(p);
-        }
-    }
-    return goodStartPoints;
-}
 
-
-std::vector<VaccineData> &
-AI::calculatePutVaccines(std::vector<VaccineData> &put, int &numberOfVaccinesToDistribute, size_t countryID) {
-    put = chooseFieldsToVaccinate(numberOfVaccinesToDistribute, countryID);
-    Country &c = Logic::getGrid()->getCountryByID(countryID);
-    for (const auto &vd:put)
-        c.addToVaccinatedFields(vd.getPoint(), AI::grid2->getDistrictByPoint(vd.getPoint()).getDistrictID());
-    return put;
-}
 
 //flood kap egy Field tömböt + egy pontot, ezt olyan sorrandbe rendezni, hogy lerakható legyen.
 void AI::floodDistrict(const Point &p, std::set<Field *> &notVisitedFields, std::vector<Field *> &orderedFields) {
@@ -342,20 +334,6 @@ void AI::floodDistrict(const Point &p, std::set<Field *> &notVisitedFields, std:
             floodDistrict(selected, notVisitedFields, orderedFields);
         }
     }
-}
-
-// Pontok között keresünk legrövidebb utat. Ezek alapján vakcinázunk. Meglátjuk jó lesz-e.
-void AI::mikoltsAlgorithm(const std::vector<Point> &startPoints, const std::set<Field *> &fieldsToHeal,
-                          std::vector<Field *> &result, size_t countryID) {
-    std::pair<std::vector<Point>, int> minPath({}, INT_MAX);
-    for (const auto &p:startPoints) {
-        Point end = grid2->getPointByFieldID((*fieldsToHeal.begin())->getFieldID());
-        std::pair<std::vector<Point>, int> dijkstraResult;
-        GraphAlgos ga;
-        ga.dijkstra(p, end, dijkstraResult, countryID);
-        if (dijkstraResult.second < minPath.second) minPath = dijkstraResult;
-    }
-
 }
 
 void AI::addFieldsToHealWithDijsktra(int &numberOfVaccinesToDistribute, size_t countryID,
@@ -397,7 +375,7 @@ void AI::addFieldsToHealWithDijsktra(int &numberOfVaccinesToDistribute, size_t c
                 int vaccines = grid2->getFieldByPoint(p).vaccinesToPutMinimal(countryID);
                 //this "if" is not needed (see check above)
                 if (numberOfVaccinesToDistribute >= vaccines) {
-                    fieldsToHealSendBack.emplace_back(VaccineData(p, vaccines, countryID));
+                    fieldsToHealSendBack.emplace_back(p, vaccines, countryID);
                     numberOfVaccinesToDistribute -= vaccines;
                     //sometimes duplicates -- refactor, and store this in country property
                     startPoints.emplace_back(p);
@@ -451,7 +429,7 @@ void AI::calculateWannabeBorder(size_t countryID) {
                     if (std::find(wannabeDistricts.begin(), wannabeDistricts.end(),
                                   grid2->getDistrictByPoint(p).getDistrictID()) == wannabeDistricts.end()) {
                         const std::set<Point> &border = country.getBorder();
-                        if (std::find(border.begin(),border.end(), p) == border.end())
+                        if (std::find(border.begin(), border.end(), p) == border.end())
                             futureBorder.insert(center);
                         break;
                     }
@@ -459,20 +437,5 @@ void AI::calculateWannabeBorder(size_t countryID) {
             }
         }
     }
-    /*
-    for (auto d:wannabeDistricts) {
-        for (auto f:grid2->getDistrictByID(d).getAssignedFields()) {
-            auto center = Point(f->getFieldID());
-            for (const auto &p:center.getNeighbours()) {
-                if (grid2->getDistrictByPoint(p) != grid2->getDistrictByPoint(center)) {
-                    //TODO: refactor from isClear to isInCountry
-                    if (!grid2->getDistrictByPoint(p).isClear()) {
-                        futureBorder.insert(center);
-                        break;
-                    }
-                }
-            }
-        }
-    }*/
     country.setWannabeBorder(futureBorder);
 }
