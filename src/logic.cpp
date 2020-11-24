@@ -27,7 +27,7 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
                 //this line should be omitted if we got the values from ericsson, but included if we simulate from the AI ...
                 //my proposal is to make the AI have a separate simulate function, but I'm open to better suggestions
                 grid->getFieldByPoint(p).updateVaccination(heal + vaccination);
-                throw std::runtime_error("Vaccination should only be calculated from the AI simulations...")
+                throw std::runtime_error("Vaccination should only be calculated from the AI simulations...");
                 //TODO: benne hagyni production mode-os #ifndef-el, mert ha nem jon server info, akkor rip?
                 //TODO: WARNING MEG MINDEN
                 //TODO: WARNING MEG MINDEN
