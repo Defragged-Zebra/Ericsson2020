@@ -105,17 +105,17 @@ void Iface::start() {
             break;
         } else if (line.find("WARN") != std::string::npos) {
             Iface::sendDebugMsg(line);
-            //throw std::runtime_error("Beszoptuk a faszt!!444!!!");
+            //TODO: test if not causes error
+            //break;
         } else if (line.find("REQ") != std::string::npos) {
             Iface::round(line);
         } else {
-            Iface::sendDebugMsg("Miafasz történt?");
-            Iface::sendDebugMsg("[DEBUG] Hibát okozta\"" + line + "\" [DEBUG VEGE]");
-            //throw std::runtime_error("Miafasz történt?");
+            Iface::sendDebugMsg("Failed to process line:");
+            Iface::sendDebugMsg("[DEBUG] Error caused by\"" + line + "\" [END OF DEBUG]");
         }
 #ifndef PROD
         grid->updateClearByFieldCheck();
-        if(grid->isClear()){
+        if (grid->isClear()) {
             break;
         }
 #endif
@@ -144,12 +144,42 @@ void Iface::round(std::string &line) {
     tmp = "";
     while (std::getline(is, tmp)) {
         if (tmp == ".\r" or tmp == ".")break;
-        //Iface::sendDebugMsg("[NOTIFY] " + tmp);
+#ifdef INFO
+        Iface::sendDebugMsg("[NOTIFY] " + tmp);
+#endif
         ss.clear();
-        //TODO: parse game-data here
+
+        //TODO: parse game-data here (test this before uncommenting)
+//        if (tmp.find("VAC") != std::string::npos) {
+//#ifdef INFO
+//            Iface::sendDebugMsg("[NOTIFY] " + tmp);
+//#endif
+//            int row, column, sum_pre_vaccine, vaccinated;
+//            ss << tmp;
+//            ss >> row >> column >> sum_pre_vaccine >> vaccinated;
+//            //documentation is unclear AF
+//            //tried to reverse engineer how this works, but couldn't find a good testfile.csv.bak for it
+//            //this variable should store the amount of newly healed people
+//            int healed=;
+//            grid->getFieldByPoint(Point(column, row)).updateVaccination(healed)
+//        }
+//        if (tmp.find("SAFE") != std::string::npos) {
+//#ifdef INFO
+//            Iface::sendDebugMsg("[NOTIFY] " + tmp);
+//#endif
+//            int healedDistrictID;
+//            ss << tmp;
+//            ss >> countryID >> healedDistrictID;
+//            grid->getCountryByID(countryID).addAssignedDistrict(healedDistrictID);
+//            grid->getDistrictByID(healedDistrictID).setClear(true);
+//        }
+
+
+#ifdef WARN
         if (tmp.find("WARN") != std::string::npos) {
             Iface::sendDebugMsg(line);
             //throw std::runtime_error("We've fucked it up!!444!!!");
+#endif
         } else if (std::isdigit(tmp[0])) {
             int _countryID, TPC, RV;
             ss << tmp;
@@ -157,23 +187,23 @@ void Iface::round(std::string &line) {
             grid->addCountry(Country(_countryID, TPC, RV));
         }
     }
+    //TODO: displayCurrentRound should happen after the AI simulation, right? (I think this is the source of the bug why we got to see the tick0 data twice on the console)
     this->displayCurrentRound(_gameID, tickID, countryID);
     Logic::simulateTO(_gameID, tickID, countryID);
-    //TODO: calculate this .. also it's buggy af, and have some serious logic errors
     int numberOfVaccinesToDistribute = grid->getCountryByID(countryID).getReserveVaccines();
     AI::copyGrid(grid);
     std::vector<VaccineData> back; // don't change this
     back = AI::calculateBackVaccines(back, numberOfVaccinesToDistribute, countryID);
 
     //debug:
-    ers<<"Vaccines before ai decision: "<<numberOfVaccinesToDistribute<<std::endl;
+    ers << "Vaccines before ai decision: " << numberOfVaccinesToDistribute << std::endl;
 
     std::vector<VaccineData> put; // don't change this
     put = AI::calculatePutVaccines(put, numberOfVaccinesToDistribute, countryID);
     Logic::simulateVaccination(back, put);
 
-//debug:
-ers<<"Vaccines after ai decision: "<<numberOfVaccinesToDistribute<<std::endl;
+    //debug:
+    ers << "Vaccines after ai decision: " << numberOfVaccinesToDistribute << std::endl;
 
     //Send result back
     os << "RES " << _gameID << " " << tickID << " " << countryID << std::endl;

@@ -21,19 +21,34 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
                 const Point &p = Point(y, x);
                 vaccination = Logic::calculateVaccination(p, heal);
                 heal = Logic::calculateSpontaneousHealing(p, healStartTick, vaccination);
+
+                //TODO: WARNING MEG MINDEN
+                //TODO: WARNING MEG MINDEN
+                //this line should be omitted if we got the values from ericsson, but included if we simulate from the AI ...
+                //my proposal is to make the AI have a separate simulate function, but I'm open to better suggestions
                 grid->getFieldByPoint(p).updateVaccination(heal + vaccination);
+                throw std::runtime_error("Vaccination should only be calculated from the AI simulations...")
+                //TODO: benne hagyni production mode-os #ifndef-el?
+                //TODO: WARNING MEG MINDEN
+                //TODO: WARNING MEG MINDEN
+
                 grid->getFieldByPoint(p).updateRemainingVaccines(vaccination);
                 if (heal + vaccination > 0) {
                     if (grid->getDistrictByPoint(p).updateIsClear()) {
-                        //todo: in round3 change this
-                        District &district = grid->getDistrictByPoint(p);
-                        district.setAssignedCountryID(countryID);
-                        grid->getCountryByID(countryID).addAssignedDistrict(district.getDistrictID());
+                        //todo: in round3 change this block
+                        {
+                            //assign district to country .. this should be done according the update coming from Ericsson
+                            District &district = grid->getDistrictByPoint(p);
+                            district.setAssignedCountryID(countryID);
+                            grid->getCountryByID(countryID).addAssignedDistrict(district.getDistrictID());
 #ifndef PROD
-                        int change = grid->calculateDistrictProductionCapacity(countryID, grid->getDistrictByPoint(p));
-                        int existing = grid->getCountryByID(countryID).getTotalProductionCapacity();
-                        grid->getCountryByID(countryID).setTotalProductionCapacity(existing + change);
+                            //update total production capacity
+                            int change = grid->calculateDistrictProductionCapacity(countryID,
+                                                                                   grid->getDistrictByPoint(p));
+                            int existing = grid->getCountryByID(countryID).getTotalProductionCapacity();
+                            grid->getCountryByID(countryID).setTotalProductionCapacity(existing + change);
 #endif
+                        }
                     }
                 }
             }
@@ -43,7 +58,7 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
                                                            grid->getCountryByID(
                                                                    countryID).getTotalProductionCapacity());
 #endif
-        int inf = 0;
+        int inf;
         for (int x = 0; x < grid->getWidth(); ++x) {
             for (int y = 0; y < grid->getHeight(); ++y) {
                 inf = Logic::calculateSpontaneousInfection(Point(y, x));
@@ -238,22 +253,15 @@ double Logic::calculateCrossInfection(const Point &center, uint64_t factor3) {
 
 int Logic::calculateVaccination(const Point &p, int &spontaneousHealAmount) {
     Field &f = grid->getFieldByPoint(p);
-    // IR: last infection rate
-    int IR = f.getCurrentInfectionRate();
-    //P: population density
-    int P = f.getPopulationDensity();
-    //Ha egy adott területen az IR > 0
-    if (IR > 0 && !f.isClear()) {
-        //van n db tartalék vakcina az összes országnak együttvéve
+    int lastInfectionRate = f.getCurrentInfectionRate();
+    int populationDensity = f.getPopulationDensity();
+    if (lastInfectionRate > 0 && !f.isClear()) {
         std::map<size_t, int> vaccinesMap = f.getStoredVaccines();
-        //reserve vaccines
-        int n = 0;
+        int allReserveVaccines = 0;
         for (const auto &tmp:vaccinesMap) {
-            n += tmp.second;
+            allReserveVaccines += tmp.second;
         }
-        //X: vaccination rate
-        //akkor az adott terület infectionRate-je csökkenni, a healthRate-je nőni fog X = min(n * P, IR) -nal
-        return std::min(n * P, IR);
+        return std::min(allReserveVaccines * populationDensity, lastInfectionRate);
     }
     return 0;
 }
@@ -274,7 +282,7 @@ int Logic::calculateSpontaneousHealing(const Point &p, int healStartTick, int va
         double b = int(factor1 % 10);
         grid->random.next(1);
         int h = std::floor((a * b) / 20.0);
-        //A h = healing() vissztérési értéke ettől fogva csak floor(h * (IR - X) / IR) -nyit gyógyít.
+        //h: legacy healing -- function updated in round 2
         return std::floor(h * (grid->getFieldByPoint(p).getCurrentInfectionRate() - vaccinated) /
                           grid->getFieldByPoint(p).getCurrentInfectionRate());
     }
