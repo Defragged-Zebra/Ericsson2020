@@ -28,14 +28,15 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
                 //my proposal is to make the AI have a separate simulate function, but I'm open to better suggestions
                 grid->getFieldByPoint(p).updateVaccination(heal + vaccination);
                 throw std::runtime_error("Vaccination should only be calculated from the AI simulations...")
-                //TODO: benne hagyni production mode-os #ifndef-el?
+                //TODO: benne hagyni production mode-os #ifndef-el, mert ha nem jon server info, akkor rip?
                 //TODO: WARNING MEG MINDEN
                 //TODO: WARNING MEG MINDEN
 
                 grid->getFieldByPoint(p).updateRemainingVaccines(vaccination);
+                //TODO: #ifndef PROD
                 if (heal + vaccination > 0) {
                     if (grid->getDistrictByPoint(p).updateIsClear()) {
-                        //todo: in round3 change this block
+                        //todo: in round3 change this block for NOT PROD mode (in prod mode this should be overwritten)
                         {
                             //assign district to country .. this should be done according the update coming from Ericsson
                             District &district = grid->getDistrictByPoint(p);
@@ -51,6 +52,7 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
                         }
                     }
                 }
+                //TODO: #endif
             }
         }
 #ifndef PROD
