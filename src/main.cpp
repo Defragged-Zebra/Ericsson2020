@@ -8,6 +8,9 @@
 #endif
 
 
+
+//TODO: cleanup config
+
 int main() {
 //    debug3();
 //    return 0;
