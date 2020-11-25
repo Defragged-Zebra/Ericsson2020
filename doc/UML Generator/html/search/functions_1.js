@@ -1,0 +1,28 @@
+var searchData=
+[
+  ['calcpath_281',['calcPath',['../d2/d5b/class_graph_algos.html#a05980a7c241d7f0c6d4356e6210df1e2',1,'GraphAlgos']]],
+  ['calculatebackvaccines_282',['calculateBackVaccines',['../d9/d64/class_a_i.html#ac842da6efb9170e4340ba3cf40df65a5',1,'AI']]],
+  ['calculateborder_283',['calculateBorder',['../da/df6/class_logic.html#a95e67ed4c9141cbf3efdf6a720993e59',1,'Logic']]],
+  ['calculatedistrictproductioncapacity_284',['calculateDistrictProductionCapacity',['../da/d74/class_grid.html#ae16bf4e418d38191c647ef0220fc8606',1,'Grid']]],
+  ['calculateputvaccines_285',['calculatePutVaccines',['../d9/d64/class_a_i.html#a6afa7ebeca7011cfffbc5a0df60c112f',1,'AI']]],
+  ['calculatespontaneoushealing_286',['calculateSpontaneousHealing',['../da/df6/class_logic.html#acf435c045c675cb3ad14f7bf8732940e',1,'Logic']]],
+  ['calculatespontaneoushealinglegacy_287',['calculateSpontaneousHealingLEGACY',['../da/df6/class_logic.html#a1a2ddbd7540b8ede1bcc7976d31f9836',1,'Logic']]],
+  ['calculatespontaneousinfection_288',['calculateSpontaneousInfection',['../da/df6/class_logic.html#a7399ce3a312128bf723035825d466d89',1,'Logic']]],
+  ['calculatespontaneousinfectionlegacy_289',['calculateSpontaneousInfectionLEGACY',['../da/df6/class_logic.html#a7ff7fb2511045df5fe201656025da085',1,'Logic']]],
+  ['calculatevaccination_290',['calculateVaccination',['../da/df6/class_logic.html#ac8b8a4faa67a5f1868371796c9d5f3c2',1,'Logic']]],
+  ['calculatewannabeborder_291',['calculateWannabeBorder',['../da/df6/class_logic.html#aeff7322382f2031ba6ac372b226723af',1,'Logic']]],
+  ['callbackvaccines_292',['callBackVaccines',['../dc/d67/class_field.html#ad96a3faacfa496c97c676888c2f323d4',1,'Field']]],
+  ['checkgrid_293',['checkGrid',['../d2/d5c/class_iface.html#a589df503c137e1452525614a3c1d226e',1,'Iface']]],
+  ['clearassignedfields_294',['clearAssignedFields',['../d6/d85/class_district.html#ad4c7c4e755534e7fefbe189272450560',1,'District']]],
+  ['copygrid_295',['copyGrid',['../d9/d64/class_a_i.html#a75315f5d182131422e23710832cf7b3f',1,'AI']]],
+  ['country_296',['Country',['../d3/d56/class_country.html#ad7c7391a99cbd7e46c2f931db594239b',1,'Country::Country()=default'],['../d3/d56/class_country.html#a8a3213956006f6bd8c1a3457ff5feaa7',1,'Country::Country(size_t ID, size_t TPC, size_t RV)'],['../d3/d56/class_country.html#a9ca12c65de03360533a273a7a69cfbf9',1,'Country::Country(size_t ID, const std::set&lt; size_t &gt; &amp;districts)'],['../d3/d56/class_country.html#ada47efeefde1a7354f43516651bd23a4',1,'Country::Country(const Country &amp;c)']]],
+  ['createacquireddistrictsmap_297',['createAcquiredDistrictsMap',['../d9/dbf/class_window.html#a3d7f68f2fe4c1e7d787353b056090ea4',1,'Window']]],
+  ['createdistrictcell_298',['createDistrictCell',['../d9/dbf/class_window.html#a3cf04a74c49b1871b64436ef60fedc87',1,'Window']]],
+  ['creategrid_299',['createGrid',['../d2/d5c/class_iface.html#a42712663a207dad0227b8fc592c7046b',1,'Iface::createGrid()'],['../d9/dbf/class_window.html#a613473425472a8fa471f2cbd4926aa2e',1,'Window::createGrid()']]],
+  ['createinfectionheatmap_300',['createInfectionHeatMap',['../d9/dbf/class_window.html#a64c006506fe02aaabd214abef651d87d',1,'Window']]],
+  ['createminimalvaccinationmap_301',['createMinimalVaccinationMap',['../d9/dbf/class_window.html#a559be400478ab10fd0c147c3e88710be',1,'Window']]],
+  ['createpopulationmap_302',['createPopulationMap',['../d9/dbf/class_window.html#ad7e1d8bae4995cbd51eff71c283e6945',1,'Window']]],
+  ['createrect_303',['createRect',['../d9/dbf/class_window.html#aa1dba04db317de569def71239cf37dcb',1,'Window']]],
+  ['createtext_304',['createText',['../d9/dbf/class_window.html#ac2cf80c0ebb9c8fa2217776be9c394d7',1,'Window::createText(const Point &amp;p, size_t w, size_t h, size_t sep, const std::string &amp;text)'],['../d9/dbf/class_window.html#acc1af947527ea45ec9e7d0454dcc689e',1,'Window::createText(const Point &amp;p, size_t w, size_t h, size_t sep, int val)'],['../d9/dbf/class_window.html#a229f6af34fbb2f8f7acbaf3dd75f6275',1,'Window::createText(const Point &amp;p, size_t w, size_t h, size_t sep, double val)']]],
+  ['createvaccinationmap_305',['createVaccinationMap',['../d9/dbf/class_window.html#a27b72cfc7953f398cace9362daa9d4ca',1,'Window']]]
+];

@@ -1,0 +1,7 @@
+var searchData=
+[
+  ['vaccinedata_426',['VaccineData',['../d5/d42/class_utils_1_1_vaccine_data.html#a8e43471fecc918580d20ce22284deb4a',1,'Utils::VaccineData::VaccineData()=default'],['../d5/d42/class_utils_1_1_vaccine_data.html#a06c4ca583e9da7ac7fe769640c189df8',1,'Utils::VaccineData::VaccineData(const Point &amp;gc, int vaccines, size_t countryID)'],['../d5/d42/class_utils_1_1_vaccine_data.html#a401c8dc30f7eeabe63fa9a1e64795849',1,'Utils::VaccineData::VaccineData(size_t y, size_t x, int vaccines, size_t countryID)'],['../d5/d42/class_utils_1_1_vaccine_data.html#afa7dc882d6244144354c8e83874107c0',1,'Utils::VaccineData::VaccineData(const VaccineData &amp;bd)']]],
+  ['vaccinestoputfortotalhealing_427',['vaccinesToPutForTotalHealing',['../dc/d67/class_field.html#a4e827e77d4d643af74e873ba5c75add2',1,'Field']]],
+  ['vaccinestoputminimal_428',['vaccinesToPutMinimal',['../dc/d67/class_field.html#ac9823a5988356e6d2f6aa8cf232c16c5',1,'Field']]],
+  ['visualization_429',['Visualization',['../d0/d85/class_visualization.html#a21fc1dc9d02fc22ddb67d8b50865506f',1,'Visualization::Visualization()=delete'],['../d0/d85/class_visualization.html#a911fd0de3beba04cc81e35e8c4660a2a',1,'Visualization::Visualization(std::istream &amp;is, std::ostream &amp;os, std::ostream &amp;ers)'],['../d0/d85/class_visualization.html#a0fd12e8f5962f7ce091c0f124e929c76',1,'Visualization::Visualization(const Visualization &amp;p)=delete']]]
+];
