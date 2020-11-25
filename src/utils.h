@@ -70,12 +70,12 @@ public:
         }
 
         [[nodiscard]] bool withinBounds()const{
-            //this is buggy bc size_t is UNSIGNED.. why was this working in the first place?
+            //a healthy integer underflow, don't change it, it works
             return !(
                     this->getX()<0
                 || this->getY()<0
                 || this->getX() > gridWidth - 1
-                || this->getY() > gridHeight - 1)
+                || this->getY() > gridHeight - 1);
         }
 
         [[nodiscard]] size_t getY() const { return y; }
