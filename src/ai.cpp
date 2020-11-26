@@ -298,6 +298,7 @@ void AI::addFieldsToHealWithFlood(int &numberOfVaccinesToDistribute, size_t coun
                                   std::vector<VaccineData> &fieldsToHealSendBack,
                                   ScoreHolder maxScoredDistrict) {
     std::set<Field *> fieldsToHeal = grid2->getDistrictByID(maxScoredDistrict.getDistrictID()).getAssignedFields();
+    std::cerr << "FieldsToHeal size: " << fieldsToHeal.size() << std::endl;
     Point startPoint = calculateStartPointForFlood(fieldsToHeal, countryID);
     std::vector<Field *> fieldsToHealContinuous;
     floodDistrict(startPoint, fieldsToHeal, fieldsToHealContinuous);
@@ -316,10 +317,18 @@ void AI::addFieldsToHealWithFlood(int &numberOfVaccinesToDistribute, size_t coun
 
 Point AI::calculateStartPointForFlood(const std::set<Field *> &fieldsToCalc, size_t countryID) {
     Grid *g = Logic::getGrid();
-    for (const auto field:fieldsToCalc) {
-        const Point &p = g->getPointByFieldID(field->getFieldID());
-        if (g->getCountryByID(countryID).isNeighbourToVaccinatedField(p)) return p;
+    if (g->getCountryByID(countryID).hasDistrict()) {
+        for (const auto field:fieldsToCalc) {
+            const Point &p = g->getPointByFieldID(field->getFieldID());
+            if (g->getCountryByID(countryID).isNeighbourToVaccinatedField(p)) return p;
+        }
+    } else {
+        for (const auto field:fieldsToCalc) {
+            const Point &p = g->getPointByFieldID(field->getFieldID());
+            if (p.isBorder()) return p;
+        }
     }
+
     throw std::runtime_error("calculateStartPointFailed -- you tried to heal an invalid area");
 }
 

@@ -10,7 +10,7 @@
 
 
 //switches
-//#define PROD
+#define PROD
 #define PRODTEST
 //#define SEED_FIXED
 
