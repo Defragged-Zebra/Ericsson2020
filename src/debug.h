@@ -4,6 +4,7 @@
 
 #ifndef VIRUS_DEBUG_H
 #define VIRUS_DEBUG_H
+
 #include <iostream>
 #include "utils.h"
 
@@ -44,14 +45,16 @@ void debug2() {
     int i = 1;
 
     while (i < 240) {
-        if ((rd.next(3) % 7)+3 <4){ std::cout << "i= " << i << std::endl; }
+        if ((rd.next(3) % 7) + 3 < 4) { std::cout << "i= " << i << std::endl; }
         ++i;
     }
 
 }
-void debug3(){
+
+void debug3() {
     double a = 8.333333333333339;
-    a = ((int)(a*100000000.0))/100000000.0;
-    std::cout<< a;
+    a = ((int) (a * 100000000.0)) / 100000000.0;
+    std::cout << a;
 }
+
 #endif //VIRUS_DEBUG_H

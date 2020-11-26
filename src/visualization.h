@@ -4,10 +4,11 @@
 
 #ifndef VIRUS_VISUALIZATION_H
 #define VIRUS_VISUALIZATION_H
+
 #include "iface.h"
 #include "window.h"
 
-class Visualization : public Iface{
+class Visualization : public Iface {
     Window ablak;
 public:
     Visualization() = delete;
@@ -18,11 +19,12 @@ public:
 
     Visualization &operator=(const Visualization &g) = delete;
 
-    void setGrid(Grid* g)override{
+    void setGrid(Grid *g) override {
         grid = g;
         Logic::setGrid(g);
         ablak.setGrid(grid);
     }
+
     void displayCurrentRound(int gameID, int tickID, int countryID) override;
 };
 

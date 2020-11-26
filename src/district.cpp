@@ -26,7 +26,7 @@ bool District::updateIsClear() {
 bool District::isFieldInDistrict(size_t fieldID) {
     //another lambda here
     return std::any_of(assignedFields.begin(), assignedFields.end(),
-                [fieldID](auto currentField) { return currentField->getFieldID() == fieldID; });
+                       [fieldID](auto currentField) { return currentField->getFieldID() == fieldID; });
     /*
     for (auto field:assignedFields) {
         if (field->getFieldID() == fieldID) return true;

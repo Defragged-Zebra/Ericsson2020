@@ -3,8 +3,10 @@
 #include "antiVirus.h"
 
 #ifndef PROD
+
 #include "visualization.h"
 #include <fstream>
+
 #endif
 
 
@@ -24,15 +26,15 @@ int main() {
 #ifdef PROD
     AntiVirus av = AntiVirus(new Protocol(std::cin, std::cout, std::cerr));
 #else
-    #ifdef PRODTEST
-        std::ifstream ifs;
-        ifs.open(FILENAME);
-        AntiVirus av = AntiVirus(new Protocol(ifs, std::cout, std::cout));
-    #else
-        std::ifstream ifs;
-        ifs.open(FILENAME);
-        AntiVirus av = AntiVirus(new Visualization(ifs, std::cout, std::cout));
-    #endif
+#ifdef PRODTEST
+    std::ifstream ifs;
+    ifs.open(FILENAME);
+    AntiVirus av = AntiVirus(new Protocol(ifs, std::cout, std::cout));
+#else
+    std::ifstream ifs;
+    ifs.open(FILENAME);
+    AntiVirus av = AntiVirus(new Visualization(ifs, std::cout, std::cout));
+#endif
 #endif
     //std::ifstream ifs;
     //ifs.open("../testfiles/round2/server1.csv");

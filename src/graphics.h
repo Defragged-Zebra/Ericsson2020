@@ -18,7 +18,6 @@ public:
     Graphics &operator=(const Graphics &g) = delete;
 
 
-
     void displayCurrentRound(int gameID, int tickID, int countryID) override {
         this->terminalGraphicsRun(gameID, tickID, countryID);
     }

@@ -33,11 +33,11 @@ public:
 
     class Point {
         size_t y{}, x{};
-        static size_t gridHeight,gridWidth;
+        static size_t gridHeight, gridWidth;
     public:
         Point() = default;
 
-        explicit Point(size_t fieldID){
+        explicit Point(size_t fieldID) {
             this->y = fieldID / gridWidth; //integer division is a design choice
             this->x = fieldID - (gridWidth * this->y);
         }
@@ -62,41 +62,46 @@ public:
         bool operator==(const Point &p) const {
             return this->y == p.y && this->x == p.x;
         }
-        bool operator<(const Point& p)const{
-            if(this->getY()==p.getY())
+
+        bool operator<(const Point &p) const {
+            if (this->getY() == p.getY())
                 return this->getX() < p.getX();
             else
                 return this->getY() < p.getY();
         }
 
-        [[nodiscard]] bool withinBounds()const{
+        [[nodiscard]] bool withinBounds() const {
             //a healthy integer underflow, don't change it, it works
             return !(
-                    this->getX()<0
-                || this->getY()<0
-                || this->getX() > gridWidth - 1
-                || this->getY() > gridHeight - 1);
+                    this->getX() < 0
+                    || this->getY() < 0
+                    || this->getX() > gridWidth - 1
+                    || this->getY() > gridHeight - 1);
         }
 
         [[nodiscard]] size_t getY() const { return y; }
 
         [[nodiscard]] size_t getX() const { return x; }
 
-        [[nodiscard]] static size_t getGridWidth(){return gridWidth;}
-        [[nodiscard]] static size_t getGridHeight(){return gridHeight;}
-        static void setGridWidth(size_t w){gridWidth=w;}
-        static void setGridHeight(size_t h){gridHeight=h;}
+        [[nodiscard]] static size_t getGridWidth() { return gridWidth; }
+
+        [[nodiscard]] static size_t getGridHeight() { return gridHeight; }
+
+        static void setGridWidth(size_t w) { gridWidth = w; }
+
+        static void setGridHeight(size_t h) { gridHeight = h; }
 
         void setX(const size_t _x) { this->x = _x; }
 
         void setY(const size_t _y) { this->y = _y; }
-        [[nodiscard]] std::vector<Point> getNeighbours()const;
 
-        [[nodiscard]] bool isBorder()const{
-            return this->getY()==0 or
-            this->getX()==0 or
-            this->getY()==Utils::Point::getGridHeight()-1 or
-            this->getX()==Utils::Point::getGridWidth()-1;
+        [[nodiscard]] std::vector<Point> getNeighbours() const;
+
+        [[nodiscard]] bool isBorder() const {
+            return this->getY() == 0 or
+                   this->getX() == 0 or
+                   this->getY() == Utils::Point::getGridHeight() - 1 or
+                   this->getX() == Utils::Point::getGridWidth() - 1;
         }
     };
 
@@ -172,35 +177,46 @@ public:
 
         //bool operator<(const ScoreHolder &sc) const { return this->profitabilityIndex < sc.profitabilityIndex; }
 
-        [[nodiscard]] bool profIndex(const ScoreHolder &sc)const{return this->profitabilityIndex < sc.profitabilityIndex;}
-        [[nodiscard]] bool totalHealing(const ScoreHolder &sc)const{return this->vaccinesNeededForTotalHealing < sc.vaccinesNeededForTotalHealing;}
+        [[nodiscard]] bool profIndex(const ScoreHolder &sc) const {
+            return this->profitabilityIndex < sc.profitabilityIndex;
+        }
+
+        [[nodiscard]] bool totalHealing(const ScoreHolder &sc) const {
+            return this->vaccinesNeededForTotalHealing < sc.vaccinesNeededForTotalHealing;
+        }
+
         bool operator==(ScoreHolder sc) const;
-        bool operator <(ScoreHolder sc) const;
+
+        bool operator<(ScoreHolder sc) const;
 
     };
-    class Compare{
+
+    class Compare {
     public:
-        class ProfIndex{
+        class ProfIndex {
         public:
-            bool operator()(const ScoreHolder &sc1,const ScoreHolder &sc2)const{
+            bool operator()(const ScoreHolder &sc1, const ScoreHolder &sc2) const {
                 return sc1.getProfitabilityIndex() < sc2.getProfitabilityIndex();
             }
         };
-        class TotalHealing{
+
+        class TotalHealing {
         public:
-            bool operator()(const ScoreHolder &sc1,const ScoreHolder &sc2)const{
+            bool operator()(const ScoreHolder &sc1, const ScoreHolder &sc2) const {
                 return sc1.getVaccinesNeededForHealing() > sc2.getVaccinesNeededForHealing();
             }
         };
-        class ProducedVaccines{
+
+        class ProducedVaccines {
         public:
-            bool operator()(const ScoreHolder &sc1,const ScoreHolder &sc2)const{
+            bool operator()(const ScoreHolder &sc1, const ScoreHolder &sc2) const {
                 return sc1.getChangeInVaccines() < sc2.getChangeInVaccines();
             }
         };
-        class MinimalVaccinesToHeal{
+
+        class MinimalVaccinesToHeal {
         public:
-            bool operator()(const ScoreHolder &sc1,const ScoreHolder &sc2)const{
+            bool operator()(const ScoreHolder &sc1, const ScoreHolder &sc2) const {
                 return sc1.getVaccinesNeededForHealing() < sc2.getVaccinesNeededForHealing();
             }
         };

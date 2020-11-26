@@ -34,7 +34,7 @@ public:
 
     static void simulateTO(int gameID, size_t tickID, size_t countryID);
 
-    static void simulateVaccination(const std::vector<VaccineData>& back, const std::vector<VaccineData>& put);
+    static void simulateVaccination(const std::vector<VaccineData> &back, const std::vector<VaccineData> &put);
 
     static int calculateSpontaneousHealing(const Point &p, int healStartTick, int vaccinated);
 

@@ -48,7 +48,7 @@ int Grid::calculateDistrictProductionCapacity(size_t countryID, const District &
     for (auto fieldPointer:district.getAssignedFields()) {
         changeInVaccines += 2;
         Point center = this->getPointByFieldID(fieldPointer->getFieldID());
-        std::vector<Point> coordinates=center.getNeighbours();
+        std::vector<Point> coordinates = center.getNeighbours();
         for (const auto &selected : coordinates) {
             /* Egy megtisztított kerület védekezési vakcina száma a kerület területeinek élszomszédos,
              * nem tiszta kerülethez tartozó területek 6 - start_info[coord].population különbségösszege,

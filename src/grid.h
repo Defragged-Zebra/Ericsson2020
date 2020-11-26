@@ -26,11 +26,11 @@ class Grid {
 public:
     Grid() = default;
 
-    Grid(const Grid &g){
+    Grid(const Grid &g) {
         *this = g;
     }
 
-    Grid &operator=(const Grid& g) {
+    Grid &operator=(const Grid &g) {
         if (this != &g) {
             this->width = g.width;
             this->height = g.height;
@@ -43,7 +43,7 @@ public:
             }
             this->districts.clear();
             for (auto d:g.districts) {
-                auto* tmp =new District(*d);
+                auto *tmp = new District(*d);
                 tmp->clearAssignedFields();
                 this->districts.push_back(tmp);
             }
@@ -205,10 +205,10 @@ public:
     }
 
     ~Grid() {
-        for (const auto& field:fields) {
+        for (const auto &field:fields) {
             delete field;
         }
-        for (const auto& district:districts) {
+        for (const auto &district:districts) {
             delete district;
         }
     }
