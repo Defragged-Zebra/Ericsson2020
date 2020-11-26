@@ -52,7 +52,7 @@ public:
 
     static void calculateBorder(size_t countryID);
 
-    static void calculateWannabeBorder(size_t countryID);
+    //static void calculateWannabeBorder(size_t countryID);
 
     static int calculateSpontaneousHealingLEGACYv2(const Point &p, int healStartTick, int vaccinated);
 };

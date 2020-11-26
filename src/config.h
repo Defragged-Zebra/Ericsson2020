@@ -15,7 +15,7 @@
 //#define SEED_FIXED
 
 //values
-#define SEED 1318360533
+#define SEED 47923402
 #define FILENAME "../testfiles/round2.5/log26188.txt"
 //which tick switch from dijkstra to flood
 #define SWITCH_TICK 5
@@ -31,8 +31,16 @@
 //macro logic goes here if we want to have some
 
 //I'm hiding this here, bc we shouldn't do logging levels with macros, but it this works for *some* area of the code
-//debug level [INFO | WARN | NOTHING]:
-#define WARN
+//debug level [VERBOSE | INFO | WARN | NOTHING]:
+#define INFO
+
+#ifdef PROD
+#undef PRODTEST
+#endif
+
+#ifdef VERBOSE
+#define INFO
+#endif
 #ifdef INFO
 #define WARN
 #endif

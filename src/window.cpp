@@ -3,7 +3,8 @@
 //
 #include "window.h"
 
-void Window::update() {
+void Window::update(std::pair<Point, int> pair) {
+    addPairToPath(pair);
     SDL_FillRect(screen, nullptr, SDL_MapRGB(screen->format, 0, 0, 0));
     SDL_Event event;
     createGrid(Point(0, 0), Point(grid->getHeight(), grid->getWidth()), 0, 20);
@@ -166,23 +167,7 @@ void Window::createGrid(const Point &windowLoc, const Point &gridSize, size_t se
                     break;
                 }
                 case 5: {
-                    //not printing the text :/
-                    std::string text("district view is fucked up Flow pls fix it");
-                    SDL_Color col = {0, 0, 0};
-                    SDL_Surface *label;
-                    SDL_Texture *label_t;
-                    SDL_Rect where;
-                    for (int i = 0; i < 1; ++i) {
-                        char c = text[i];
-                        label = TTF_RenderUTF8_Blended(font, &c, col);
-                        label_t = SDL_CreateTextureFromSurface(renderer, label);
-                        where = {(int) offset.getX() + i * (int) sidelen, (int) offset.getY() + 100,
-                                 static_cast<int>(sidelen - 3),
-                                 static_cast<int>(sidelen - 3)};
-                        SDL_RenderCopy(renderer, label_t, nullptr, &where);
-                    }
-                    SDL_FreeSurface(label);
-                    SDL_DestroyTexture(label_t);
+                    createPathMap(offset, Point(y, x), sidelen, sidelen, sep);
                     break;
                 }
                 default: {
@@ -240,6 +225,50 @@ Window::createInfectionHeatMap(const Point &windowLoc, const Point &gridElement,
     std::string text;
     std::stringstream ss;
     ss << grid->getFieldByPoint(gridElement).getCurrentInfectionRate();
+    ss >> text;
+    SDL_Color col = {0, static_cast<Uint8>((Uint8) 255 - color.g), static_cast<Uint8>((Uint8) 255 - color.b)};
+    SDL_Surface *felirat;
+    SDL_Texture *felirat_t;
+    SDL_Rect hova = {(int) (windowLoc.getX() + gridElement.getX() * (w + sep) + sep),
+                     (int) (windowLoc.getY() + gridElement.getY() * (h + sep) + sep), static_cast<int>(w - 3),
+                     static_cast<int>(h - 3)};
+    felirat = TTF_RenderUTF8_Blended(font, text.c_str(), col);
+    felirat_t = SDL_CreateTextureFromSurface(renderer, felirat);
+    SDL_RenderCopy(renderer, felirat_t, nullptr, &hova);
+    SDL_FreeSurface(felirat);
+    SDL_DestroyTexture(felirat_t);
+}
+
+void
+Window::createPathMap(const Point &windowLoc, const Point &gridElement, size_t w, size_t h, size_t sep) {
+    //színes négyzet létrehozása
+    bool marked = false;
+    std::pair<Point,int>foundPair;
+    for (auto pair:path) {
+        if (pair.first == gridElement) {
+            marked = true;
+            break;
+        }
+    }
+    uint8_t r = 0;
+    uint8_t g = 0;
+    uint8_t b = 0;
+    if (marked) {
+        r = 200;
+        g = 200;
+        b = 200;
+    }
+    SDL_Color color = {r, g, b};
+    SDL_Rect block;
+    block.x = windowLoc.getX() + gridElement.getX() * (w + sep) + sep;
+    block.y = windowLoc.getY() + gridElement.getY() * (h + sep) + sep;
+    block.w = w;
+    block.h = h;
+    SDL_FillRect(screen, &block, SDL_MapRGB(screen->format, color.r, color.g, color.b));
+    //szám létrehozása
+    std::string text;
+    std::stringstream ss;
+    ss << foundPair.second;
     ss >> text;
     SDL_Color col = {0, static_cast<Uint8>((Uint8) 255 - color.g), static_cast<Uint8>((Uint8) 255 - color.b)};
     SDL_Surface *felirat;

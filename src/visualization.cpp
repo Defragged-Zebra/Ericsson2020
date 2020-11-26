@@ -14,6 +14,11 @@ void Visualization::displayCurrentRound(int gameID, int tickID, int countryID) {
     }
     os << "." << std::endl;
 
-    ablak.update();
+    ablak.update(std::pair(Point(-1,-1),0));
+    // show windows comes here
+}
+
+void Visualization::displayCurrentRound(int gameID, int tickID, int countryID, std::pair<Point, int> pair) {
+    ablak.update(pair);
     // show windows comes here
 }

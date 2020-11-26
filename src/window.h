@@ -30,6 +30,9 @@ class Window {
     std::vector<SDL_Color> colors;
     size_t mode = 0;
     std::vector<size_t> markedDistricts{};
+    std::vector<std::pair<Point, int>> path;
+
+    void addPairToPath(std::pair<Point, int> pair) { path.push_back(pair); }
 
 public:
     Window &operator=(const Window &) = delete;
@@ -72,7 +75,7 @@ public:
 
     }
 
-    void update();
+    void update(std::pair<Point, int> pair);
 
     void setGrid(Grid *g) {
         this->grid = g;
@@ -113,6 +116,8 @@ public:
     void createPopulationMap(const Point &windowLoc, const Point &gridElement, size_t w, size_t h, size_t sep);
 
     void createAcquiredDistrictsMap(const Point &windowLoc, const Point &gridElement, size_t w, size_t h, size_t sep);
+
+    void createPathMap(const Point &windowLoc, const Point &gridElement, size_t w, size_t h, size_t sep);
 };
 
 

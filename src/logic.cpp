@@ -33,26 +33,22 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
                 //TODO: WARNING MEG MINDEN
 
                 grid->getFieldByPoint(p).updateRemainingVaccines(vaccination);
-                //TODO: #ifndef PROD
+#ifndef PROD
                 if (heal + vaccination > 0) {
                     if (grid->getDistrictByPoint(p).updateIsClear()) {
                         //todo: in round3 change this block for NOT PROD mode (in prod mode this should be overwritten)
-                        {
-                            //assign district to country .. this should be done according the update coming from Ericsson
-                            District &district = grid->getDistrictByPoint(p);
-                            district.setAssignedCountryID(countryID);
-                            grid->getCountryByID(countryID).addAssignedDistrict(district.getDistrictID());
-#ifndef PROD
-                            //update total production capacity
-                            int change = grid->calculateDistrictProductionCapacity(countryID,
-                                                                                   grid->getDistrictByPoint(p));
-                            int existing = grid->getCountryByID(countryID).getTotalProductionCapacity();
-                            grid->getCountryByID(countryID).setTotalProductionCapacity(existing + change);
-#endif
-                        }
+                        //assign district to country .. this should be done according the update coming from Ericsson
+                        District &district = grid->getDistrictByPoint(p);
+                        district.setAssignedCountryID(countryID);
+                        grid->getCountryByID(countryID).addAssignedDistrict(district.getDistrictID());
+                        //update total production capacity
+                        int change = grid->calculateDistrictProductionCapacity(countryID,
+                                                                               grid->getDistrictByPoint(p));
+                        int existing = grid->getCountryByID(countryID).getTotalProductionCapacity();
+                        grid->getCountryByID(countryID).setTotalProductionCapacity(existing + change);
                     }
                 }
-                //TODO: #endif
+#endif
             }
         }
 #ifndef PROD

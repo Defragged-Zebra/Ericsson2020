@@ -26,6 +26,8 @@ public:
     }
 
     void displayCurrentRound(int gameID, int tickID, int countryID) override;
+
+    void displayCurrentRound(int gameID, int tickID, int countryID, std::pair<Point, int> pair);
 };
 
 
