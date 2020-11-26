@@ -12,7 +12,7 @@
 #include "logic.h"
 
 class GraphAlgos {
-    typedef std::pair<int, Point> node;
+    typedef std::pair<int, size_t> node;
     typedef std::pair<int, Point> nodeLEGACY;
     Grid *g = Logic::getGrid();
     size_t countryID;
