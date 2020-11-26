@@ -22,8 +22,9 @@ class Grid {
     size_t height{};
     size_t currentTick = 0;
     bool clear = false;
-
+    std::vector<std::vector<int>> allVaccinations;
 public:
+
     Grid() = default;
 
     Grid(const Grid &g) {
@@ -38,6 +39,7 @@ public:
             this->random = g.random;
             this->grid = g.grid;
             this->fields.clear();
+            this->allVaccinations = g.allVaccinations;
             for (auto f:g.fields) {
                 this->fields.push_back(new Field(*f));
             }
@@ -71,6 +73,7 @@ public:
             this->fields = g->fields;
             this->districts = g->districts;
             this->countries = g->countries;
+            this->allVaccinations = g->allVaccinations;
         }
         return *this;
     }
@@ -82,10 +85,21 @@ public:
         this->width = width;
         random = Utils::Random(seeds);
         grid = std::vector<std::vector<size_t>>();
+        allVaccinations = {};
         grid.reserve(height);
+        allVaccinations.reserve(height);
         for (size_t i = 0; i < height; ++i) {
             std::vector<size_t> sor = std::vector<size_t>(width);
             grid.push_back(sor);
+            //push_back copies
+            std::vector<int> sor2 = {};
+            allVaccinations.push_back(sor2);
+        }
+        int i=0;
+        std::cerr<<"grid constructor"<<std::endl;
+        for (auto it:allVaccinations){
+            std::cerr<<"AllVac: "<<i<<std::endl;
+            i++;
         }
         this->countries = std::vector<Country>();
         this->districts = std::vector<District *>();
@@ -112,6 +126,17 @@ public:
 
     Field &getFieldByPoint(const Point &p) {
         return getFieldByID(grid[p.getY()][p.getX()]);
+    }
+
+    void updateAllVaccination(const Point &p, int v) { allVaccinations[p.getY()][p.getX()] = v; }
+
+    int getAllVaccination(const Point &p) {
+        std::cerr << "checkpoint 4.1.2.2.1" << std::endl;
+        std::cerr<<"Y: "<<p.getY()<< std::endl;
+        std::cerr<<"X: "<<p.getX()<< std::endl;
+        auto deb1 = allVaccinations[p.getY()][p.getX()];
+        std::cerr << "checkpoint 4.1.2.2.1" << std::endl;
+        return deb1;
     }
 
     template<typename FUNC>

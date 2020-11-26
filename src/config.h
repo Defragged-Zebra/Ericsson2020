@@ -10,13 +10,13 @@
 
 
 //switches
-//#define PROD
-//#define PRODTEST
+#define PROD
+#define PRODTEST
 //#define SEED_FIXED
 
 //values
 #define SEED 47923402
-#define FILENAME "../testfiles/round2.5/log26188.txt"
+#define FILENAME "../testfiles/round2.5/segfault.txt"
 //which tick switch from dijkstra to flood
 #define SWITCH_TICK 5
 
