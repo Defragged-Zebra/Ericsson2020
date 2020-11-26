@@ -103,6 +103,8 @@ public:
 
     std::set<Point> getWannabeBorder() { return wannabeBorder; }
 
+    std::map<size_t, std::set<Point>> &getVaccinatedFields(){return vaccinatedFields;}
+
     void thereAreNoVaccinatedFieldsHere(std::map<size_t, std::set<Point>> &notVaccinatedFields) {
         for (const auto &nvd:notVaccinatedFields) {
             auto &vd = vaccinatedFields[nvd.first];

@@ -33,15 +33,15 @@ AI::calculateBackVaccines(std::vector<VaccineData> &back, int &numberOfVaccinesT
 
 std::vector<VaccineData> &
 AI::calculatePutVaccines(std::vector<VaccineData> &put, int &numberOfVaccinesToDistribute, size_t countryID) {
-    std::cerr<<"checkpoint 4.1"<<std::endl;
+    std::cerr << "checkpoint 4.1" << std::endl;
     std::vector<VaccineData> put2 = chooseFieldsToVaccinate(numberOfVaccinesToDistribute, countryID);
     Country &c = Logic::getGrid()->getCountryByID(countryID);
-    std::cerr<<"checkpoint 4.2"<<std::endl;
+    std::cerr << "checkpoint 4.2" << std::endl;
     std::vector<std::vector<bool>> check(grid2->getHeight());
     for (auto &row:check) {
         row = std::vector<bool>(grid2->getWidth(), true);
     }
-    std::cerr<<"checkpoint 4.3"<<std::endl;
+    std::cerr << "checkpoint 4.3" << std::endl;
     for (const auto &vd:put2)
         if (check[vd.getY()][vd.getX()]) {
             check[vd.getY()][vd.getX()] = false;
@@ -263,6 +263,28 @@ void AI::addFieldsToHealWithDijsktra(int &numberOfVaccinesToDistribute, size_t c
             //TODO: the put should omit it too, if we've already put vaccines to that field in this round -- this would solve the sometimes duplicates error below too
             if (!grid2->getDistrictByPoint(p).isClear() or
                 (grid2->getFieldByPoint(p).getStoredVaccines()[countryID] > 0)) {
+
+                //propose:
+                bool exit = false;
+                if (std::any_of(fieldsToHealSendBack.begin(), fieldsToHealSendBack.end(),
+                                [p](auto currentVaccineData) { return currentVaccineData->getPoint() == p; })) {
+                    continue;
+                }
+                //country.vaccinatedfields tuti jo-e?
+                auto vaccinatedFieldMap = grid2->getCountryByID(countryID).getVaccinatedFields();
+                for (const auto &district2:vaccinatedFieldMap) {
+                    auto vaccinatedFields = district2.second;
+                    if (std::any_of(vaccinatedFields.begin(), vaccinatedFields.end(),
+                                    [p](auto field) { return field == p; })) {
+                        exit = true;
+                        break;
+                    }
+                }
+                if (exit) {
+                    continue;
+                }
+                //end of propose
+
                 int vaccines = grid2->getFieldByPoint(p).vaccinesToPutMinimal(countryID);
                 //TODO: this "if" is not needed (see check above)
                 if (numberOfVaccinesToDistribute >= vaccines) {

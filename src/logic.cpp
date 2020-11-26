@@ -20,7 +20,7 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
         for (int x = 0; x < grid->getWidth(); ++x) {
             for (int y = 0; y < grid->getHeight(); ++y) {
                 const Point &p = Point(y, x);
-#ifndef PRODTEST //TODO: warning!!!!!!
+#ifndef PROD
                 vaccination = Logic::calculateVaccination(p, heal);
 #else
                 //std::cerr<<"checkpoint 4.1.2.2"<<std::endl;
@@ -135,7 +135,7 @@ int Logic::calculateSpontaneousInfection(const Point &p) {
     a = (std::floor(a * 100000.0)) / 100000.0;
     //updated in v3
     if(std::ceil(a * (double) ((factor4 % 500)+250) / 1000.0)>100)
-        throw std::runtime_error("vacc>100");
+        throw std::runtime_error("inf>100");
     return std::ceil(a * (double) ((factor4 % 500)+250) / 1000.0);
 }
 

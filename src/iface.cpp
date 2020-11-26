@@ -176,7 +176,7 @@ void Iface::round(std::string &line) {
             ers << "vaccinated: " << vaccinated << std::endl;
 //            //variable healed should store the amount of newly healed people
 //            sum_pre_vaccine -- mennyi vakcina van osszesen az összes országnak ::Vakcina beadás és gyógyulás kepletben az *m*
-//            vaccinated: összesen mennyi vaknica adótdott be ::Vakcina beadás és gyógyulás kepletben az *X*
+//            vaccinated: összesen mennyi vaknica adódott be ::Vakcina beadás és gyógyulás kepletben az *X*
             int healed = vaccinated;
             grid->updateAllVaccination(Point(column, row), healed);
         }
