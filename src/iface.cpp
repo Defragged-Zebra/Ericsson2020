@@ -99,7 +99,7 @@ void Iface::createGrid() {
 }
 
 void Iface::start() {
-    ers << "checkpoint -1" << std::endl;
+    //ers << "checkpoint -1" << std::endl;
     std::string line;
     while (std::getline(is, line)) {
         if (line == ".\r" or line == "\r" or line == ".") {
@@ -143,7 +143,7 @@ void Iface::requestLEGACY(std::string &line) {
 
 void Iface::round(std::string &line) {
     ers << "[TICKID]: " << grid->getCurrentTick() << std::endl;
-    ers << "checkpoint 0" << std::endl;
+    //ers << "checkpoint 0" << std::endl;
     std::string tmp;
     std::stringstream ss;
     ss << line;
@@ -204,24 +204,24 @@ void Iface::round(std::string &line) {
         }
     }
     ers << "TickID: " << grid->getCurrentTick() << std::endl;
-    ers << "checkpoint 1" << std::endl;
+    //ers << "checkpoint 1" << std::endl;
     Logic::simulateTO(_gameID, tickID, countryID);
-    ers << "checkpoint 2" << std::endl;
+    //ers << "checkpoint 2" << std::endl;
     this->displayCurrentRound(_gameID, tickID, countryID);
     int numberOfVaccinesToDistribute = grid->getCountryByID(countryID).getReserveVaccines();
     AI::copyGrid(grid);
     std::vector<VaccineData> back; // don't change this
-    ers << "checkpoint 3" << std::endl;
+    //ers << "checkpoint 3" << std::endl;
     back = AI::calculateBackVaccines(back, numberOfVaccinesToDistribute, countryID);
 
 #ifdef INFO
     ers << "[INFO] Vaccines before ai decision: " << numberOfVaccinesToDistribute << std::endl;
 #endif
 
-    ers << "checkpoint 4 -- AI:put" << std::endl;
+    //ers << "checkpoint 4 -- AI:put" << std::endl;
     std::vector<VaccineData> put; // don't change this
     put = AI::calculatePutVaccines(put, numberOfVaccinesToDistribute, countryID);
-    ers << "checkpoint 5" << std::endl;
+    //ers << "checkpoint 5" << std::endl;
     Logic::simulateVaccination(back, put);
 
 #ifdef INFO

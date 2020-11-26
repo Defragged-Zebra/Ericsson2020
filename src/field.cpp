@@ -10,7 +10,7 @@ void Field::updateVaccination(int healed) {
     //std::cerr<<"vaccinationRate + healed= "<<vaccinationRate + healed<<std::endl;
     //std::cerr<<"InfectionRateBefore:" <<infectionRate <<std::endl;
     if (vaccinationRate + healed > 100) {
-        std::cerr << "vaccinationRate + healed > 100:" << std::endl;
+        //std::cerr << "vaccinationRate + healed > 100:" << std::endl;
         vaccinationRate = 100;
     }
     vaccinationRate = std::min(vaccinationRate + healed, 100);
@@ -18,7 +18,7 @@ void Field::updateVaccination(int healed) {
     //std::cerr<<"InfectionRateAfter:" <<infectionRate <<std::endl;
     if (infectionRate < 0) {
         infectionRate = 0;
-        std::cerr << "Infection<0 FieldID:" << fieldID << std::endl;
+        //std::cerr << "Infection<0 FieldID:" << fieldID << std::endl;
     }
 
 }

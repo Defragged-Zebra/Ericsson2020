@@ -42,12 +42,13 @@ AI::calculatePutVaccines(std::vector<VaccineData> &put, int &numberOfVaccinesToD
         row = std::vector<bool>(grid2->getWidth(), true);
     }
     //std::cerr<<"checkpoint 4.3"<<std::endl;
-    for (const auto &vd:put2)
+    for (const auto &vd:put2) {
         if (check[vd.getY()][vd.getX()]) {
             check[vd.getY()][vd.getX()] = false;
             c.addToVaccinatedFields(vd.getPoint(), AI::grid2->getDistrictByPoint(vd.getPoint()).getDistrictID());
             put.push_back(vd);
         }
+    }
     return put;
 }
 
@@ -86,6 +87,8 @@ std::vector<VaccineData> AI::chooseFieldsToVaccinate(int &numberOfVaccinesToDist
             orderedDistrictScores(districtScores.begin(), districtScores.end());
     int smallestDistrictValue = orderedDistrictScores.top().getVaccinesNeededForHealing();
 
+
+    /*
     //TODO: could be merged with label A?
     //TODO: shouldn't this be a separate function?
     while (numberOfVaccinesToDistribute > smallestDistrictValue) {
@@ -102,6 +105,7 @@ std::vector<VaccineData> AI::chooseFieldsToVaccinate(int &numberOfVaccinesToDist
             modeA(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
         }
     }
+     */
     return fieldsToHealSendBack;
 }
 
@@ -313,7 +317,7 @@ void AI::modeA(int &numberOfVaccinesToDistribute, size_t countryID, std::set<Sco
             //grid2->getCountryByID(countryID).addWannabeDistrict(maxScoredDistrict.getDistrictID());
             addFieldsToHealWithFlood(numberOfVaccinesToDistribute, countryID, fieldsToHealSendBack, maxScoredDistrict);
         }
-        std::cerr << "Our Vaccines: " << numberOfVaccinesToDistribute << std::endl;
+        //std::cerr << "Our Vaccines: " << numberOfVaccinesToDistribute << std::endl;
         std::cerr << "TotalHealingneeds: " << maxScoredDistrict.getVaccinesNeededForHealing() << std::endl;
 //             else if(numberOfVaccinesToDistribute>30){
 //            std::cerr<<"We need to heal because we stuck."<<std::endl;
@@ -332,7 +336,7 @@ void AI::addFieldsToHealWithFlood(int &numberOfVaccinesToDistribute, size_t coun
     std::vector<Field *> fieldsToHealContinuous;
     floodDistrict(startPoint, fieldsToHeal, fieldsToHealContinuous);
     //check proposed by woranhun -- in really extreme cases it can make problem
-    if (maxScoredDistrict.getChangeInVaccines() < 0) return;
+    //if (maxScoredDistrict.getChangeInVaccines() < 0) return;
     for (const auto &field:fieldsToHealContinuous) {
         int vaccinesToBeUsed = field->vaccinesToPutForTotalHealing(countryID);
         if (numberOfVaccinesToDistribute > vaccinesToBeUsed) {
@@ -435,7 +439,7 @@ void AI::addFieldsToWannaHealWithFlood(int &numberOfVaccinesToDistribute, size_t
     std::vector<Field *> fieldsToHealContinuous;
     floodDistrict(startPoint, fieldsToHeal, fieldsToHealContinuous);
     //check proposed by woranhun -- in really extreme cases it can make problem
-    if (maxScoredDistrict.getChangeInVaccines() < 0) return;
+    //if (maxScoredDistrict.getChangeInVaccines() < 0) return;
     //get the fields of the district
     for (const auto &field:fieldsToHealContinuous) {
         int vaccinesToBeUsed = field->vaccinesToPutForTotalHealing(countryID);
