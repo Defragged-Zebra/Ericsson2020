@@ -245,8 +245,8 @@ void AI::addFieldsToHealWithDijsktra(int &numberOfVaccinesToDistribute, size_t c
                                    grid2->getFieldByPoint(startPoint).vaccinesToPutMinimal(countryID));
             } else {
                 //ga.dijkstra(startPoint, endPoint, result, countryID);
-                //ga.Astar(startPoint, endPoint, result, countryID);
-                ga.dijkstraLEGACY(startPoint, endPoint, result, countryID);
+                ga.Astar(startPoint, endPoint, result, countryID);
+                //ga.dijkstraLEGACY(startPoint, endPoint, result, countryID);
                 result.first.insert(result.first.begin(), 1, startPoint);
                 result.second += grid2->getFieldByPoint(startPoint).vaccinesToPutMinimal(countryID);
             }

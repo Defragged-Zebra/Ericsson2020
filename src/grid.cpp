@@ -46,7 +46,7 @@ std::ostream &operator<<(std::ostream &os, const Grid &g) {
 int Grid::calculateDistrictProductionCapacity(size_t countryID, const District &district) {
     int changeInVaccines = 0;
     for (auto fieldPointer:district.getAssignedFields()) {
-        //changed from 2 to 1 in 2.5
+        //changed from 2 to 1 in 2.5, and also in v3.0
         changeInVaccines += 1;
         Point center = this->getPointByFieldID(fieldPointer->getFieldID());
         std::vector<Point> coordinates = center.getNeighbours();
@@ -58,8 +58,9 @@ int Grid::calculateDistrictProductionCapacity(size_t countryID, const District &
             this->getDistrictByPoint(selected).isClear() ? plusMinus = +1 : plusMinus = -1;
             //changed in v2.5, if logic doesn't calculate right, check this first!!!
             //TPC - Kerületi védekezési vakcina 2.** A kerületek között a szabad áruforgalmat biztosítani kell, így az optimista `... területek 6 - start_info[coord].population különbségösszege, osztva 3-mal ...` sajnos megduplázódik, `... területek 6 - start_info[coord].population különbségösszege * 2, osztva 3-mal ...`, de ezáltal a mindig friss étel mindenkihez eljut.
+            //Update for v3.0
             changeInVaccines += (int) (plusMinus * (ceil(
-                    (6 - this->getFieldByPoint(selected).getPopulationDensity()) * 2 / (double) 3)));
+                    (6 - this->getFieldByPoint(selected).getPopulationDensity()) * 4 / (double) 5)));
         }
     }
     return changeInVaccines;
