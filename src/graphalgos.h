@@ -13,6 +13,7 @@
 
 class GraphAlgos {
     typedef std::pair<int, Point> node;
+    typedef std::pair<int, Point> nodeLEGACY;
     Grid *g = Logic::getGrid();
     size_t countryID;
 public:
@@ -20,6 +21,9 @@ public:
     int calcPath(std::vector<size_t> &parent, std::vector<Point> &result, size_t startFieldID, size_t endFieldID);
 
     void dijkstra(const Point &start, const Point &goal, std::pair<std::vector<Point>, int> &result, size_t _countryID);
+
+    void dijkstraLEGACY(const Point &start, const Point &goal, std::pair<std::vector<Point>, int> &result,
+                        size_t _countryID);
 };
 
 
