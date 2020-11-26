@@ -99,7 +99,7 @@ std::vector<VaccineData> AI::chooseFieldsToVaccinate(int &numberOfVaccinesToDist
             modeB(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
         } else {
             //TODO: Why is there a separate function for modeB(), but one for modeA()
-            //modeWanna(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
+            modeA(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
         }
     }
     return fieldsToHealSendBack;
@@ -222,6 +222,7 @@ std::vector<Point> AI::addMapEdge(size_t districtID) {
 void AI::addFieldsToHealWithDijsktra(int &numberOfVaccinesToDistribute, size_t countryID,
                                      std::vector<VaccineData> &fieldsToHealSendBack,
                                      const ScoreHolder &maxScoredDistrict, std::vector<Point> &startPoints) {
+    if (maxScoredDistrict.getChangeInVaccines() < 0) return;
     District district = grid2->getDistrictByID(maxScoredDistrict.getDistrictID());
     std::vector<Point> endPoints;
     for (auto field:district.getAssignedFields()) {
@@ -267,7 +268,7 @@ void AI::addFieldsToHealWithDijsktra(int &numberOfVaccinesToDistribute, size_t c
                 //propose:
                 bool exit = false;
                 if (std::any_of(fieldsToHealSendBack.begin(), fieldsToHealSendBack.end(),
-                                [p](auto currentVaccineData) { return currentVaccineData->getPoint() == p; })) {
+                                [p](VaccineData &currentVaccineData) { return currentVaccineData.getPoint() == p; })) {
                     continue;
                 }
                 //country.vaccinatedfields tuti jo-e?
@@ -304,14 +305,20 @@ void AI::addFieldsToHealWithDijsktra(int &numberOfVaccinesToDistribute, size_t c
 void AI::modeA(int &numberOfVaccinesToDistribute, size_t countryID, std::set<ScoreHolder> &districtScores,
                std::vector<VaccineData> &fieldsToHealSendBack) {
 
-    std::priority_queue<ScoreHolder, std::vector<ScoreHolder>, Compare::ProducedVaccines>
+    std::priority_queue<ScoreHolder, std::vector<ScoreHolder>, Compare::MinimalVaccinesToHeal>
             orderedDistrictScores(districtScores.begin(), districtScores.end());
     while (!orderedDistrictScores.empty()) {
         ScoreHolder maxScoredDistrict = orderedDistrictScores.top();
         if (numberOfVaccinesToDistribute > maxScoredDistrict.getVaccinesNeededForHealing()) {
-            grid2->getCountryByID(countryID).addWannabeDistrict(maxScoredDistrict.getDistrictID());
+            //grid2->getCountryByID(countryID).addWannabeDistrict(maxScoredDistrict.getDistrictID());
             addFieldsToHealWithFlood(numberOfVaccinesToDistribute, countryID, fieldsToHealSendBack, maxScoredDistrict);
         }
+        std::cerr << "Our Vaccines: " << numberOfVaccinesToDistribute << std::endl;
+        std::cerr << "TotalHealingneeds: " << maxScoredDistrict.getVaccinesNeededForHealing() << std::endl;
+//             else if(numberOfVaccinesToDistribute>30){
+//            std::cerr<<"We need to heal because we stuck."<<std::endl;
+//            addFieldsToHealWithFlood(numberOfVaccinesToDistribute, countryID, fieldsToHealSendBack, maxScoredDistrict);
+//        }
         orderedDistrictScores.pop();
     }
 }
@@ -320,7 +327,7 @@ void AI::addFieldsToHealWithFlood(int &numberOfVaccinesToDistribute, size_t coun
                                   std::vector<VaccineData> &fieldsToHealSendBack,
                                   ScoreHolder maxScoredDistrict) {
     std::set<Field *> fieldsToHeal = grid2->getDistrictByID(maxScoredDistrict.getDistrictID()).getAssignedFields();
-    std::cerr << "FieldsToHeal size: " << fieldsToHeal.size() << std::endl;
+    //std::cerr << "FieldsToHeal size: " << fieldsToHeal.size() << std::endl;
     Point startPoint = calculateStartPointForFlood(fieldsToHeal, countryID);
     std::vector<Field *> fieldsToHealContinuous;
     floodDistrict(startPoint, fieldsToHeal, fieldsToHealContinuous);
