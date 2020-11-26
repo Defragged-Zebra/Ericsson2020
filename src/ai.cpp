@@ -234,15 +234,9 @@ void AI::addFieldsToHealWithDijsktra(int &numberOfVaccinesToDistribute, size_t c
         for (const auto &startPoint:startPoints) {
             //for optimization purposes
             if (startPoint == endPoint) {
+                //works without template specification: https://en.cppreference.com/w/cpp/language/class_template_argument_deduction
                 //TODO: change to this
-                /*
-                ///////////////////////// important note on this /////////////////////////////////////
-                 If you watch the uncommented code, that line is a syntax error bc template type is missing (ericsson gcc pointed this out).
-                 Since the if above is always false, the compiler simply optimized out this line, and we never get the error
-                 watch for the optimization settings next time
-                 /////////////////////////////////////////////////////////////////////////////////////
-                 */
-                //result = std::pair<std::vector<Point>, int>(std::vector(1, startPoint),
+                //result = std::pair(std::vector(1, startPoint),
                 //                   grid2->getFieldByPoint(startPoint).vaccinesToPutForTotalHealing(countryID));
                 result = std::pair(std::vector(1, startPoint),
                                    grid2->getFieldByPoint(startPoint).vaccinesToPutMinimal(countryID));
