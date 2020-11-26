@@ -18,7 +18,7 @@
 #define SEED 47923402
 #define FILENAME "../testfiles/round3/log12%3A17%3A23.txt"
 //which tick switch from dijkstra to flood
-#define SWITCH_TICK 0
+#define SWITCH_TICK 100
 
 
 
