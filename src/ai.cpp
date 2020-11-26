@@ -286,7 +286,7 @@ void AI::modeA(int &numberOfVaccinesToDistribute, size_t countryID, std::set<Sco
             orderedDistrictScores(districtScores.begin(), districtScores.end());
     while (!orderedDistrictScores.empty()) {
         ScoreHolder maxScoredDistrict = orderedDistrictScores.top();
-        if (numberOfVaccinesToDistribute > maxScoredDistrict.getVaccinesNeededForHealing()) {
+        if (true) /*(numberOfVaccinesToDistribute > maxScoredDistrict.getVaccinesNeededForHealing())*/ {
             grid2->getCountryByID(countryID).addWannabeDistrict(maxScoredDistrict.getDistrictID());
             addFieldsToHealWithFlood(numberOfVaccinesToDistribute, countryID, fieldsToHealSendBack, maxScoredDistrict);
         }
