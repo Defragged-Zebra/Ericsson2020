@@ -11,7 +11,7 @@
 
 //switches
 #define PROD
-#define PRODTEST
+//#define PRODTEST
 //#define SEED_FIXED
 
 //values
