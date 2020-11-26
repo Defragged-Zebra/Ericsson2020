@@ -33,15 +33,15 @@ AI::calculateBackVaccines(std::vector<VaccineData> &back, int &numberOfVaccinesT
 
 std::vector<VaccineData> &
 AI::calculatePutVaccines(std::vector<VaccineData> &put, int &numberOfVaccinesToDistribute, size_t countryID) {
-    std::cerr<<"checkpoint 4.1"<<std::endl;
+    //std::cerr<<"checkpoint 4.1"<<std::endl;
     std::vector<VaccineData> put2 = chooseFieldsToVaccinate(numberOfVaccinesToDistribute, countryID);
     Country &c = Logic::getGrid()->getCountryByID(countryID);
-    std::cerr<<"checkpoint 4.2"<<std::endl;
+    //std::cerr<<"checkpoint 4.2"<<std::endl;
     std::vector<std::vector<bool>> check(grid2->getHeight());
     for (auto &row:check) {
         row = std::vector<bool>(grid2->getWidth(), true);
     }
-    std::cerr<<"checkpoint 4.3"<<std::endl;
+    //std::cerr<<"checkpoint 4.3"<<std::endl;
     for (const auto &vd:put2)
         if (check[vd.getY()][vd.getX()]) {
             check[vd.getY()][vd.getX()] = false;
@@ -52,22 +52,22 @@ AI::calculatePutVaccines(std::vector<VaccineData> &put, int &numberOfVaccinesToD
 }
 
 std::vector<VaccineData> AI::chooseFieldsToVaccinate(int &numberOfVaccinesToDistribute, size_t countryID) {
-    std::cerr<<"checkpoint 4.1.1"<<std::endl;
+    //std::cerr<<"checkpoint 4.1.1"<<std::endl;
     std::set<ScoreHolder> districtScores;
     std::vector<VaccineData> fieldsToHealSendBack;
     Grid *originalGrid = Logic::getGrid();
-    std::cerr<<"checkpoint 4.1.2"<<std::endl;
+    //std::cerr<<"checkpoint 4.1.2"<<std::endl;
     //simulate next round
     Logic::setGrid(AI::grid2);
     Logic::simulateTO(0, grid2->getCurrentTick() + 1, countryID);
     Logic::setGrid(originalGrid);
-    std::cerr<<"checkpoint 4.1.3"<<std::endl;
+    //std::cerr<<"checkpoint 4.1.3"<<std::endl;
     //check if grid is clear
     grid2->updateClearByFieldCheck();
     if (grid2->isClear()) return std::vector<VaccineData>();
 
     AI::calculateDistrictScoresForNextRound(countryID, districtScores);
-    std::cerr<<"checkpoint 4.1.4"<<std::endl;
+    //std::cerr<<"checkpoint 4.1.4"<<std::endl;
     //TODO: label A
     //calculate fields to heal
     if (grid2->getCurrentTick() < SWITCH_TICK) {

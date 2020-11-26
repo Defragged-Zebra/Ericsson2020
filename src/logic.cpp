@@ -11,7 +11,7 @@
 Grid *Logic::grid = nullptr;
 
 void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
-    std::cerr<<"checkpoint 4.1.2.1"<<std::endl;
+    //std::cerr<<"checkpoint 4.1.2.1"<<std::endl;
     for (int i = 0; (grid->getCurrentTick() < tickID); ++i) {
 
         int heal = 0;
@@ -23,11 +23,11 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
 #ifndef PROD
                 vaccination = Logic::calculateVaccination(p, heal);
 #else
-                std::cerr<<"checkpoint 4.1.2.2"<<std::endl;
+                //std::cerr<<"checkpoint 4.1.2.2"<<std::endl;
                 vaccination = grid->getAllVaccination(Point(y, x));
 #endif
                 heal = Logic::calculateSpontaneousHealing(p, healStartTick, vaccination);
-                std::cerr<<"checkpoint 4.1.2.3"<<std::endl;
+                //std::cerr<<"checkpoint 4.1.2.3"<<std::endl;
                 //TODO: WARNING MEG MINDEN
                 //TODO: WARNING MEG MINDEN
                 //this line should be omitted if we got the values from ericsson, but included if we simulate from the AI ...
@@ -37,7 +37,7 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
                 //TODO: benne hagyni production mode-os #ifndef-el, mert ha nem jon server info, akkor rip?
                 //TODO: WARNING MEG MINDEN
                 //TODO: WARNING MEG MINDEN
-                std::cerr<<"checkpoint 4.1.2.4"<<std::endl;
+                //std::cerr<<"checkpoint 4.1.2.4"<<std::endl;
 
                 grid->getFieldByPoint(p).updateRemainingVaccines(vaccination);
 #ifndef PROD

@@ -92,15 +92,20 @@ public:
             std::vector<size_t> sor = std::vector<size_t>(width);
             grid.push_back(sor);
             //push_back copies
-            std::vector<int> sor2 = {};
+            std::vector<int> sor2 = std::vector<int>(width);
             allVaccinations.push_back(sor2);
         }
-        int i=0;
-        std::cerr<<"grid constructor"<<std::endl;
-        for (auto it:allVaccinations){
-            std::cerr<<"AllVac: "<<i<<std::endl;
-            i++;
-        }
+        /*
+       int i = 0;
+       int j=0;
+       std::cerr << "grid constructor" << std::endl;
+       for (auto it:allVaccinations) {
+           for (auto it2:it) {
+               std::cerr << "AllVac: " << i  <<" " <<j<< std::endl;
+               i++;
+               j++;
+           }
+       }*/
         this->countries = std::vector<Country>();
         this->districts = std::vector<District *>();
         currentTick = 0;
@@ -131,12 +136,15 @@ public:
     void updateAllVaccination(const Point &p, int v) { allVaccinations[p.getY()][p.getX()] = v; }
 
     int getAllVaccination(const Point &p) {
+        /*
         std::cerr << "checkpoint 4.1.2.2.1" << std::endl;
-        std::cerr<<"Y: "<<p.getY()<< std::endl;
-        std::cerr<<"X: "<<p.getX()<< std::endl;
+        std::cerr << "Y: " << p.getY() << std::endl;
+        std::cerr << "X: " << p.getX() << std::endl;
         auto deb1 = allVaccinations[p.getY()][p.getX()];
         std::cerr << "checkpoint 4.1.2.2.1" << std::endl;
         return deb1;
+         */
+        return allVaccinations[p.getY()][p.getX()];
     }
 
     template<typename FUNC>
