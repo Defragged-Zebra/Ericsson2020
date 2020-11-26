@@ -34,7 +34,7 @@
 //debug level [INFO | WARN | NOTHING]:
 #define WARN
 #ifdef INFO
-    #define WARN
+#define WARN
 #endif
 //------------------------------------------------------------------------
 #endif //VIRUS_CONFIG_H

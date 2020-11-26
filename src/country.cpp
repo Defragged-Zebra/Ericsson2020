@@ -5,7 +5,8 @@
 #include "country.h"
 
 std::ostream &operator<<(std::ostream &os, const Country &c) {
-    os << "Country ID: "<<c.countryID << std::endl<<"TPC: " << c.getTotalProductionCapacity() <<std::endl<< "RV: " << c.getReserveVaccines()<<std::endl;
+    os << "Country ID: " << c.countryID << std::endl << "TPC: " << c.getTotalProductionCapacity() << std::endl << "RV: "
+       << c.getReserveVaccines() << std::endl;
     return os;
 }
 
@@ -29,16 +30,17 @@ bool Country::isNeighbourToVaccinatedField(const Point &p) const {
     }
     return false;
 }
+
 bool Country::isNeighbourToWannabeVaccinatedField(const Point &p) const {
     //if (wannabeVaccinatedFields.empty()) {
     //    return false;
     //} else {
-        for (const auto &selected : p.getNeighbours()) {
-            for (const auto &vd:wannabeVaccinatedFields) {
-                if (vd.second.find(selected) != vd.second.end()) return true;
-            }
-            if (wannabeBorder.find(selected) != wannabeBorder.end()) return true;
+    for (const auto &selected : p.getNeighbours()) {
+        for (const auto &vd:wannabeVaccinatedFields) {
+            if (vd.second.find(selected) != vd.second.end()) return true;
         }
+        if (wannabeBorder.find(selected) != wannabeBorder.end()) return true;
+    }
     //}
     return false;
 }

@@ -7,8 +7,8 @@
 #include <cmath>
 
 void Protocol::displayResult(int gameID, int tickID, int countryID) {
-    ers << "[DEBUG - GRID]"<<std::endl;
-    ers <<"RES " << gameID << " " << tickID << " " << countryID << std::endl;
+    ers << "[DEBUG - GRID]" << std::endl;
+    ers << "RES " << gameID << " " << tickID << " " << countryID << std::endl;
     for (size_t y = 0; y < grid->getHeight(); ++y) {
         for (size_t x = 0; x < grid->getWidth(); ++x) {
             ers << grid->getFieldByID((*grid)[y][x]).getCurrentInfectionRate() << " ";
@@ -16,5 +16,5 @@ void Protocol::displayResult(int gameID, int tickID, int countryID) {
         }
         ers << std::endl;
     }
-    ers << "[DEBUG - GRID ENDS]" <<std::endl;
+    ers << "[DEBUG - GRID ENDS]" << std::endl;
 }

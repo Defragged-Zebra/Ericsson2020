@@ -82,6 +82,7 @@ public:
     void addToVaccinatedFields(const Point &p, size_t districtID) {
         vaccinatedFields[districtID].insert(p);
     }
+
     void addToWannabeVaccinatedFields(const Point &p, size_t districtID) {
         wannabeVaccinatedFields[districtID].insert(p);
     }
@@ -113,6 +114,7 @@ public:
             }
         }
     }
+
     void thereAreNoWannabeVaccinatedFieldsHere(std::map<size_t, std::set<Point>> &notWannabeVaccinatedFields) {
         for (const auto &nvd:notWannabeVaccinatedFields) {
             auto &vd = wannabeVaccinatedFields[nvd.first];

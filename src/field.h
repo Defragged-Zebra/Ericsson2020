@@ -25,12 +25,13 @@ class Field {
     size_t lastInfRateLen{};
 public:
     Field() = default;
-    friend std::ostream &operator<<(std::ostream &os, const Field &f){
-        os<<"FieldID: "<<f.getFieldID()<<std::endl;
-        os<<"InfRate: "<<f.getCurrentInfectionRate()<<std::endl;
-        os<<"VaccRate: "<<f.getVaccinationRate()<<std::endl;
-        os<<"PopulDensity: "<<f.getPopulationDensity()<<std::endl;
-        os<<"AssigDistrID: "<<f.getAssignedDistrictID()<<std::endl;
+
+    friend std::ostream &operator<<(std::ostream &os, const Field &f) {
+        os << "FieldID: " << f.getFieldID() << std::endl;
+        os << "InfRate: " << f.getCurrentInfectionRate() << std::endl;
+        os << "VaccRate: " << f.getVaccinationRate() << std::endl;
+        os << "PopulDensity: " << f.getPopulationDensity() << std::endl;
+        os << "AssigDistrID: " << f.getAssignedDistrictID() << std::endl;
         return os;
     }
 
@@ -112,7 +113,8 @@ public:
         return std::max((int) std::ceil((infectionRate - vaccinationRate) / populationDensity),
                         vaccinesToPutMinimal(countryID));
     }
-    ~Field()= default;
+
+    ~Field() = default;
 };
 
 
