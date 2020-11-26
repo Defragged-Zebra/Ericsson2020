@@ -25,7 +25,6 @@ class Logic {
     static double calculateCrossInfection(const Point &center, uint64_t factor3);
 
 public:
-
     Logic() = default;
 
     void static setGrid(Grid *newGrid) { Logic::grid = newGrid; }
