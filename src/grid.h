@@ -133,7 +133,12 @@ public:
         return getFieldByID(grid[p.getY()][p.getX()]);
     }
 
-    void updateAllVaccination(const Point &p, int v) { allVaccinations[p.getY()][p.getX()] = v; }
+    void updateAllVaccination(const Point &p, int v) {
+        if (!p.withinBounds()) {
+            throw std::runtime_error("updateAllVaccination");
+        }
+        allVaccinations[p.getY()][p.getX()] = v;
+    }
 
     int getAllVaccination(const Point &p) {
         /*

@@ -178,7 +178,7 @@ void Iface::round(std::string &line) {
 //            sum_pre_vaccine -- mennyi vakcina van osszesen az összes országnak ::Vakcina beadás és gyógyulás kepletben az *m*
 //            vaccinated: összesen mennyi vaknica adótdott be ::Vakcina beadás és gyógyulás kepletben az *X*
             int healed = vaccinated;
-            grid->updateAllVaccination(Point(column, row), healed);
+            grid->updateAllVaccination(Point(row, column), healed);
         }
 
 

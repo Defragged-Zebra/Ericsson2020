@@ -33,15 +33,15 @@ AI::calculateBackVaccines(std::vector<VaccineData> &back, int &numberOfVaccinesT
 
 std::vector<VaccineData> &
 AI::calculatePutVaccines(std::vector<VaccineData> &put, int &numberOfVaccinesToDistribute, size_t countryID) {
-    std::cerr<<"checkpoint 4.1"<<std::endl;
+    //std::cerr<<"checkpoint 4.1"<<std::endl;
     std::vector<VaccineData> put2 = chooseFieldsToVaccinate(numberOfVaccinesToDistribute, countryID);
     Country &c = Logic::getGrid()->getCountryByID(countryID);
-    std::cerr<<"checkpoint 4.2"<<std::endl;
+    //std::cerr<<"checkpoint 4.2"<<std::endl;
     std::vector<std::vector<bool>> check(grid2->getHeight());
     for (auto &row:check) {
         row = std::vector<bool>(grid2->getWidth(), true);
     }
-    std::cerr<<"checkpoint 4.3"<<std::endl;
+    //std::cerr<<"checkpoint 4.3"<<std::endl;
     for (const auto &vd:put2)
         if (check[vd.getY()][vd.getX()]) {
             check[vd.getY()][vd.getX()] = false;
@@ -298,7 +298,7 @@ void AI::addFieldsToHealWithFlood(int &numberOfVaccinesToDistribute, size_t coun
                                   std::vector<VaccineData> &fieldsToHealSendBack,
                                   ScoreHolder maxScoredDistrict) {
     std::set<Field *> fieldsToHeal = grid2->getDistrictByID(maxScoredDistrict.getDistrictID()).getAssignedFields();
-    std::cerr << "FieldsToHeal size: " << fieldsToHeal.size() << std::endl;
+    //std::cerr << "FieldsToHeal size: " << fieldsToHeal.size() << std::endl;
     Point startPoint = calculateStartPointForFlood(fieldsToHeal, countryID);
     std::vector<Field *> fieldsToHealContinuous;
     floodDistrict(startPoint, fieldsToHeal, fieldsToHealContinuous);
