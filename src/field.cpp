@@ -9,7 +9,8 @@ void Field::updateVaccination(int healed) {
     if (vaccinationRate + healed > 100) throw std::runtime_error("vaccinationRate + healed>100");
     vaccinationRate = std::min(vaccinationRate + healed, 100);
     infectionRate -= healed;
-    if (infectionRate < 0) throw std::runtime_error("infectionRate <0");
+    if (infectionRate < 0)
+        throw std::runtime_error("infectionRate <0");
 }
 
 void Field::updateInfection(int infected) {

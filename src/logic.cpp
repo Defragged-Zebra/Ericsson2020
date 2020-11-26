@@ -126,6 +126,43 @@ int Logic::calculateSpontaneousInfection(const Point &p) {
     Logic::shiftFactor2to4();
     //round error
     a = (std::floor(a * 100000.0)) / 100000.0;
+    //updated in v3
+    if(std::ceil(a * (double) ((factor4 % 500)+250) / 1000.0)>100)
+        throw std::runtime_error("vacc>100");
+    return std::ceil(a * (double) ((factor4 % 500)+250) / 1000.0);
+}
+
+int Logic::calculateSpontaneousInfectionLEGACYv25(const Point &p) {
+
+    if (grid == nullptr) throw std::invalid_argument("grid null pointer");
+    uint64_t factor2, factor3, factor4;
+
+    size_t currentTick = grid->getCurrentTick();
+    size_t districtID = grid->getFieldByPoint(p).getAssignedDistrictID();
+
+    if (grid->getDistrictByID(districtID).isClear()) return 0;
+
+    factor2 = grid->random.getFactor(2);
+    factor3 = grid->random.getFactor(3);
+    factor4 = grid->random.getFactor(4);
+    int intervalToAverage = std::min(int(factor2 % 10) + 10, (int) currentTick + 1);
+    Field &field = grid->getFieldByPoint(p);
+
+    double average = 0;
+    std::deque<int> &lastInfectionValues = field.getLastInfectionValues();
+    int size = lastInfectionValues.size();
+    for (int i = 0; i < intervalToAverage; ++i) {
+        average += lastInfectionValues[size - i - 1];
+    }
+    average = average / intervalToAverage;
+    //round error
+    average = (std::floor(average * 100000.0)) / 100000.0;
+    double average2 = calculateCrossInfection(p, factor3);
+    double a = average + average2;
+
+    Logic::shiftFactor2to4();
+    //round error
+    a = (std::floor(a * 100000.0)) / 100000.0;
     //updated in v2.5
     return std::ceil(a * (double) (factor4 % 75) / 100.0);
 }
@@ -298,8 +335,30 @@ int Logic::calculateVaccination(const Point &p, int &spontaneousHealAmount) {
     }
     return 0;
 }
-
 int Logic::calculateSpontaneousHealing(const Point &p, int healStartTick, int vaccinated) {
+    size_t currentTick = grid->getCurrentTick();
+    if (grid == nullptr) throw std::invalid_argument("grid null pointer");
+    if (currentTick < healStartTick) {
+        return 0;
+    } else {
+        if (grid->getFieldByPoint(p).getCurrentInfectionRate() == 0) return 0;
+        uint64_t factor1 = grid->random.getFactor(1);
+        Field field = grid->getFieldByPoint(p);
+        size_t beginIndex = field.getLastInfectionRates().size() - grid->getWidth() - grid->getHeight();
+        auto tmp = std::min_element(field.getLastInfectionRates().begin() + beginIndex,
+                                    field.getLastInfectionRates().end());
+        double a = *tmp;
+        double b = (pow((double)(factor1 % 89000) / 100000.0 - 0.1, 3) + 0.001);
+        grid->random.next(1);
+        //updated in v2.5
+        int h = std::floor(a * b);
+        //h: legacy_v1 healing -- function updated in round 2
+        return std::floor(h * (grid->getFieldByPoint(p).getCurrentInfectionRate() - vaccinated) /
+                          grid->getFieldByPoint(p).getCurrentInfectionRate());
+    }
+}
+
+int Logic::calculateSpontaneousHealingLEGACYv25(const Point &p, int healStartTick, int vaccinated) {
     size_t currentTick = grid->getCurrentTick();
     if (grid == nullptr) throw std::invalid_argument("grid null pointer");
     if (currentTick < healStartTick) {

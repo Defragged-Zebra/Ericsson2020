@@ -38,9 +38,13 @@ public:
 
     static int calculateSpontaneousHealing(const Point &p, int healStartTick, int vaccinated);
 
+    static int calculateSpontaneousHealingLEGACYv25(const Point &p, int healStartTick, int vaccinated);
+
     static int calculateSpontaneousHealingLEGACYv1(const Point &p, int healStartTick);
 
     static int calculateSpontaneousInfection(const Point &p);
+
+    static int calculateSpontaneousInfectionLEGACYv25(const Point &p);
 
     static int calculateSpontaneousInfectionLEGACYv2(const Point &p);
 
