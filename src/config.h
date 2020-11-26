@@ -16,7 +16,7 @@
 
 //values
 #define SEED 1318360533
-#define FILENAME "../testfiles/round2.1/log26188.txt"
+#define FILENAME "../testfiles/round2/server1299122113.csv"
 //which tick switch from dijkstra to flood
 #define SWITCH_TICK 5
 
