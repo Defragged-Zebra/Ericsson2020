@@ -320,7 +320,7 @@ Point AI::calculateStartPointForFlood(const std::set<Field *> &fieldsToCalc, siz
         const Point &p = g->getPointByFieldID(field->getFieldID());
         if (g->getCountryByID(countryID).isNeighbourToVaccinatedField(p)) return p;
     }
-    throw std::runtime_error("calculateStartPointFailed -- you tried to heal an invalid area");
+    //throw std::runtime_error("calculateStartPointFailed -- you tried to heal an invalid area");
 }
 
 //flood kap egy Field tömböt + egy pontot, ezt olyan sorrandbe rendezni, hogy lerakható legyen.
@@ -417,7 +417,7 @@ Point AI::calculateWannabeStartPoint(const std::set<Field *> &fieldsToCalc, size
         if (grid2->getCountryByID(countryID).isNeighbourToVaccinatedField(p)) return p;
         if (grid2->getCountryByID(countryID).isNeighbourToWannabeVaccinatedField(p)) return p;
     }
-    throw std::runtime_error("calculateWannabeStartPoint -- you tried to heal an invalid area");
+    //throw std::runtime_error("calculateWannabeStartPoint -- you tried to heal an invalid area");
 }
 
 void AI::calculateWannabeBorder(size_t countryID) {
