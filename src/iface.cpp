@@ -88,8 +88,8 @@ void Iface::createGrid() {
     for (size_t y = 0; y < grid->getHeight(); ++y) {
         for (size_t x = 0; x < grid->getWidth(); ++x) {
             std::vector<size_t> n;
-            Field& f = grid->getFieldByPoint(Point(y,x));
-            for(auto& p :Point(y,x).getNeighbours()){
+            Field &f = grid->getFieldByPoint(Point(y, x));
+            for (auto &p :Point(y, x).getNeighbours()) {
                 f.neigh.push_back(grid->getFieldByPoint(p).getFieldID());
             }
         }
@@ -99,6 +99,7 @@ void Iface::createGrid() {
 }
 
 void Iface::start() {
+    ers<<"checkpoint -1"<<std::endl;
     std::string line;
     while (std::getline(is, line)) {
         if (line == ".\r" or line == "\r" or line == ".") {
@@ -114,8 +115,6 @@ void Iface::start() {
             break;
         } else if (line.find("WARN") != std::string::npos) {
             Iface::sendDebugMsg(line);
-            //TODO: test if not causes error
-            //break;
         } else if (line.find("REQ") != std::string::npos) {
             Iface::round(line);
         } else {
@@ -143,6 +142,7 @@ void Iface::requestLEGACY(std::string &line) {
 }
 
 void Iface::round(std::string &line) {
+    ers<<"checkpoint 0"<<std::endl;
     std::string tmp;
     std::stringstream ss;
     ss << line;
@@ -153,66 +153,79 @@ void Iface::round(std::string &line) {
     tmp = "";
     while (std::getline(is, tmp)) {
         if (tmp == ".\r" or tmp == ".")break;
-#ifdef INFO
-        Iface::sendDebugMsg("[NOTIFY] " + tmp);
+#ifdef VERBOSE
+        Iface::sendDebugMsg("[NOTIFY] original line:" + tmp);
 #endif
         ss.clear();
 
         //TODO: parse game-data here (test this before uncommenting)
-//        if (tmp.find("VAC") != std::string::npos) {
-//#ifdef INFO
-//            Iface::sendDebugMsg("[NOTIFY] " + tmp);
-//#endif
-//            int row, column, sum_pre_vaccine, vaccinated;
-//            ss << tmp;
-//            ss >> row >> column >> sum_pre_vaccine >> vaccinated;
-//            //documentation is unclear AF
-//            //tried to reverse engineer how this works, but couldn't find a good testfile.csv.bak for it
-//            //this variable should store the amount of newly healed people
-//            int healed=;
-//            grid->getFieldByPoint(Point(column, row)).updateVaccination(healed)
-//        }
-//        if (tmp.find("SAFE") != std::string::npos) {
-//#ifdef INFO
-//            Iface::sendDebugMsg("[NOTIFY] " + tmp);
-//#endif
-//            int healedDistrictID;
-//            ss << tmp;
-//            ss >> countryID >> healedDistrictID;
-//            grid->getCountryByID(countryID).addAssignedDistrict(healedDistrictID);
-//            grid->getDistrictByID(healedDistrictID).setClear(true);
-//        }
-
-
-#ifdef WARN
-        if (tmp.find("WARN") != std::string::npos) {
-            Iface::sendDebugMsg(line);
-            //throw std::runtime_error("We've fucked it up!!444!!!");
+        if (tmp.find("VAC") != std::string::npos) {
+#ifdef INFO
+            Iface::sendDebugMsg("[NOTIFY] " + tmp);
 #endif
+            int row, column, sum_pre_vaccine, vaccinated;
+            ss << tmp;
+            ss >> row >> column >> sum_pre_vaccine >> vaccinated;
+            ers<<std::endl;
+            ers<<"row: "<<row<<std::endl;
+            ers<<"column: "<<column<<std::endl;
+            ers<<"sumpre: "<<sum_pre_vaccine<<std::endl;
+            ers<<"vaccinated: "<<vaccinated<<std::endl;
+//            //variable healed should store the amount of newly healed people
+//            sum_pre_vaccine -- mennyi vakcina van osszesen az összes országnak ::Vakcina beadás és gyógyulás kepletben az *m*
+//            vaccinated: összesen mennyi vaknica adótdott be ::Vakcina beadás és gyógyulás kepletben az *X*
+            int healed = vaccinated;
+            grid->updateAllVaccination(Point(column,row),healed);
+        }
+
+
+        if (tmp.find("SAFE") != std::string::npos) {
+#ifdef INFO
+            Iface::sendDebugMsg("[NOTIFY] " + tmp);
+#endif
+            int healedDistrictID;
+            ss << tmp;
+            std::string strtmp;
+            ss >> strtmp;
+            ss >> countryID >> healedDistrictID;
+            grid->getCountryByID(countryID).addAssignedDistrict(healedDistrictID);
+            grid->getDistrictByID(healedDistrictID).setClear(true);
         } else if (std::isdigit(tmp[0])) {
+#ifdef INFO
+            Iface::sendDebugMsg("[NOTIFY] " + tmp);
+#endif
             int _countryID, TPC, RV;
             ss << tmp;
             ss >> _countryID >> TPC >> RV;
             grid->addCountry(Country(_countryID, TPC, RV));
         }
     }
-    //TODO: displayCurrentRound should happen after the AI simulation, right? (I think this is the source of the bug why we got to see the tick0 data twice on the console)
-    this->displayCurrentRound(_gameID, tickID, countryID);
+    ers<<"checkpoint 1"<<std::endl;
     Logic::simulateTO(_gameID, tickID, countryID);
+    ers<<"checkpoint 2"<<std::endl;
+    this->displayCurrentRound(_gameID, tickID, countryID);
     int numberOfVaccinesToDistribute = grid->getCountryByID(countryID).getReserveVaccines();
     AI::copyGrid(grid);
     std::vector<VaccineData> back; // don't change this
+    ers<<"checkpoint 3"<<std::endl;
     back = AI::calculateBackVaccines(back, numberOfVaccinesToDistribute, countryID);
 
-    //debug:
-    ers << "Vaccines before ai decision: " << numberOfVaccinesToDistribute << std::endl;
+#ifdef INFO
+    ers << "[INFO] Vaccines before ai decision: " << numberOfVaccinesToDistribute << std::endl;
+#endif
 
+    ers<<"checkpoint 4"<<std::endl;
     std::vector<VaccineData> put; // don't change this
     put = AI::calculatePutVaccines(put, numberOfVaccinesToDistribute, countryID);
+    ers<<"checkpoint 5"<<std::endl;
     Logic::simulateVaccination(back, put);
 
-    //debug:
-    ers << "Vaccines after ai decision: " << numberOfVaccinesToDistribute << std::endl;
+#ifdef INFO
+    ers << "[INFO] Vaccines after ai decision: " << numberOfVaccinesToDistribute << std::endl;
+    ers << "[INFO] Assigned districts: " << grid->getCountryByID(countryID).getAssignedDistricts().size()
+        << std::endl;
+#endif
+    //ers<<"checkpoint 6"<<std::endl;
 
     //Send result back
     os << "RES " << _gameID << " " << tickID << " " << countryID << std::endl;
@@ -223,4 +236,5 @@ void Iface::round(std::string &line) {
         os << "PUT " << i.getY() << " " << i.getX() << " " << i.getVaccines() << std::endl;
     }
     os << "." << std::endl;
+    //ers<<"checkpoint 7"<<std::endl;
 }
