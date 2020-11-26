@@ -203,6 +203,7 @@ void Iface::round(std::string &line) {
             grid->addCountry(Country(_countryID, TPC, RV));
         }
     }
+    ers << "TickID: " << grid->getCurrentTick() << std::endl;
     ers << "checkpoint 1" << std::endl;
     Logic::simulateTO(_gameID, tickID, countryID);
     ers << "checkpoint 2" << std::endl;

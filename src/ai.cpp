@@ -99,7 +99,7 @@ std::vector<VaccineData> AI::chooseFieldsToVaccinate(int &numberOfVaccinesToDist
             modeB(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
         } else {
             //TODO: Why is there a separate function for modeB(), but one for modeA()
-            modeWanna(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
+            //modeWanna(numberOfVaccinesToDistribute, countryID, districtScores, fieldsToHealSendBack);
         }
     }
     return fieldsToHealSendBack;
