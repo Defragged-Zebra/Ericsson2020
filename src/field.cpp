@@ -2,15 +2,25 @@
 // Created by woranhun on 2020. 10. 17..
 //
 
+#include <iostream>
 #include "field.h"
 
 void Field::updateVaccination(int healed) {
     //check for healing to not extend 100
-    if (vaccinationRate + healed > 100) throw std::runtime_error("vaccinationRate + healed>100");
+    //std::cerr<<"vaccinationRate + healed= "<<vaccinationRate + healed<<std::endl;
+    //std::cerr<<"InfectionRateBefore:" <<infectionRate <<std::endl;
+    if (vaccinationRate + healed > 100) {
+        std::cerr << "vaccinationRate + healed > 100:" << std::endl;
+        vaccinationRate = 100;
+    }
     vaccinationRate = std::min(vaccinationRate + healed, 100);
     infectionRate -= healed;
-    if (infectionRate < 0)
-        throw std::runtime_error("infectionRate <0");
+    //std::cerr<<"InfectionRateAfter:" <<infectionRate <<std::endl;
+    if (infectionRate < 0) {
+        infectionRate = 0;
+        std::cerr << "Infection<0 FieldID:" << fieldID << std::endl;
+    }
+
 }
 
 void Field::updateInfection(int infected) {

@@ -20,8 +20,9 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
         for (int x = 0; x < grid->getWidth(); ++x) {
             for (int y = 0; y < grid->getHeight(); ++y) {
                 const Point &p = Point(y, x);
-#ifndef PROD
+#ifndef PRODTEST //TODO: warning!!!!!!
                 vaccination = Logic::calculateVaccination(p, heal);
+                std::cerr<<"Vaccination: "<<vaccination <<std::endl;
 #else
                 //std::cerr<<"checkpoint 4.1.2.2"<<std::endl;
                 vaccination = grid->getAllVaccination(Point(y, x));
@@ -32,6 +33,8 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
                 //TODO: WARNING MEG MINDEN
                 //this line should be omitted if we got the values from ericsson, but included if we simulate from the AI ...
                 //my proposal is to make the AI have a separate simulate function, but I'm open to better suggestions
+                //std::cerr<<"P: " <<p.getY() << ":"<<p.getX()<<std::endl;
+                //std::cerr<<"PFieldID: "<<grid->getFieldByPoint(p).getFieldID()<<std::endl;
                 grid->getFieldByPoint(p).updateVaccination(heal + vaccination);
                 //throw std::runtime_error("Vaccination should only be calculated from the AI simulations...");
                 //TODO: benne hagyni production mode-os #ifndef-el, mert ha nem jon server info, akkor rip?
@@ -70,14 +73,17 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
                 grid->getFieldByPoint(Point(y, x)).updateInfection(inf);
             }
         }
+        //std::cerr<<"checkpoint 4.1.2.5"<<std::endl;
 
         std::map<size_t, std::set<Point>> nvf;
         grid->getNotVaccinatedFields(countryID, nvf);
         grid->getCountryByID(countryID).thereAreNoVaccinatedFieldsHere(nvf);
+        //std::cerr<<"checkpoint 4.1.2.6"<<std::endl;
 
         calculateBorder(countryID);
 
         grid->IncreaseCurrentTick();
+        //std::cerr<<"checkpoint 4.1.2.7"<<std::endl;
     }
 
 }
