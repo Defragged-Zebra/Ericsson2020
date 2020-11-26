@@ -127,9 +127,9 @@ int Logic::calculateSpontaneousInfection(const Point &p) {
     //round error
     a = (std::floor(a * 100000.0)) / 100000.0;
     //updated in v3
-    if(std::ceil(a * (double) ((factor4 % 500)+250) / 1000.0)>100)
-        throw std::runtime_error("vacc>100");
-    return std::ceil(a * (double) ((factor4 % 500)+250) / 1000.0);
+    //if(std::ceil(a * (double) ((factor4 % 500)+250) / 1000.0)>100)
+    //throw std::runtime_error("vacc>100");
+    return std::ceil(a * (double) ((factor4 % 500) + 250) / 1000.0);
 }
 
 int Logic::calculateSpontaneousInfectionLEGACYv25(const Point &p) {
