@@ -46,14 +46,32 @@ std::ostream &operator<<(std::ostream &os, const Grid &g) {
 int Grid::calculateDistrictProductionCapacity(size_t countryID, const District &district) {
     int changeInVaccines = 0;
     for (auto fieldPointer:district.getAssignedFields()) {
+        //changed from 2 to 1 in 2.5
+        changeInVaccines += 1;
+        Point center = this->getPointByFieldID(fieldPointer->getFieldID());
+        std::vector<Point> coordinates = center.getNeighbours();
+        for (const auto &selected : coordinates) {
+
+            if (!selected.withinBounds()) continue;
+            if (this->getDistrictByPoint(selected) == this->getDistrictByPoint(center)) continue;
+            int plusMinus;
+            this->getDistrictByPoint(selected).isClear() ? plusMinus = +1 : plusMinus = -1;
+            //changed in v2.5, if logic doesn't calculate right, check this first!!!
+            //TPC - Kerületi védekezési vakcina 2.** A kerületek között a szabad áruforgalmat biztosítani kell, így az optimista `... területek 6 - start_info[coord].population különbségösszege, osztva 3-mal ...` sajnos megduplázódik, `... területek 6 - start_info[coord].population különbségösszege * 2, osztva 3-mal ...`, de ezáltal a mindig friss étel mindenkihez eljut.
+            changeInVaccines += (int) (plusMinus * (ceil(
+                    (6 - this->getFieldByPoint(selected).getPopulationDensity()) * 2 / (double) 3)));
+        }
+    }
+    return changeInVaccines;
+}
+
+int Grid::calculateDistrictProductionCapacityLEGACYv2(size_t countryID, const District &district) {
+    int changeInVaccines = 0;
+    for (auto fieldPointer:district.getAssignedFields()) {
         changeInVaccines += 2;
         Point center = this->getPointByFieldID(fieldPointer->getFieldID());
         std::vector<Point> coordinates = center.getNeighbours();
         for (const auto &selected : coordinates) {
-            /* Egy megtisztított kerület védekezési vakcina száma a kerület területeinek élszomszédos,
-             * nem tiszta kerülethez tartozó területek 6 - start_info[coord].population különbségösszege,
-             * osztva 3-mal, ennek a felső egészrésze.
-             */
             if (!selected.withinBounds()) continue;
             if (this->getDistrictByPoint(selected) == this->getDistrictByPoint(center)) continue;
             int plusMinus;

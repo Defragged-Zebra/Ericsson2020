@@ -20,7 +20,7 @@ class Logic {
 
     static int distance(const Point &p1, const Point &p2);
 
-    static int calculateCrossInfectionLEGACY(const Point &center, uint64_t factor3);
+    static int calculateCrossInfectionLEGACYv1(const Point &center, uint64_t factor3);
 
     static double calculateCrossInfection(const Point &center, uint64_t factor3);
 
@@ -38,11 +38,13 @@ public:
 
     static int calculateSpontaneousHealing(const Point &p, int healStartTick, int vaccinated);
 
-    static int calculateSpontaneousHealingLEGACY(const Point &p, int healStartTick);
+    static int calculateSpontaneousHealingLEGACYv1(const Point &p, int healStartTick);
 
     static int calculateSpontaneousInfection(const Point &p);
 
-    static int calculateSpontaneousInfectionLEGACY(const Point &p);
+    static int calculateSpontaneousInfectionLEGACYv2(const Point &p);
+
+    static int calculateSpontaneousInfectionLEGACYv1(const Point &p);
 
     static int calculateVaccination(const Point &p, int &spontaneousHealAmount);
 
@@ -51,6 +53,8 @@ public:
     static void calculateBorder(size_t countryID);
 
     static void calculateWannabeBorder(size_t countryID);
+
+    static int calculateSpontaneousHealingLEGACYv2(const Point &p, int healStartTick, int vaccinated);
 };
 
 

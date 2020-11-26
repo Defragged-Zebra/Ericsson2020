@@ -1,4 +1,4 @@
-<map id="Logic::calculateSpontaneousHealingLEGACY" name="Logic::calculateSpontaneousHealingLEGACY">
+<map id="Logic::calculateSpontaneousHealingLEGACY" name="Logic::calculateSpontaneousHealingLEGACYv1">
 <area shape="rect" id="node1" title=" " alt="" coords="5,175,195,217"/>
 <area shape="rect" id="node2" href="$dc/d67/class_field.html#a3ceb497dd33f97896974a2367fedc3c4" title=" " alt="" coords="243,5,436,32"/>
 <area shape="rect" id="node3" href="$da/d74/class_grid.html#a53693945f3d1ec88325b6a7c45053b7d" title=" " alt="" coords="270,56,409,83"/>

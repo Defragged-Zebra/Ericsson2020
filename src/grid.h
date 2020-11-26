@@ -213,6 +213,7 @@ public:
         }
     }
 
+    int calculateDistrictProductionCapacityLEGACYv2(size_t countryID, const District &district);
 };
 
 

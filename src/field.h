@@ -24,6 +24,7 @@ class Field {
     std::deque<int> lastInfectionValues{};
     size_t lastInfRateLen{};
 public:
+    std::vector<size_t> neigh{};
     Field() = default;
 
     friend std::ostream &operator<<(std::ostream &os, const Field &f) {
@@ -48,6 +49,7 @@ public:
         this->lastInfectionRates.push_back(currentInfectionValue);
         this->lastInfectionValues.push_back(currentInfectionValue > 0 ? 1 : 0);
         this->lastInfRateLen = numberOfStoredPastValues;
+        this->neigh = std::vector<size_t>();
     }
 
     Field(const Field &f) {
@@ -65,6 +67,7 @@ public:
             this->assignedDistrictID = f.assignedDistrictID;
             this->lastInfRateLen = f.lastInfRateLen;
             this->lastInfectionValues = f.lastInfectionValues;
+            this->neigh = f.neigh;
         }
         return *this;
     }
@@ -107,6 +110,9 @@ public:
         //don't check for clear, it'll break other stuff
         if (storedVaccines[countryID] > 0) return 0;
         else return 6 - populationDensity;
+    }
+    std::vector<size_t>& getNeig(){
+        return neigh;
     }
 
     [[nodiscard]] int vaccinesToPutForTotalHealing(size_t countryID) {

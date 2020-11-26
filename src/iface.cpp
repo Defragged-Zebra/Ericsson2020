@@ -85,6 +85,15 @@ void Iface::createGrid() {
             grid->getDistrictByPoint(Point(y, x)).addAssignedField(&grid->getFieldByPoint(Point(y, x)));
         }
     }
+    for (size_t y = 0; y < grid->getHeight(); ++y) {
+        for (size_t x = 0; x < grid->getWidth(); ++x) {
+            std::vector<size_t> n;
+            Field& f = grid->getFieldByPoint(Point(y,x));
+            for(auto& p :Point(y,x).getNeighbours()){
+                f.neigh.push_back(grid->getFieldByPoint(p).getFieldID());
+            }
+        }
+    }
     setGrid(grid);
 
 }
