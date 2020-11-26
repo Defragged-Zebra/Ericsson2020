@@ -20,7 +20,7 @@ void Logic::simulateTO(int gameID, size_t tickID, size_t countryID) {
         for (int x = 0; x < grid->getWidth(); ++x) {
             for (int y = 0; y < grid->getHeight(); ++y) {
                 const Point &p = Point(y, x);
-#ifndef PROD
+#ifndef PRODTEST //TODO: warning!!!!!!
                 vaccination = Logic::calculateVaccination(p, heal);
 #else
                 //std::cerr<<"checkpoint 4.1.2.2"<<std::endl;

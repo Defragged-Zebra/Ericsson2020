@@ -33,15 +33,15 @@ AI::calculateBackVaccines(std::vector<VaccineData> &back, int &numberOfVaccinesT
 
 std::vector<VaccineData> &
 AI::calculatePutVaccines(std::vector<VaccineData> &put, int &numberOfVaccinesToDistribute, size_t countryID) {
-    //std::cerr<<"checkpoint 4.1"<<std::endl;
+    std::cerr<<"checkpoint 4.1"<<std::endl;
     std::vector<VaccineData> put2 = chooseFieldsToVaccinate(numberOfVaccinesToDistribute, countryID);
     Country &c = Logic::getGrid()->getCountryByID(countryID);
-    //std::cerr<<"checkpoint 4.2"<<std::endl;
+    std::cerr<<"checkpoint 4.2"<<std::endl;
     std::vector<std::vector<bool>> check(grid2->getHeight());
     for (auto &row:check) {
         row = std::vector<bool>(grid2->getWidth(), true);
     }
-    //std::cerr<<"checkpoint 4.3"<<std::endl;
+    std::cerr<<"checkpoint 4.3"<<std::endl;
     for (const auto &vd:put2)
         if (check[vd.getY()][vd.getX()]) {
             check[vd.getY()][vd.getX()] = false;
@@ -320,7 +320,7 @@ Point AI::calculateStartPointForFlood(const std::set<Field *> &fieldsToCalc, siz
         const Point &p = g->getPointByFieldID(field->getFieldID());
         if (g->getCountryByID(countryID).isNeighbourToVaccinatedField(p)) return p;
     }
-    //throw std::runtime_error("calculateStartPointFailed -- you tried to heal an invalid area");
+    throw std::runtime_error("calculateStartPointFailed -- you tried to heal an invalid area");
 }
 
 //flood kap egy Field tömböt + egy pontot, ezt olyan sorrandbe rendezni, hogy lerakható legyen.
@@ -417,7 +417,7 @@ Point AI::calculateWannabeStartPoint(const std::set<Field *> &fieldsToCalc, size
         if (grid2->getCountryByID(countryID).isNeighbourToVaccinatedField(p)) return p;
         if (grid2->getCountryByID(countryID).isNeighbourToWannabeVaccinatedField(p)) return p;
     }
-    //throw std::runtime_error("calculateWannabeStartPoint -- you tried to heal an invalid area");
+    throw std::runtime_error("calculateWannabeStartPoint -- you tried to heal an invalid area");
 }
 
 void AI::calculateWannabeBorder(size_t countryID) {
